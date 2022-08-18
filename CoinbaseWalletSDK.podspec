@@ -15,5 +15,5 @@ Decentralized verification of participating apps' authenticity without centraliz
   s.social_media_url = 'https://twitter.com/CoinbaseWallet'
   s.ios.deployment_target = '12.0'
   s.swift_version = '5.0'
-  s.source_files = 'packages/wallet-native-sdk/ios/**/*.swift'
+  s.source_files = 'ios/CoinbaseWalletSDK/**/*.swift'
 end

@@ -15,7 +15,7 @@ let package = Package(
         .target(
             name: "CoinbaseWalletSDK",
             dependencies: [],
-            path: "packages/wallet-native-sdk/ios"
+            path: "ios"
         ),
     ]
 )
