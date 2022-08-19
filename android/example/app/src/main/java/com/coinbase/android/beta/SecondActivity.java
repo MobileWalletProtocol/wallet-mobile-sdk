@@ -48,16 +48,16 @@ public class SecondActivity extends AppCompatActivity {
 
         client.initiateHandshake(
                 actions,
-                result -> {
-                    ReturnValue r = result.get(0);
+                (results, account) -> {
+                    for (ReturnValue result : results) {
+                        if (result instanceof ReturnValue.Result) {
+                            ((ReturnValue.Result) result).getValue();
+                        }
 
-                    if (r instanceof ReturnValue.Result) {
-                        ((ReturnValue.Result) r).getValue();
-                    }
-
-                    if (r instanceof ReturnValue.Error) {
-                        ((ReturnValue.Error) r).getCode();
-                        ((ReturnValue.Error) r).getMessage();
+                        if (result instanceof ReturnValue.Error) {
+                            ((ReturnValue.Error) result).getCode();
+                            ((ReturnValue.Error) result).getMessage();
+                        }
                     }
                 },
                 error -> {

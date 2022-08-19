@@ -4,15 +4,22 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.coinbase.android.nativesdk.key.KeyManager
+import com.coinbase.android.nativesdk.message.JSON
 import com.coinbase.android.nativesdk.message.MessageConverter
+import com.coinbase.android.nativesdk.message.request.Account
 import com.coinbase.android.nativesdk.message.request.Action
+import com.coinbase.android.nativesdk.message.request.ETH_REQUEST_ACCOUNTS
 import com.coinbase.android.nativesdk.message.request.RequestContent
 import com.coinbase.android.nativesdk.message.request.RequestMessage
 import com.coinbase.android.nativesdk.message.request.nonHandshakeActions
 import com.coinbase.android.nativesdk.message.response.FailureResponseCallback
 import com.coinbase.android.nativesdk.message.response.ResponseHandler
-import com.coinbase.android.nativesdk.message.response.SuccessResponseCallback
+import com.coinbase.android.nativesdk.message.response.ResponseResult
+import com.coinbase.android.nativesdk.message.response.ReturnValue
+import com.coinbase.android.nativesdk.message.response.SuccessHandshakeResponseCallback
+import com.coinbase.android.nativesdk.message.response.SuccessRequestResponseCallback
 import com.coinbase.android.nativesdk.task.TaskManager
+import kotlinx.serialization.decodeFromString
 import java.security.interfaces.ECPublicKey
 import java.util.Date
 import java.util.UUID
@@ -35,8 +42,8 @@ class CoinbaseWalletSDK(
     private val launchWalletIntent: Intent?
         get() = appContext.packageManager.getLaunchIntentForPackage(hostPackageName)
 
-    val isWalletInstalled get() = launchWalletIntent != null
-    val hasEstablishedConnection: Boolean get() = keyManager.peerPublicKey != null
+    val isCoinbaseWalletInstalled get() = launchWalletIntent != null
+    val isConnected: Boolean get() = keyManager.peerPublicKey != null
 
     init {
         this.domain = if (domain.pathSegments.size < 2) {
@@ -62,13 +69,13 @@ class CoinbaseWalletSDK(
 
     fun initiateHandshake(
         initialActions: List<Action>? = null,
-        onResponse: ResponseHandler
+        onResponse: (ResponseResult, Account?) -> Unit
     ) {
         resetSession()
 
         val hasIllegalAction = initialActions?.any { nonHandshakeActions.contains(it.method) } == true
         if (hasIllegalAction) {
-            onResponse(Result.failure(CoinbaseWalletSDKError.InvalidHandshakeRequest))
+            onResponse(Result.failure(CoinbaseWalletSDKError.InvalidHandshakeRequest), null)
             return
         }
 
@@ -85,17 +92,39 @@ class CoinbaseWalletSDK(
             callbackUrl = domain.toString()
         )
 
-        send(message, onResponse)
+        send(message) { result ->
+            // Get index of eth_requestAccounts action
+            val requestAccountsIndex = initialActions?.indexOfFirst { it.method == ETH_REQUEST_ACCOUNTS } ?: -1
+            if (requestAccountsIndex == -1) {
+                onResponse(result, null)
+                return@send
+            }
+
+            // Get response from Wallet at index
+            val requestAccountsResult = result.getOrNull()?.getOrNull(requestAccountsIndex)
+            if (requestAccountsResult !is ReturnValue.Result) {
+                onResponse(result, null)
+                return@send
+            }
+
+            val account = try {
+                JSON.decodeFromString<Account>(requestAccountsResult.value)
+            } catch (e: Exception) {
+                null
+            }
+
+            onResponse(result, account)
+        }
     }
 
     fun initiateHandshake(
         initialActions: List<Action>? = null,
-        onSuccess: SuccessResponseCallback,
+        onSuccess: SuccessHandshakeResponseCallback,
         onFailure: FailureResponseCallback
     ) {
-        initiateHandshake(initialActions) { result ->
+        initiateHandshake(initialActions) { result, account ->
             result
-                .onSuccess { onSuccess.call(it) }
+                .onSuccess { onSuccess.call(it, account) }
                 .onFailure { onFailure.call(it) }
         }
     }
@@ -118,7 +147,7 @@ class CoinbaseWalletSDK(
 
     fun makeRequest(
         request: RequestContent.Request,
-        onSuccess: SuccessResponseCallback,
+        onSuccess: SuccessRequestResponseCallback,
         onFailure: FailureResponseCallback
     ) {
         makeRequest(request) { result ->
