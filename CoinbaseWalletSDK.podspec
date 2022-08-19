@@ -1,19 +1,13 @@
 Pod::Spec.new do |s|
-  s.name             = 'CoinbaseWalletSDK'
-  s.version          = '0.2.0'
-  s.summary          = 'Swift SDK to interact with Coinbase Wallet iOS app'
-  s.description      = <<-DESC
-Swift implementation of WalletSegue protocol for iOS web3 apps to interact with web3 wallets.
-Inter-app messaging contained within user's device, not requiring a bridge server.
-Secure communication channel between client app and host wallet.
-Decentralized verification of participating apps' authenticity without centralized registry.
-                       DESC
-  s.homepage         = 'https://www.coinbase.com/wallet/developers'
-  s.license          = { :type => 'Apache', :file => 'LICENSE' }
-  s.author           = { 'Coinbase Wallet' => 'wallet-build-squad@coinbase.com' }
-  s.source           = { :git => 'https://github.com/coinbase/wallet-mobile-sdk.git', :tag => s.version }
-  s.social_media_url = 'https://twitter.com/CoinbaseWallet'
+  s.name                  = 'CoinbaseWalletSDK'
+  s.version               = '0.2.1'
+  s.summary               = 'Swift implementation of WalletSegue protocol to interact with Coinbase Wallet iOS app'
+  s.source                = { :git => 'https://github.com/coinbase/wallet-mobile-sdk.git', :tag => s.version }
+  s.author                = 'Coinbase Wallet'
+  s.social_media_url      = 'https://twitter.com/CoinbaseWallet'
+  s.homepage              = 'https://www.coinbase.com/wallet/developers'
+  s.license               = { :type => 'Apache', :file => 'LICENSE' }
   s.ios.deployment_target = '12.0'
-  s.swift_version = '5.0'
-  s.source_files = 'ios/CoinbaseWalletSDK/**/*.swift'
+  s.swift_version         = '5.0'
+  s.source_files          = 'ios/CoinbaseWalletSDK/**/*.swift'
 end
