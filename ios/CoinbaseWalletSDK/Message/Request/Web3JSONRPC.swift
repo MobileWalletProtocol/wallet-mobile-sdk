@@ -39,7 +39,7 @@ public enum Web3JSONRPC: Codable {
         maxFeePerGas: BigInt?,
         maxPriorityFeePerGas: BigInt?,
         gasLimit: BigInt?,
-        chainId: String
+        chainId: BigInt
     )
     
     case eth_sendTransaction(
@@ -52,13 +52,15 @@ public enum Web3JSONRPC: Codable {
         maxFeePerGas: BigInt?,
         maxPriorityFeePerGas: BigInt?,
         gasLimit: BigInt?,
-        chainId: String
+        chainId: BigInt
     )
     
-    case wallet_switchEthereumChain(chainId: Int)
+    case wallet_switchEthereumChain(
+        chainId: BigInt
+    )
     
     case wallet_addEthereumChain(
-        chainId: String,
+        chainId: BigInt,
         blockExplorerUrls: [String]?,
         chainName: String?,
         iconUrls: [String]?,
