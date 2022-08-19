@@ -1,0 +1,9 @@
+{
+  "platforms": ["ios", "android"],
+  "ios": {
+    "modules": ["CoinbaseWalletSDKModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.coinbasewalletsdkexpo.CoinbaseWalletSDKModule"]
+  }
+}
