@@ -1,5 +1,5 @@
 {
-  "name": "@coinbase/wallet-mobile-sdk-expo",
+  "name": "@coinbase/wallet-mobile-sdk",
   "version": "0.1.0",
   "description": "Coinbase Wallet Mobile SDK for React Native",
   "main": "build/CoinbaseWalletSDK.js",
