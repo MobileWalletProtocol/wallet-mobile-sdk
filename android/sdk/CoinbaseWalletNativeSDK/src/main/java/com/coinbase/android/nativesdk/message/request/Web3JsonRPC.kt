@@ -7,49 +7,49 @@ import kotlinx.serialization.encodeToString
 
 private typealias BigInt = String
 
-const val WEB3_JSON_RPC_ETH_REQUEST_ACCOUNTS = "eth_requestAccounts"
-const val WEB3_JSON_RPC_PERSONAL_SIGN = "personal_sign"
-const val WEB3_JSON_RPC_ETH_SIGN_TYPED_DATA_V3 = "eth_signTypedData_v3"
-const val WEB3_JSON_RPC_ETH_SIGN_TYPED_DATA_V4 = "eth_signTypedData_v4"
-const val WEB3_JSON_RPC_ETH_SIGN_TRANSACTION = "eth_signTransaction"
-const val WEB3_JSON_RPC_ETH_SEND_TRANSACTION = "eth_sendTransaction"
-const val WEB3_JSON_RPC_WALLET_SWITCH_ETHEREUM_CHAIN = "wallet_switchEthereumChain"
-const val WEB3_JSON_RPC_WALLET_ADD_ETHEREUM_CHAIN = "wallet_addEthereumChain"
-const val WEB3_JSON_RPC_WALLET_WATCH_ASSET = "wallet_watchAsset"
+const val ETH_REQUEST_ACCOUNTS = "eth_requestAccounts"
+const val PERSONAL_SIGN = "personal_sign"
+const val ETH_SIGN_TYPED_DATA_V3 = "eth_signTypedData_v3"
+const val ETH_SIGN_TYPED_DATA_V4 = "eth_signTypedData_v4"
+const val ETH_SIGN_TRANSACTION = "eth_signTransaction"
+const val ETH_SEND_TRANSACTION = "eth_sendTransaction"
+const val WALLET_SWITCH_ETHEREUM_CHAIN = "wallet_switchEthereumChain"
+const val WALLET_ADD_ETHEREUM_CHAIN = "wallet_addEthereumChain"
+const val WALLET_WATCH_ASSET = "wallet_watchAsset"
 
-val nonHandshakeActions = listOf(WEB3_JSON_RPC_ETH_SEND_TRANSACTION, WEB3_JSON_RPC_ETH_SIGN_TRANSACTION)
+val nonHandshakeActions = listOf(ETH_SEND_TRANSACTION, ETH_SIGN_TRANSACTION)
 
 @Suppress("unused")
 @Serializable
 sealed class Web3JsonRPC {
 
     @Serializable
-    @SerialName(WEB3_JSON_RPC_ETH_REQUEST_ACCOUNTS)
+    @SerialName(ETH_REQUEST_ACCOUNTS)
     class RequestAccounts : Web3JsonRPC()
 
     @Serializable
-    @SerialName(WEB3_JSON_RPC_PERSONAL_SIGN)
+    @SerialName(PERSONAL_SIGN)
     class PersonalSign(
         val address: String,
         val message: String
     ) : Web3JsonRPC()
 
     @Serializable
-    @SerialName(WEB3_JSON_RPC_ETH_SIGN_TYPED_DATA_V3)
+    @SerialName(ETH_SIGN_TYPED_DATA_V3)
     class SignTypedDataV3(
         val address: String,
         val typedDataJson: String
     ) : Web3JsonRPC()
 
     @Serializable
-    @SerialName(WEB3_JSON_RPC_ETH_SIGN_TYPED_DATA_V4)
+    @SerialName(ETH_SIGN_TYPED_DATA_V4)
     class SignTypedDataV4(
         val address: String,
         val typedDataJson: String
     ) : Web3JsonRPC()
 
     @Serializable
-    @SerialName(WEB3_JSON_RPC_ETH_SIGN_TRANSACTION)
+    @SerialName(ETH_SIGN_TRANSACTION)
     class SignTransaction(
         val fromAddress: String,
         val toAddress: String?,
@@ -64,7 +64,7 @@ sealed class Web3JsonRPC {
     ) : Web3JsonRPC()
 
     @Serializable
-    @SerialName(WEB3_JSON_RPC_ETH_SEND_TRANSACTION)
+    @SerialName(ETH_SEND_TRANSACTION)
     class SendTransaction(
         val fromAddress: String,
         val toAddress: String?,
@@ -79,11 +79,11 @@ sealed class Web3JsonRPC {
     ) : Web3JsonRPC()
 
     @Serializable
-    @SerialName(WEB3_JSON_RPC_WALLET_SWITCH_ETHEREUM_CHAIN)
+    @SerialName(WALLET_SWITCH_ETHEREUM_CHAIN)
     class SwitchEthereumChain(val chainId: String) : Web3JsonRPC()
 
     @Serializable
-    @SerialName(WEB3_JSON_RPC_WALLET_ADD_ETHEREUM_CHAIN)
+    @SerialName(WALLET_ADD_ETHEREUM_CHAIN)
     class AddEthereumChain(
         val chainId: String,
         val blockExplorerUrls: List<String>? = null,
@@ -94,7 +94,7 @@ sealed class Web3JsonRPC {
     ) : Web3JsonRPC()
 
     @Serializable
-    @SerialName(WEB3_JSON_RPC_WALLET_WATCH_ASSET)
+    @SerialName(WALLET_WATCH_ASSET)
     class WatchAsset(
         val type: String,
         val options: WatchAssetOptions
@@ -104,15 +104,15 @@ sealed class Web3JsonRPC {
         get() {
             val json = JSON.encodeToString(this)
             val method = when (this) {
-                is RequestAccounts -> WEB3_JSON_RPC_ETH_REQUEST_ACCOUNTS
-                is SendTransaction -> WEB3_JSON_RPC_ETH_SEND_TRANSACTION
-                is SignTransaction -> WEB3_JSON_RPC_ETH_SIGN_TRANSACTION
-                is PersonalSign -> WEB3_JSON_RPC_PERSONAL_SIGN
-                is SignTypedDataV3 -> WEB3_JSON_RPC_ETH_SIGN_TYPED_DATA_V3
-                is SignTypedDataV4 -> WEB3_JSON_RPC_ETH_SIGN_TYPED_DATA_V4
-                is AddEthereumChain -> WEB3_JSON_RPC_WALLET_ADD_ETHEREUM_CHAIN
-                is SwitchEthereumChain -> WEB3_JSON_RPC_WALLET_SWITCH_ETHEREUM_CHAIN
-                is WatchAsset -> WEB3_JSON_RPC_WALLET_WATCH_ASSET
+                is RequestAccounts -> ETH_REQUEST_ACCOUNTS
+                is SendTransaction -> ETH_SEND_TRANSACTION
+                is SignTransaction -> ETH_SIGN_TRANSACTION
+                is PersonalSign -> PERSONAL_SIGN
+                is SignTypedDataV3 -> ETH_SIGN_TYPED_DATA_V3
+                is SignTypedDataV4 -> ETH_SIGN_TYPED_DATA_V4
+                is AddEthereumChain -> WALLET_ADD_ETHEREUM_CHAIN
+                is SwitchEthereumChain -> WALLET_SWITCH_ETHEREUM_CHAIN
+                is WatchAsset -> WALLET_WATCH_ASSET
             }
 
             return method to json

@@ -1,8 +1,15 @@
 package com.coinbase.android.nativesdk.message.response
 
-typealias SuccessResponseCallback = ResponseCallback<List<ReturnValue>>
-typealias FailureResponseCallback = ResponseCallback<Throwable>
+import com.coinbase.android.nativesdk.message.request.Account
 
-interface ResponseCallback<T> {
-    fun call(result: T)
+interface SuccessHandshakeResponseCallback {
+    fun call(result: List<ReturnValue>, account: Account?)
+}
+
+interface SuccessRequestResponseCallback {
+    fun call(result: List<ReturnValue>)
+}
+
+interface FailureResponseCallback {
+    fun call(error: Throwable)
 }

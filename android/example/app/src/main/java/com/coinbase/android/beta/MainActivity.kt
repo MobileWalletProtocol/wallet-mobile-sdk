@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import com.coinbase.android.beta.databinding.ActivityMainBinding
 import com.coinbase.android.nativesdk.CoinbaseWalletSDK
+import com.coinbase.android.nativesdk.message.request.Account
 import com.coinbase.android.nativesdk.message.request.Action
 import com.coinbase.android.nativesdk.message.request.RequestContent
 import com.coinbase.android.nativesdk.message.response.ReturnValue
@@ -48,9 +49,11 @@ class MainActivity : AppCompatActivity() {
         setVisibility()
         connectWalletButton.setOnClickListener {
             val handShakeActions = ActionsManager.handShakeActions
-            client.initiateHandshake(initialActions = handShakeActions) { result: Result<List<ReturnValue>> ->
+            client.initiateHandshake(
+                initialActions = handShakeActions
+            ) { result: Result<List<ReturnValue>>, account: Account? ->
                 result.onSuccess { returnValues: List<ReturnValue> ->
-                    returnValues.handleSuccess("Handshake", handShakeActions)
+                    returnValues.handleSuccess("Handshake", handShakeActions, account)
                 }
                 result.onFailure { err ->
                     err.handleError("HandShake")
@@ -82,7 +85,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun List<ReturnValue>.handleSuccess(requestType: String, actions: List<Action>) = with(binding) {
+    private fun List<ReturnValue>.handleSuccess(
+        requestType: String,
+        actions: List<Action>,
+        account: Account? = null
+    ) = with(binding) {
         textArea.text = buildString {
             if (actions.isEmpty()) {
                 append("Handshake successful")
@@ -93,13 +100,12 @@ class MainActivity : AppCompatActivity() {
                                 "${if (returnValue is ReturnValue.Result) "Success" else "Error"}\n"
                     )
 
+                    if (account != null) {
+                        SharedPrefsManager.account = account.address
+                    }
+
                     val result = when (returnValue) {
-                        is ReturnValue.Result -> {
-                            if (actions[index].method == "eth_requestAccounts") {
-                                SharedPrefsManager.account = returnValue.value
-                            }
-                            returnValue.value
-                        }
+                        is ReturnValue.Result -> returnValue.value
                         is ReturnValue.Error -> returnValue.message
                     }
                     append("${result}\n\n")
@@ -117,7 +123,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setVisibility() = with(binding) {
-        val isConnected = client.hasEstablishedConnection
+        val isConnected = client.isConnected
         connectContainer.isVisible = !isConnected
         requestContainer.isVisible = isConnected
 
