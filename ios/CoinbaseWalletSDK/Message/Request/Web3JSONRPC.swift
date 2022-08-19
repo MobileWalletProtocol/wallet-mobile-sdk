@@ -21,19 +21,19 @@ public enum Web3JSONRPC: Codable {
     
     case eth_signTypedData_v3(
         address: String,
-        typedDataJson: String
+        typedData: JSONString
     )
 
     case eth_signTypedData_v4(
         address: String,
-        typedDataJson: String
+        typedData: JSONString
     )
     
     case eth_signTransaction(
         fromAddress: String,
         toAddress: String?,
         weiValue: BigInt,
-        data: String,
+        data: Data,
         nonce: Int?,
         gasPriceInWei: BigInt?,
         maxFeePerGas: BigInt?,
@@ -46,7 +46,7 @@ public enum Web3JSONRPC: Codable {
         fromAddress: String,
         toAddress: String?,
         weiValue: BigInt,
-        data: String,
+        data: Data,
         nonce: Int?,
         gasPriceInWei: BigInt?,
         maxFeePerGas: BigInt?,
