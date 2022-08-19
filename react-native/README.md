@@ -1,6 +1,6 @@
 # coinbase-wallet-sdk-expo
 
-Coinbase Wallet Native SDK
+Coinbase Wallet Mobile SDK
 
 # API documentation
 
