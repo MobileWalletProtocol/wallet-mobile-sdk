@@ -7,6 +7,8 @@
 
 import Foundation
 
+public typealias EthAddress = String
+public typealias EthTxData = String
 public typealias BigInt = String
 
 public let unsupportedHandShakeMethod: [String] = ["eth_signTransaction", "eth_sendTransaction"]
@@ -15,25 +17,25 @@ public enum Web3JSONRPC: Codable {
     case eth_requestAccounts
     
     case personal_sign(
-        address: String,
+        address: EthAddress,
         message: String
     )
     
     case eth_signTypedData_v3(
-        address: String,
+        address: EthAddress,
         typedData: JSONString
     )
 
     case eth_signTypedData_v4(
-        address: String,
+        address: EthAddress,
         typedData: JSONString
     )
     
     case eth_signTransaction(
-        fromAddress: String,
-        toAddress: String?,
+        fromAddress: EthAddress,
+        toAddress: EthAddress?,
         weiValue: BigInt,
-        data: Data,
+        data: EthTxData,
         nonce: Int?,
         gasPriceInWei: BigInt?,
         maxFeePerGas: BigInt?,
@@ -43,10 +45,10 @@ public enum Web3JSONRPC: Codable {
     )
     
     case eth_sendTransaction(
-        fromAddress: String,
-        toAddress: String?,
+        fromAddress: EthAddress,
+        toAddress: EthAddress?,
         weiValue: BigInt,
-        data: Data,
+        data: EthTxData,
         nonce: Int?,
         gasPriceInWei: BigInt?,
         maxFeePerGas: BigInt?,
