@@ -10,12 +10,11 @@ let package = Package(
             name: "CoinbaseWalletSDK",
             targets: ["CoinbaseWalletSDK"]),
     ],
-    dependencies: [],
     targets: [
         .target(
             name: "CoinbaseWalletSDK",
-            dependencies: [],
-            path: "ios"
+            path: "ios",
+            exclude: ["example"]
         ),
     ]
 )
