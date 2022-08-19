@@ -17,4 +17,4 @@ dependencyResolutionManagement {
 rootProject.name = "ClientApp"
 include ':app', ':nativesdk'
 
-project(":nativesdk").projectDir = new File("../../packages/wallet-native-sdk/android/CoinbaseWalletNativeSDK")
+project(":nativesdk").projectDir = new File("../sdk/CoinbaseWalletNativeSDK")
