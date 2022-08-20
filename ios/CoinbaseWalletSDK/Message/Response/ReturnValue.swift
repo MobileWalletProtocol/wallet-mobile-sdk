@@ -8,7 +8,7 @@
 import Foundation
 
 public enum ReturnValue: BaseContent {
-    case result(value: String)
+    case result(value: JSONString)
     case error(code: Int, message: String)
 }
 
