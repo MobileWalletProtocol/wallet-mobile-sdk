@@ -108,7 +108,7 @@ public final class CoinbaseWalletSDK {
                 let content = try? result.get().content,
                 content.indices.contains(requestAccountsIndex),
                 case .result(let accountJson) = content[requestAccountsIndex],
-                let account = try? accountJson.decode(Account.self)
+                let account = try? accountJson.decode(as: Account.self)
             else {
                 onResponse(result, nil)
                 return

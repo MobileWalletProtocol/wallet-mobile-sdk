@@ -41,7 +41,7 @@ public struct JSONString {
         return object
     }
     
-    public func decode<T: Decodable>(_ type: T.Type) throws -> T? {
+    public func decode<T: Decodable>(as type: T.Type) throws -> T? {
         guard let data = self.data else { return nil }
         return try JSONDecoder().decode(type, from: data)
     }
