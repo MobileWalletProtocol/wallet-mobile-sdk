@@ -1,12 +1,13 @@
 # Coinbase Wallet Mobile SDK
 
-> :warning: **Wallet Mobile SDK**: is a WIP. Full integration with the Coinbase Wallet app is scheduled for mid September 2022
+> :warning: **Wallet Mobile SDK** is a WIP. Full integration with the Coinbase Wallet app is scheduled for mid September 2022
 
 ## Packages
 
 - [Android](android/)
 - [iOS](ios/)
 - [React Native](react-native/)
+- [Flutter](flutter/)
 
 ## License
 
