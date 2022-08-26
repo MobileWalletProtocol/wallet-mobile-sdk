@@ -101,7 +101,7 @@ class ViewController: UITableViewController {
                 Action(jsonRpc: .personal_sign(address: address, message: "message")),
                 Action(jsonRpc: .eth_signTypedData_v3(
                     address: address,
-                    typedData: JSONString(encode: typedData)!
+                    typedDataJson: JSONString(encode: typedData)!
                 ))
             ])
         ) { result in

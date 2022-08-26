@@ -23,12 +23,12 @@ public enum Web3JSONRPC: Codable {
     
     case eth_signTypedData_v3(
         address: EthAddress,
-        typedData: JSONString
+        typedDataJson: JSONString
     )
 
     case eth_signTypedData_v4(
         address: EthAddress,
-        typedData: JSONString
+        typedDataJson: JSONString
     )
     
     case eth_signTransaction(
