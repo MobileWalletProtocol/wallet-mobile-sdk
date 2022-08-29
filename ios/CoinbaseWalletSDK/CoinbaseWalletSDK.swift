@@ -21,7 +21,7 @@ public final class CoinbaseWalletSDK {
     static private var callback: URL?
     
     static public func configure(
-        host: URL = URL(string: "https://go.cb-w.com/wsegue")!,
+        host: URL = URL(string: "https://wallet.coinbase.com/wsegue")!,
         callback: URL
     ) {
         guard self.host == nil && self.callback == nil else {

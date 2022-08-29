@@ -52,7 +52,7 @@ public class CoinbaseWalletSDKModule: Module {
             if let hostURLStr = hostURL {
                 host = URL(string: hostURLStr)!
             } else {
-                host = URL(string: "https://go.cb-w.com/wsegue")!
+                host = URL(string: "https://wallet.coinbase.com/wsegue")!
             }
 
             self.hasConfigured = true
