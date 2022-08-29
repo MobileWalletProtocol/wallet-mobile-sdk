@@ -25,7 +25,6 @@ import java.util.Date
 import java.util.UUID
 
 const val CBW_PACKAGE_NAME = "org.toshi"
-private const val CBW_APP_LINK = "go.cb-w.com"
 private const val CBW_SCHEME = "cbwallet://wsegue"
 
 class CoinbaseWalletSDK(
