@@ -28,7 +28,7 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         client = new CoinbaseWalletSDK(
-                Uri.parse("https://myappxyz.com"),
+                Uri.parse("https://www.coinbase.com"),
                 getApplicationContext(),
                 CBW_PACKAGE_NAME,
                 intent -> {

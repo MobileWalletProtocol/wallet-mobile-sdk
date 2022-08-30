@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "ClientApp"
-include ':app', ':walletsdk'
+include ':example', ':walletsdk'
