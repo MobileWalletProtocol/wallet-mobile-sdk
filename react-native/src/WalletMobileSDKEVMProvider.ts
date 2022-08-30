@@ -76,14 +76,14 @@ interface WatchAssetParams {
   };
 }
 
-export class WalletMobileSDKProvider
+export class WalletMobileSDKEVMProvider
   extends SafeEventEmitter
   implements Web3Provider
 {
-  private _chainId?: number;
-  private _jsonRpcUrl?: string;
-  private _addresses: AddressString[] = [];
-  private _store: KVStorage;
+  #chainId?: number;
+  #jsonRpcUrl?: string;
+  #addresses: AddressString[] = [];
+  #storage: KVStorage;
 
   constructor(opts?: WalletMobileSDKProviderOptions) {
     super();
@@ -92,26 +92,26 @@ export class WalletMobileSDKProvider
     this.sendAsync = this.sendAsync.bind(this);
     this.request = this.request.bind(this);
 
-    this._store = opts?.storage ?? new MMKV({ id: "mobile_sdk.store" });
-    this._chainId = opts?.chainId;
-    this._jsonRpcUrl = opts?.jsonRpcUrl;
+    this.#storage = opts?.storage ?? new MMKV({ id: "mobile_sdk.store" });
+    this.#chainId = opts?.chainId;
+    this.#jsonRpcUrl = opts?.jsonRpcUrl;
 
-    const chainId = this._chainId ?? this.getChainId();
+    const chainId = this.#chainId ?? this.#getChainId();
     const chainIdStr = prepend0x(chainId.toString(16));
     this.emit("connect", { chainId: chainIdStr });
 
-    const cachedAddresses = this._store.getString(CACHED_ADDRESSES_KEY);
+    const cachedAddresses = this.#storage.getString(CACHED_ADDRESSES_KEY);
     if (cachedAddresses) {
       const addresses = cachedAddresses.split(" ") as AddressString[];
       if (addresses[0] && addresses[0] !== "") {
-        this._setAddresses(addresses);
+        this.#setAddresses(addresses);
       }
     }
   }
 
   public get host(): string {
-    if (this._jsonRpcUrl) {
-      return this._jsonRpcUrl;
+    if (this.#jsonRpcUrl) {
+      return this.#jsonRpcUrl;
     } else {
       throw new Error("No jsonRpcUrl provided");
     }
@@ -122,7 +122,7 @@ export class WalletMobileSDKProvider
   }
 
   public get chainId(): string {
-    return prepend0x(this.getChainId().toString(16));
+    return prepend0x(this.#getChainId().toString(16));
   }
 
   public supportsSubscriptions(): boolean {
@@ -131,13 +131,13 @@ export class WalletMobileSDKProvider
 
   public disconnect(): boolean {
     resetSession();
-    this._addresses = [];
-    this._store.delete(CACHED_ADDRESSES_KEY);
+    this.#addresses = [];
+    this.#storage.delete(CACHED_ADDRESSES_KEY);
     return true;
   }
 
-  private _send = this.send.bind(this);
-  private _sendAsync = this.sendAsync.bind(this);
+  #send = this.send.bind(this);
+  #sendAsync = this.sendAsync.bind(this);
 
   public send(request: JSONRPCRequest): JSONRPCResponse;
   public send(request: JSONRPCRequest[]): JSONRPCResponse[];
@@ -172,25 +172,25 @@ export class WalletMobileSDKProvider
         method,
         params,
       };
-      return this._sendRequestAsync(request).then((res) => res.result);
+      return this.#sendRequestAsync(request).then((res) => res.result);
     }
 
     // send(JSONRPCRequest | JSONRPCRequest[], callback): void
     if (typeof callbackOrParams === "function") {
       const request = requestOrMethod as any;
       const callback = callbackOrParams;
-      return this._sendAsync(request, callback);
+      return this.#sendAsync(request, callback);
     }
 
     // send(JSONRPCRequest[]): JSONRPCResponse[]
     if (Array.isArray(requestOrMethod)) {
       const requests = requestOrMethod;
-      return requests.map((r) => this._sendRequest(r));
+      return requests.map((r) => this.#sendRequest(r));
     }
 
     // send(JSONRPCRequest): JSONRPCResponse
     const req: JSONRPCRequest = requestOrMethod;
-    return this._sendRequest(req);
+    return this.#sendRequest(req);
   }
 
   public sendAsync(
@@ -212,7 +212,7 @@ export class WalletMobileSDKProvider
     // send(JSONRPCRequest[], callback): void
     if (Array.isArray(request)) {
       const arrayCb = callback as Callback<JSONRPCResponse[]>;
-      this._sendMultipleRequestsAsync(request)
+      this.#sendMultipleRequestsAsync(request)
         .then((responses) => arrayCb(null, responses))
         .catch((err) => arrayCb(err, null));
       return;
@@ -220,7 +220,7 @@ export class WalletMobileSDKProvider
 
     // send(JSONRPCRequest, callback): void
     const cb = callback as Callback<JSONRPCResponse>;
-    return this._sendRequestAsync(request)
+    return this.#sendRequestAsync(request)
       .then((response) => cb(null, response))
       .catch((err) => cb(err, null));
   }
@@ -256,9 +256,8 @@ export class WalletMobileSDKProvider
 
     const newParams = params === undefined ? [] : params;
 
-    // Coinbase Wallet Requests
     const id = 0;
-    const result = await this._sendRequestAsync({
+    const result = await this.#sendRequestAsync({
       method,
       params: newParams,
       jsonrpc: "2.0",
@@ -268,70 +267,70 @@ export class WalletMobileSDKProvider
     return result.result as T;
   }
 
-  private _sendRequest(request: JSONRPCRequest): JSONRPCResponse {
+  #sendRequest(request: JSONRPCRequest): JSONRPCResponse {
     throw new Error(`Unsupported synchronous method: ${request.method}`);
   }
 
-  private _sendMultipleRequestsAsync(
+  #sendMultipleRequestsAsync(
     requests: JSONRPCRequest[]
   ): Promise<JSONRPCResponse[]> {
-    return Promise.all(requests.map((r) => this._sendRequestAsync(r))); // TODO: Request batching
+    return Promise.all(requests.map((r) => this.#sendRequestAsync(r))); // TODO: Request batching
   }
 
-  private _sendRequestAsync(request: JSONRPCRequest): Promise<JSONRPCResponse> {
+  #sendRequestAsync(request: JSONRPCRequest): Promise<JSONRPCResponse> {
     const method = request.method;
     const params = request.params || [];
 
     return new Promise<JSONRPCResponse>((resolve, reject) => {
       switch (method) {
         case JSONRPCMethod.eth_requestAccounts:
-          this._eth_requestAccounts()
+          this.#eth_requestAccounts()
             .then((res) => resolve(res))
             .catch((err) => reject(err));
           break;
         case JSONRPCMethod.personal_sign:
-          this._personal_sign(params)
+          this.#personal_sign(params)
             .then((res) => resolve(res))
             .catch((err) => reject(err));
           break;
         case JSONRPCMethod.eth_signTypedData_v3:
-          this._eth_signTypedData(params, "v3")
+          this.#eth_signTypedData(params, "v3")
             .then((res) => resolve(res))
             .catch((err) => reject(err));
           break;
         case JSONRPCMethod.eth_signTypedData_v4:
-          this._eth_signTypedData(params, "v4")
+          this.#eth_signTypedData(params, "v4")
             .then((res) => resolve(res))
             .catch((err) => reject(err));
           break;
         case JSONRPCMethod.eth_signTransaction:
-          this._eth_signTransaction(params, false)
+          this.#eth_signTransaction(params, false)
             .then((res) => resolve(res))
             .catch((err) => reject(err));
           break;
         case JSONRPCMethod.eth_sendTransaction:
-          this._eth_signTransaction(params, true)
+          this.#eth_signTransaction(params, true)
             .then((res) => resolve(res))
             .catch((err) => reject(err));
           break;
         case JSONRPCMethod.wallet_switchEthereumChain:
-          this._wallet_switchEthereumChain(params)
+          this.#wallet_switchEthereumChain(params)
             .then((res) => resolve(res))
             .catch((err) => reject(err));
           break;
         case JSONRPCMethod.wallet_addEthereumChain:
-          this._wallet_addEthereumChain(params)
+          this.#wallet_addEthereumChain(params)
             .then((res) => resolve(res))
             .catch((err) => reject(err));
           break;
         case JSONRPCMethod.wallet_watchAsset:
-          this._wallet_watchAsset(params)
+          this.#wallet_watchAsset(params)
             .then((res) => resolve(res))
             .catch((err) => reject(err));
           break;
         default:
-          if (this._jsonRpcUrl) {
-            this._makeEthereumJsonRpcRequest(request, this._jsonRpcUrl)
+          if (this.#jsonRpcUrl) {
+            this.#makeEthereumJsonRpcRequest(request, this.#jsonRpcUrl)
               .then((res) => resolve(res))
               .catch((err) => reject(err));
           } else {
@@ -345,28 +344,28 @@ export class WalletMobileSDKProvider
     });
   }
 
-  private async _eth_requestAccounts(): Promise<JSONRPCResponse> {
+  async #eth_requestAccounts(): Promise<JSONRPCResponse> {
     const action: Action = {
       method: JSONRPCMethod.eth_requestAccounts,
       params: {},
     };
 
-    const res = await this._makeHandshakeRequest(action);
+    const res = await this.#makeHandshakeRequest(action);
     if (res.result) {
       const resultJSON = JSON.parse(res.result);
-      this._setAddresses([resultJSON.address]);
+      this.#setAddresses([resultJSON.address]);
       return {
         jsonrpc: "2.0",
         id: 0,
         result: [resultJSON.address],
       };
     } else {
-      throw this._getProviderError(res);
+      throw this.#getProviderError(res);
     }
   }
 
-  private async _personal_sign(params: unknown[]): Promise<JSONRPCResponse> {
-    this._requireAuthorization();
+  async #personal_sign(params: unknown[]): Promise<JSONRPCResponse> {
+    this.#requireAuthorization();
     const message = ensureBuffer(params[0]);
     const address = ensureAddressString(params[1]);
 
@@ -378,7 +377,7 @@ export class WalletMobileSDKProvider
       },
     };
 
-    const res = await this._makeSDKRequest(action);
+    const res = await this.#makeSDKRequest(action);
     if (res.result) {
       return {
         jsonrpc: "2.0",
@@ -386,15 +385,15 @@ export class WalletMobileSDKProvider
         result: res.result,
       };
     } else {
-      throw this._getProviderError(res);
+      throw this.#getProviderError(res);
     }
   }
 
-  private async _eth_signTypedData(
+  async #eth_signTypedData(
     params: unknown[],
     type: "v3" | "v4"
   ): Promise<JSONRPCResponse> {
-    this._requireAuthorization();
+    this.#requireAuthorization();
     const address = ensureAddressString(params[0]);
     const typedDataJson = JSON.stringify(ensureParsedJSONObject(params[1]));
 
@@ -409,7 +408,7 @@ export class WalletMobileSDKProvider
       },
     };
 
-    const res = await this._makeSDKRequest(action);
+    const res = await this.#makeSDKRequest(action);
     if (res.result) {
       return {
         jsonrpc: "2.0",
@@ -417,16 +416,16 @@ export class WalletMobileSDKProvider
         result: res.result,
       };
     } else {
-      throw this._getProviderError(res);
+      throw this.#getProviderError(res);
     }
   }
 
-  private async _eth_signTransaction(
+  async #eth_signTransaction(
     params: unknown[],
     shouldSubmit: boolean
   ): Promise<JSONRPCResponse> {
-    this._requireAuthorization();
-    const tx = this._prepareTransactionParams((params[0] as any) || {});
+    this.#requireAuthorization();
+    const tx = this.#prepareTransactionParams((params[0] as any) || {});
     const action: Action = {
       method: shouldSubmit
         ? JSONRPCMethod.eth_sendTransaction
@@ -451,7 +450,7 @@ export class WalletMobileSDKProvider
       },
     };
 
-    const res = await this._makeSDKRequest(action);
+    const res = await this.#makeSDKRequest(action);
     if (res.result) {
       return {
         jsonrpc: "2.0",
@@ -459,11 +458,11 @@ export class WalletMobileSDKProvider
         result: res.result,
       };
     } else {
-      throw this._getProviderError(res);
+      throw this.#getProviderError(res);
     }
   }
 
-  private _prepareTransactionParams(tx: {
+  #prepareTransactionParams(tx: {
     from?: unknown;
     to?: unknown;
     gasPrice?: unknown;
@@ -491,9 +490,9 @@ export class WalletMobileSDKProvider
         ? ensureBN(tx.maxPriorityFeePerGas)
         : null;
     const gasLimit = tx.gas != null ? ensureBN(tx.gas) : null;
-    const chainId = this._chainId
-      ? IntNumber(this._chainId)
-      : this.getChainId();
+    const chainId = this.#chainId
+      ? IntNumber(this.#chainId)
+      : this.#getChainId();
 
     return {
       fromAddress,
@@ -509,10 +508,10 @@ export class WalletMobileSDKProvider
     };
   }
 
-  private async _wallet_switchEthereumChain(
+  async #wallet_switchEthereumChain(
     params: unknown[]
   ): Promise<JSONRPCResponse> {
-    this._requireAuthorization();
+    this.#requireAuthorization();
     const request = params[0] as SwitchEthereumChainParams;
     const chainId = parseInt(request.chainId, 16);
 
@@ -522,7 +521,7 @@ export class WalletMobileSDKProvider
       result: null,
     };
 
-    if (ensureIntNumber(chainId) === this.getChainId()) {
+    if (ensureIntNumber(chainId) === this.#getChainId()) {
       return successResponse;
     }
 
@@ -533,9 +532,9 @@ export class WalletMobileSDKProvider
       },
     };
 
-    const res = await this._makeSDKRequest(action);
+    const res = await this.#makeSDKRequest(action);
     if (res.result) {
-      this.updateChainId(chainId);
+      this.#updateChainId(chainId);
       return successResponse;
     } else {
       throw ethErrors.provider.custom({
@@ -545,10 +544,8 @@ export class WalletMobileSDKProvider
     }
   }
 
-  private async _wallet_addEthereumChain(
-    params: unknown[]
-  ): Promise<JSONRPCResponse> {
-    this._requireAuthorization();
+  async #wallet_addEthereumChain(params: unknown[]): Promise<JSONRPCResponse> {
+    this.#requireAuthorization();
     const request = params[0] as AddEthereumChainParams;
 
     if (!request.rpcUrls || request.rpcUrls?.length === 0) {
@@ -583,7 +580,7 @@ export class WalletMobileSDKProvider
       },
     };
 
-    const res = await this._makeSDKRequest(action);
+    const res = await this.#makeSDKRequest(action);
     if (res.result && res.result === "true") {
       return {
         jsonrpc: "2.0",
@@ -591,12 +588,12 @@ export class WalletMobileSDKProvider
         result: null,
       };
     } else {
-      throw this._getProviderError(res);
+      throw this.#getProviderError(res);
     }
   }
 
-  private async _wallet_watchAsset(params: unknown): Promise<JSONRPCResponse> {
-    this._requireAuthorization();
+  async #wallet_watchAsset(params: unknown): Promise<JSONRPCResponse> {
+    this.#requireAuthorization();
     const request = (
       Array.isArray(params) ? params[0] : params
     ) as WatchAssetParams;
@@ -640,7 +637,7 @@ export class WalletMobileSDKProvider
       },
     };
 
-    const res = await this._makeSDKRequest(action);
+    const res = await this.#makeSDKRequest(action);
     if (res.result) {
       return {
         jsonrpc: "2.0",
@@ -648,11 +645,11 @@ export class WalletMobileSDKProvider
         result: res.result === "true",
       };
     } else {
-      throw this._getProviderError(res);
+      throw this.#getProviderError(res);
     }
   }
 
-  private async _makeEthereumJsonRpcRequest(
+  async #makeEthereumJsonRpcRequest(
     request: JSONRPCRequest,
     jsonRpcUrl: string
   ): Promise<JSONRPCResponse> {
@@ -677,11 +674,11 @@ export class WalletMobileSDKProvider
       });
   }
 
-  private async _makeHandshakeRequest(action: Action) {
+  async #makeHandshakeRequest(action: Action) {
     try {
       const [res] = await initiateHandshake([action]);
       if (res.errorMessage) {
-        throw this._getProviderError(res);
+        throw this.#getProviderError(res);
       }
       return res;
     } catch (error) {
@@ -698,11 +695,11 @@ export class WalletMobileSDKProvider
     }
   }
 
-  private async _makeSDKRequest(action: Action) {
+  async #makeSDKRequest(action: Action) {
     try {
       const [res] = await makeRequest([action]);
       if (res.errorMessage) {
-        throw this._getProviderError(res);
+        throw this.#getProviderError(res);
       }
       return res;
     } catch (error) {
@@ -719,7 +716,7 @@ export class WalletMobileSDKProvider
     }
   }
 
-  private _getProviderError(result: Result) {
+  #getProviderError(result: Result) {
     const errorMessage = result.errorMessage ?? "";
     if (errorMessage.match(/(denied|rejected)/i)) {
       return ethErrors.provider.userRejectedRequest();
@@ -731,36 +728,36 @@ export class WalletMobileSDKProvider
     }
   }
 
-  private getChainId(): IntNumber {
-    const chainIdStr = this._store.getString(CHAIN_ID_KEY) || "1";
+  #getChainId(): IntNumber {
+    const chainIdStr = this.#storage.getString(CHAIN_ID_KEY) || "1";
     const chainId = parseInt(chainIdStr, 10);
     return ensureIntNumber(chainId);
   }
 
-  private updateChainId(chainId: number) {
-    const originalChainId = this.getChainId();
-    this._store.set(CHAIN_ID_KEY, chainId.toString(10));
+  #updateChainId(chainId: number) {
+    const originalChainId = this.#getChainId();
+    this.#storage.set(CHAIN_ID_KEY, chainId.toString(10));
     const chainChanged = ensureIntNumber(chainId) !== originalChainId;
     if (chainChanged) {
-      this.emit("chainChanged", prepend0x(this.getChainId().toString(16)));
+      this.emit("chainChanged", prepend0x(this.#getChainId().toString(16)));
     }
   }
 
-  private _setAddresses(addresses: string[]) {
+  #setAddresses(addresses: string[]) {
     const newAddresses = addresses.map((address) =>
       ensureAddressString(address)
     );
 
-    if (JSON.stringify(this._addresses) === JSON.stringify(newAddresses)) {
+    if (JSON.stringify(this.#addresses) === JSON.stringify(newAddresses)) {
       return;
     }
 
-    this._addresses = newAddresses;
-    this._store.set(CACHED_ADDRESSES_KEY, newAddresses.join(" "));
-    this.emit("accountsChanged", this._addresses);
+    this.#addresses = newAddresses;
+    this.#storage.set(CACHED_ADDRESSES_KEY, newAddresses.join(" "));
+    this.emit("accountsChanged", this.#addresses);
   }
 
-  private _requireAuthorization() {
+  #requireAuthorization() {
     if (!this.connected) {
       throw ethErrors.provider.unauthorized();
     }
