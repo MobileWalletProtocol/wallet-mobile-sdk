@@ -110,7 +110,17 @@ class ViewController: UITableViewController {
                 return
             }
             
-            self.log("\(returnValues)")
+            for returnValue in returnValues {
+                switch returnValue {
+                case .result(let value):
+                    self.log("result (raw JSON): \(value)")
+                    if let decoded = value.decode() {
+                        self.log("result (decoded): \(decoded)")
+                    }
+                case .error(let code, let message):
+                    self.log("error \(code): \(message)")
+                }
+            }
         }
     }
     
