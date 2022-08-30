@@ -13,7 +13,7 @@ class MainActivity: FlutterActivity() {
     private val client by lazy {
         CoinbaseWalletSDK(
             appContext = applicationContext,
-            domain = Uri.parse("https://www.coinbase.com"),
+            domain = Uri.parse("https://www.myappxyz.com"),
             openIntent = { intent -> launcher.launch(intent) }
         )
     }

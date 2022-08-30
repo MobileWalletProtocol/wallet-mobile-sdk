@@ -44,6 +44,7 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
         flutterApplicationContext = flutterPluginBinding.applicationContext
         coinbase = CoinbaseWalletSDK(
             appContext = flutterPluginBinding.applicationContext,
+            // TODO: This should be changed, and passed in from client
             domain = Uri.parse("https://www.coinbase.com"),
             openIntent = { intent -> act?.startActivityForResult(intent, 0) }
         );

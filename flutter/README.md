@@ -18,7 +18,7 @@ Note: This wrapper only supports iOS and Android.
         callback: Uri.parse('tribesxyz://mycallback'),
       ),
       android: AndroidConfiguration(
-        domain: Uri.parse('https://www.coinbase.com'),
+        domain: Uri.parse('https://www.myappxyz.com'),
       ),
     ),
   );
