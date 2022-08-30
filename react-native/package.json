@@ -26,7 +26,14 @@
   "author": "Coinbase, Inc.",
   "license": "Apache-2.0",
   "homepage": "https://github.com/coinbase/wallet-mobile-sdk#readme",
-  "dependencies": {},
+  "dependencies": {
+    "@coinbase/wallet-sdk": "^3.5.0",
+    "@metamask/safe-event-emitter": "2.0.0",
+    "eth-rpc-errors": "4.0.3",
+    "buffer": "6.0.3",
+    "bn.js": "5.2.1",
+    "react-native-mmkv": "2.4.3"
+  },
   "devDependencies": {
     "expo-module-scripts": "^2.0.0",
     "expo-modules-core": "^0.11.3"
