@@ -27,11 +27,11 @@ class _MyAppState extends State<MyApp> {
     CoinbaseWalletSDK.shared.configure(
       Configuration(
         ios: IOSConfiguration(
-          host: Uri.parse('cbwallet://wsegue'),
+          host: Uri.parse('https://wallet.coinbase.com/wsegue'),
           callback: Uri.parse('tribesxyzsample://mycallback'),
         ),
         android: AndroidConfiguration(
-          domain: Uri.parse('https://www.coinbase.com'),
+          domain: Uri.parse('https://www.myappxyz.com'),
         ),
       ),
     );

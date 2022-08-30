@@ -14,11 +14,11 @@ Note: This wrapper only supports iOS and Android.
   await CoinbaseWalletSDK.shared.configure(
     Configuration(
       ios: IOSConfiguration(
-        host: Uri.parse('cbwallet://wsegue'),
+        host: Uri.parse('https://wallet.coinbase.com/wsegue'),
         callback: Uri.parse('tribesxyz://mycallback'),
       ),
       android: AndroidConfiguration(
-        domain: Uri.parse('https://www.coinbase.com'),
+        domain: Uri.parse('https://www.myappxyz.com'),
       ),
     ),
   );

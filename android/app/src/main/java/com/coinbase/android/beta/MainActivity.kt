@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     private val client by lazy {
         CoinbaseWalletSDK(
             appContext = applicationContext,
-            domain = Uri.parse("https://www.coinbase.com"),
+            domain = Uri.parse("https://myappxyz.com"),
             openIntent = { intent -> launcher.launch(intent) }
         )
     }
