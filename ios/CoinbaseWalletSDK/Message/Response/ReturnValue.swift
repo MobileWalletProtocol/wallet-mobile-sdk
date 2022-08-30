@@ -16,6 +16,13 @@ public enum ReturnValue: BaseContent {
 public typealias ResponseResult = Result<BaseMessage<[ReturnValue]>, Error>
 
 @available(iOS 13.0, *)
+extension ResponseResult {
+    public var returnValues: [ReturnValue]? {
+        return (try? self.get())?.content
+    }
+}
+
+@available(iOS 13.0, *)
 public typealias ResponseHandler = (ResponseResult) -> Void
 
 @available(iOS 13.0, *)
