@@ -105,7 +105,12 @@ class ViewController: UITableViewController {
                 ))
             ])
         ) { result in
-            self.log("\(result)")
+            guard let returnValues = result.returnValues else {
+                self.log("\(result)")
+                return
+            }
+            
+            self.log("\(returnValues)")
         }
     }
     
