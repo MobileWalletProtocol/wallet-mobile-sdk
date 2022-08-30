@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
           callback: Uri.parse('tribesxyzsample://mycallback'),
         ),
         android: AndroidConfiguration(
-          domain: Uri.parse('https://www.coinbase.com'),
+          domain: Uri.parse('https://www.myappxyz.com'),
         ),
       ),
     );
