@@ -78,7 +78,7 @@ public class CoinbaseWalletSDKModule: Module {
                 case .success(let response):
                     let results: [ReturnValueRecord.Dict] = response.content.map { $0.asRecord }
                     let accountRecord = account?.asRecord
-                    promise.resolve((results, accountRecord))
+                    promise.resolve([results, accountRecord])
                 case .failure(let error):
                     promise.reject("handshake-error", error.localizedDescription)
                 }
