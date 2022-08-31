@@ -66,6 +66,7 @@ class CoinbaseWalletSDKModule : Module() {
                 result
                     .onSuccess { responses ->
                         val results: List<ReturnValueRecord> = responses.map { it.asRecord }
+                        promise.resolve(results)
                         /* 
                         TODO
                         val accountRecord = AccountRecord()

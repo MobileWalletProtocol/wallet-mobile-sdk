@@ -674,7 +674,7 @@ export class WalletMobileSDKEVMProvider
   private async _makeSDKRequest(action: Action): Promise<unknown> {
     try {
       const [res] = await makeRequest([action]);
-      if (!res.result) {
+      if (res.errorMessage || !res.result) {
         throw this._getProviderError(res);
       }
       return JSON.parse(res.result);
