@@ -516,6 +516,9 @@ export class WalletMobileSDKEVMProvider
     };
 
     const res = await this._makeSDKRequest(action);
+    if (res === null) {
+      this._updateChainId(chainId);
+    }
     return {
       jsonrpc: "2.0",
       id: 0,
