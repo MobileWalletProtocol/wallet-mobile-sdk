@@ -1,6 +1,6 @@
 {
   "name": "@coinbase/wallet-mobile-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Coinbase Wallet Mobile SDK for React Native",
   "main": "build/CoinbaseWalletSDK.js",
   "types": "build/CoinbaseWalletSDK.d.ts",
@@ -27,7 +27,7 @@
   "license": "Apache-2.0",
   "homepage": "https://github.com/coinbase/wallet-mobile-sdk#readme",
   "dependencies": {
-    "@coinbase/wallet-sdk": "^3.5.0",
+    "@coinbase/wallet-sdk": "^3.5.1",
     "@metamask/safe-event-emitter": "2.0.0",
     "eth-rpc-errors": "4.0.3",
     "buffer": "6.0.3",
@@ -35,8 +35,8 @@
     "react-native-mmkv": "2.4.3"
   },
   "devDependencies": {
-    "expo-module-scripts": "^2.0.0",
-    "expo-modules-core": "^0.11.3"
+    "expo-module-scripts": "^2.1.1",
+    "expo-modules-core": "^0.11.4"
   },
   "peerDependencies": {
     "expo": "*",
