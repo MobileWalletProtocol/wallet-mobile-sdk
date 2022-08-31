@@ -62,11 +62,19 @@ class CoinbaseWalletSDKModule : Module() {
                 )
             }
 
-            sdk.initiateHandshake(handshakeActions) { result ->
+            sdk.initiateHandshake(handshakeActions) { result -> // result, account ->
                 result
                     .onSuccess { responses ->
                         val results: List<ReturnValueRecord> = responses.map { it.asRecord }
                         promise.resolve(results)
+                        /* 
+                        TODO
+                        val accountRecord = AccountRecord()
+                        accountRecord.chain = account.chain
+                        accountRecord.networkId = account.networkId
+                        accountRecord.address = account.address
+                        promise.resolve([results, accountRecord])
+                        */
                     }
                     .onFailure { error ->
                         promise.reject("handshake-error", error.message, error)

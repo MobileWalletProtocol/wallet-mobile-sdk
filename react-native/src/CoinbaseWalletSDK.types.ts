@@ -17,7 +17,7 @@ export type Account = {
 };
 
 export type Result = {
-  result: string | null;
-  errorCode: number | null;
-  errorMessage: string | null;
+  result?: string;
+  errorCode?: number;
+  errorMessage?: string;
 };

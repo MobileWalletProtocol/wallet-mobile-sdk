@@ -73,11 +73,12 @@ public class CoinbaseWalletSDKModule: Module {
                 return Action(method: record.method, params: params)
             }
 
-            CoinbaseWalletSDK.shared.initiateHandshake(initialActions: actions) { result in
+            CoinbaseWalletSDK.shared.initiateHandshake(initialActions: actions) { result, account in
                 switch result {
                 case .success(let response):
                     let results: [ReturnValueRecord.Dict] = response.content.map { $0.asRecord }
-                    promise.resolve(results)
+                    let accountRecord = account?.asRecord
+                    promise.resolve([results, accountRecord])
                 case .failure(let error):
                     promise.reject("handshake-error", error.localizedDescription)
                 }
@@ -164,12 +165,23 @@ extension ReturnValue {
 
         switch self {
         case .result(let value):
-            record.result = value
+            record.result = value.rawValue
         case .error(let code, let message):
             record.errorCode = code
             record.errorMessage = message
         }
 
+        return record.toDictionary()
+    }
+}
+
+extension Account {
+    var asRecord: AccountRecord.Dict {
+        let record = AccountRecord()
+        record.chain = self.chain
+        record.networkId = Int(self.networkId)
+        record.address = self.address
+        
         return record.toDictionary()
     }
 }

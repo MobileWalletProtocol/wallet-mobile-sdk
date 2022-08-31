@@ -19,7 +19,7 @@ import {
   makeRequest,
   resetSession,
 } from "./CoinbaseWalletSDK";
-import { Action, Result } from "./CoinbaseWalletSDK.types";
+import { Account, Action, Result } from "./CoinbaseWalletSDK.types";
 import {
   bigIntStringFromBN,
   ensureAddressString,
@@ -350,18 +350,13 @@ export class WalletMobileSDKEVMProvider
       params: {},
     };
 
-    const res = await this._makeHandshakeRequest(action);
-    if (res.result) {
-      const resultJSON = JSON.parse(res.result);
-      this._setAddresses([resultJSON.address]);
-      return {
-        jsonrpc: "2.0",
-        id: 0,
-        result: [resultJSON.address],
-      };
-    } else {
-      throw this._getProviderError(res);
-    }
+    const [res, account] = await this._makeHandshakeRequest(action);
+    this._setAddresses([account.address]);
+    return {
+      jsonrpc: "2.0",
+      id: 0,
+      result: [account.address],
+    };
   }
 
   private async _personal_sign(params: unknown[]): Promise<JSONRPCResponse> {
@@ -378,15 +373,11 @@ export class WalletMobileSDKEVMProvider
     };
 
     const res = await this._makeSDKRequest(action);
-    if (res.result) {
-      return {
-        jsonrpc: "2.0",
-        id: 0,
-        result: res.result,
-      };
-    } else {
-      throw this._getProviderError(res);
-    }
+    return {
+      jsonrpc: "2.0",
+      id: 0,
+      result: res,
+    };
   }
 
   private async _eth_signTypedData(
@@ -409,15 +400,11 @@ export class WalletMobileSDKEVMProvider
     };
 
     const res = await this._makeSDKRequest(action);
-    if (res.result) {
-      return {
-        jsonrpc: "2.0",
-        id: 0,
-        result: res.result,
-      };
-    } else {
-      throw this._getProviderError(res);
-    }
+    return {
+      jsonrpc: "2.0",
+      id: 0,
+      result: res,
+    };
   }
 
   private async _eth_signTransaction(
@@ -451,15 +438,11 @@ export class WalletMobileSDKEVMProvider
     };
 
     const res = await this._makeSDKRequest(action);
-    if (res.result) {
-      return {
-        jsonrpc: "2.0",
-        id: 0,
-        result: res.result,
-      };
-    } else {
-      throw this._getProviderError(res);
-    }
+    return {
+      jsonrpc: "2.0",
+      id: 0,
+      result: res,
+    };
   }
 
   private _prepareTransactionParams(tx: {
@@ -533,15 +516,14 @@ export class WalletMobileSDKEVMProvider
     };
 
     const res = await this._makeSDKRequest(action);
-    if (res.result) {
+    if (res === null) {
       this._updateChainId(chainId);
-      return successResponse;
-    } else {
-      throw ethErrors.provider.custom({
-        code: res.errorCode ?? 1000,
-        message: res.errorMessage ?? "",
-      });
     }
+    return {
+      jsonrpc: "2.0",
+      id: 0,
+      result: res,
+    };
   }
 
   private async _wallet_addEthereumChain(
@@ -583,15 +565,11 @@ export class WalletMobileSDKEVMProvider
     };
 
     const res = await this._makeSDKRequest(action);
-    if (res.result && res.result === "true") {
-      return {
-        jsonrpc: "2.0",
-        id: 0,
-        result: null,
-      };
-    } else {
-      throw this._getProviderError(res);
-    }
+    return {
+      jsonrpc: "2.0",
+      id: 0,
+      result: res,
+    };
   }
 
   private async _wallet_watchAsset(params: unknown): Promise<JSONRPCResponse> {
@@ -640,15 +618,11 @@ export class WalletMobileSDKEVMProvider
     };
 
     const res = await this._makeSDKRequest(action);
-    if (res.result) {
-      return {
-        jsonrpc: "2.0",
-        id: 0,
-        result: res.result === "true",
-      };
-    } else {
-      throw this._getProviderError(res);
-    }
+    return {
+      jsonrpc: "2.0",
+      id: 0,
+      result: res,
+    };
   }
 
   private async _makeEthereumJsonRpcRequest(
@@ -676,13 +650,13 @@ export class WalletMobileSDKEVMProvider
       });
   }
 
-  private async _makeHandshakeRequest(action: Action) {
+  private async _makeHandshakeRequest(action: Action): Promise<[unknown, Account]> {
     try {
-      const [res] = await initiateHandshake([action]);
-      if (res.errorMessage) {
+      const [[res], account] = await initiateHandshake([action]);
+      if (!res.result || !account) {
         throw this._getProviderError(res);
       }
-      return res;
+      return [JSON.parse(res.result), account];
     } catch (error) {
       if (error.message.match(/(session not found|session expired)/i)) {
         this.disconnect();
@@ -697,13 +671,13 @@ export class WalletMobileSDKEVMProvider
     }
   }
 
-  private async _makeSDKRequest(action: Action) {
+  private async _makeSDKRequest(action: Action): Promise<unknown> {
     try {
       const [res] = await makeRequest([action]);
-      if (res.errorMessage) {
+      if (res.errorMessage || !res.result) {
         throw this._getProviderError(res);
       }
-      return res;
+      return JSON.parse(res.result);
     } catch (error) {
       if (error.message.match(/(session not found|session expired)/i)) {
         this.disconnect();
