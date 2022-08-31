@@ -21,11 +21,6 @@ class MainActivity: FlutterActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//            val uri = result.data?.data ?: return@registerForActivityResult
-//            client.handleResponse(uri)
-//        }
     }
 
 }
