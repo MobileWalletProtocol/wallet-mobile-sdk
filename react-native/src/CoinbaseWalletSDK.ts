@@ -20,7 +20,7 @@ export function configure({
 
 export async function initiateHandshake(
   initialActions?: Action[]
-): Promise<Result[]> {
+): Promise<[Result[], Account?]> {
   const actions =
     initialActions?.map((action) => {
       return {

@@ -62,7 +62,7 @@ class CoinbaseWalletSDKModule : Module() {
                 )
             }
 
-            sdk.initiateHandshake(handshakeActions) { result ->
+            sdk.initiateHandshake(handshakeActions) { result -> // TODO
                 result
                     .onSuccess { responses ->
                         val results: List<ReturnValueRecord> = responses.map { it.asRecord }

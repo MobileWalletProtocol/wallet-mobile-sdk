@@ -676,7 +676,7 @@ export class WalletMobileSDKEVMProvider
 
   async #makeHandshakeRequest(action: Action) {
     try {
-      const [res] = await initiateHandshake([action]);
+      const [[res], _] = await initiateHandshake([action]);
       if (res.errorMessage) {
         throw this.#getProviderError(res);
       }
