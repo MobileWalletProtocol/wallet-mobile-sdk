@@ -20,12 +20,15 @@ public final class CoinbaseWalletSDK {
     
     static private var host: URL?
     static private var callback: URL?
+    static public var isConfigured: Bool {
+        return host != nil && callback != nil
+    }
     
     static public func configure(
         host: URL = URL(string: "https://wallet.coinbase.com/wsegue")!,
         callback: URL
     ) {
-        guard self.host == nil && self.callback == nil else {
+        guard isConfigured == false else {
             assertionFailure("`CoinbaseWalletSDK.configure` should be called only once.")
             return
         }
