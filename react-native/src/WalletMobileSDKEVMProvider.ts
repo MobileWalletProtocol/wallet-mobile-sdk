@@ -28,6 +28,7 @@ import {
   ensureIntNumber,
   ensureParsedJSONObject,
   hexStringFromBuffer,
+  hexStringFromIntNumber,
   prepend0x,
 } from "@coinbase/wallet-sdk/dist/util";
 import { EthereumTransactionParams } from "@coinbase/wallet-sdk/dist/relay/EthereumTransactionParams";
@@ -44,6 +45,7 @@ export interface WalletMobileSDKProviderOptions {
   chainId?: number;
   storage?: KVStorage;
   jsonRpcUrl?: string;
+  address?: string;
 }
 
 export interface KVStorage
@@ -91,6 +93,9 @@ export class WalletMobileSDKEVMProvider
     this.send = this.send.bind(this);
     this.sendAsync = this.sendAsync.bind(this);
     this.request = this.request.bind(this);
+    this._updateChainId = this._updateChainId.bind(this);
+    this._setAddresses = this._setAddresses.bind(this);
+    this._getChainId = this._getChainId.bind(this);
 
     this._storage = opts?.storage ?? new MMKV({ id: "mobile_sdk.store" });
     this._chainId = opts?.chainId;
@@ -100,13 +105,22 @@ export class WalletMobileSDKEVMProvider
     const chainIdStr = prepend0x(chainId.toString(16));
     this.emit("connect", { chainId: chainIdStr });
 
-    const cachedAddresses = this._storage.getString(CACHED_ADDRESSES_KEY);
+    const cachedAddresses =
+      opts?.address ?? this._storage.getString(CACHED_ADDRESSES_KEY);
     if (cachedAddresses) {
       const addresses = cachedAddresses.split(" ") as AddressString[];
       if (addresses[0] && addresses[0] !== "") {
         this._setAddresses(addresses);
       }
     }
+  }
+
+  public get selectedAddress(): AddressString | undefined {
+    return this._addresses[0] || undefined;
+  }
+
+  public get networkVersion(): string {
+    return this._getChainId().toString(10);
   }
 
   public get host(): string {
@@ -268,7 +282,18 @@ export class WalletMobileSDKEVMProvider
   }
 
   private _sendRequest(request: JSONRPCRequest): JSONRPCResponse {
-    throw new Error(`Unsupported synchronous method: ${request.method}`);
+    const result = this._handleSynchronousMethods(request);
+    if (result === undefined) {
+      throw ethErrors.provider.unsupportedMethod(
+        `Unsupported synchronous method: ${request.method}`
+      );
+    }
+
+    return {
+      jsonrpc: "2.0",
+      id: request.id,
+      result,
+    };
   }
 
   private _sendMultipleRequestsAsync(
@@ -278,70 +303,93 @@ export class WalletMobileSDKEVMProvider
   }
 
   private _sendRequestAsync(request: JSONRPCRequest): Promise<JSONRPCResponse> {
+    return new Promise<JSONRPCResponse>((resolve, reject) => {
+      try {
+        // Handle synchronous methods
+        const syncResult = this._handleSynchronousMethods(request);
+        if (syncResult !== undefined) {
+          return resolve({
+            jsonrpc: "2.0",
+            id: request.id,
+            result: syncResult,
+          });
+        }
+      } catch (error) {
+        return reject(error);
+      }
+
+      // Handle asynchronous methods
+      this._handleAsynchronouseMethods(request)
+        .then((res) => res && resolve({ ...res, id: request.id }))
+        .catch((error) => reject(error));
+    });
+  }
+
+  private _handleSynchronousMethods({ method }: JSONRPCRequest) {
+    switch (method) {
+      case JSONRPCMethod.eth_accounts:
+        return this._eth_accounts();
+      case JSONRPCMethod.eth_coinbase:
+        return this._eth_coinbase();
+      case JSONRPCMethod.net_version:
+        return this._net_version();
+      case JSONRPCMethod.eth_chainId:
+        return this._eth_chainId();
+      default:
+        return undefined;
+    }
+  }
+
+  private async _handleAsynchronouseMethods(
+    request: JSONRPCRequest
+  ): Promise<JSONRPCResponse | void> {
     const method = request.method;
     const params = request.params || [];
 
-    return new Promise<JSONRPCResponse>((resolve, reject) => {
-      switch (method) {
-        case JSONRPCMethod.eth_requestAccounts:
-          this._eth_requestAccounts()
-            .then((res) => resolve(res))
-            .catch((err) => reject(err));
-          break;
-        case JSONRPCMethod.personal_sign:
-          this._personal_sign(params)
-            .then((res) => resolve(res))
-            .catch((err) => reject(err));
-          break;
-        case JSONRPCMethod.eth_signTypedData_v3:
-          this._eth_signTypedData(params, "v3")
-            .then((res) => resolve(res))
-            .catch((err) => reject(err));
-          break;
-        case JSONRPCMethod.eth_signTypedData_v4:
-          this._eth_signTypedData(params, "v4")
-            .then((res) => resolve(res))
-            .catch((err) => reject(err));
-          break;
-        case JSONRPCMethod.eth_signTransaction:
-          this._eth_signTransaction(params, false)
-            .then((res) => resolve(res))
-            .catch((err) => reject(err));
-          break;
-        case JSONRPCMethod.eth_sendTransaction:
-          this._eth_signTransaction(params, true)
-            .then((res) => resolve(res))
-            .catch((err) => reject(err));
-          break;
-        case JSONRPCMethod.wallet_switchEthereumChain:
-          this._wallet_switchEthereumChain(params)
-            .then((res) => resolve(res))
-            .catch((err) => reject(err));
-          break;
-        case JSONRPCMethod.wallet_addEthereumChain:
-          this._wallet_addEthereumChain(params)
-            .then((res) => resolve(res))
-            .catch((err) => reject(err));
-          break;
-        case JSONRPCMethod.wallet_watchAsset:
-          this._wallet_watchAsset(params)
-            .then((res) => resolve(res))
-            .catch((err) => reject(err));
-          break;
-        default:
-          if (this._jsonRpcUrl) {
-            this._makeEthereumJsonRpcRequest(request, this._jsonRpcUrl)
-              .then((res) => resolve(res))
-              .catch((err) => reject(err));
-          } else {
-            reject(
-              ethErrors.provider.unsupportedMethod({
-                message: `Unsupported method: ${method}`,
-              })
-            );
-          }
-      }
-    });
+    switch (method) {
+      case JSONRPCMethod.eth_requestAccounts:
+        return this._eth_requestAccounts();
+      case JSONRPCMethod.personal_sign:
+        return this._personal_sign(params);
+      case JSONRPCMethod.eth_signTypedData_v3:
+        return this._eth_signTypedData(params, "v3");
+      case JSONRPCMethod.eth_signTypedData_v4:
+        return this._eth_signTypedData(params, "v4");
+      case JSONRPCMethod.eth_signTransaction:
+        return this._eth_signTransaction(params, false);
+      case JSONRPCMethod.eth_sendTransaction:
+        return this._eth_signTransaction(params, true);
+      case JSONRPCMethod.wallet_switchEthereumChain:
+        return this._wallet_switchEthereumChain(params);
+      case JSONRPCMethod.wallet_addEthereumChain:
+        return this._wallet_addEthereumChain(params);
+      case JSONRPCMethod.wallet_watchAsset:
+        return this._wallet_watchAsset(params);
+      default:
+        if (this._jsonRpcUrl) {
+          return this._makeEthereumJsonRpcRequest(request, this._jsonRpcUrl);
+        } else {
+          throw ethErrors.provider.unsupportedMethod({
+            message: `Unsupported method: ${method}`,
+          });
+        }
+    }
+  }
+
+  private _eth_accounts(): string[] {
+    return [...this._addresses];
+  }
+
+  private _eth_coinbase(): string | null {
+    return this.selectedAddress ?? null;
+  }
+
+  private _net_version(): string {
+    return this._getChainId().toString(10);
+  }
+
+  private _eth_chainId(): string {
+    return hexStringFromIntNumber(this._getChainId());
   }
 
   private async _eth_requestAccounts(): Promise<JSONRPCResponse> {
@@ -350,7 +398,7 @@ export class WalletMobileSDKEVMProvider
       params: {},
     };
 
-    const [res, account] = await this._makeHandshakeRequest(action);
+    const [, account] = await this._makeHandshakeRequest(action);
     this._setAddresses([account.address]);
     return {
       jsonrpc: "2.0",
@@ -650,7 +698,9 @@ export class WalletMobileSDKEVMProvider
       });
   }
 
-  private async _makeHandshakeRequest(action: Action): Promise<[unknown, Account]> {
+  private async _makeHandshakeRequest(
+    action: Action
+  ): Promise<[unknown, Account]> {
     try {
       const [[res], account] = await initiateHandshake([action]);
       if (!res.result || !account) {

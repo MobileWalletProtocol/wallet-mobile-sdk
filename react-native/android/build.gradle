@@ -70,6 +70,6 @@ repositories {
 dependencies {
   implementation project(':expo-modules-core')
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${getKotlinVersion()}"
-  implementation "com.coinbase:coinbase-wallet-sdk:0.1.0"
+  implementation "com.coinbase:coinbase-wallet-sdk:0.3.0"
   implementation 'androidx.appcompat:appcompat:1.4.2'
 }
