@@ -18,3 +18,8 @@ extension CoinbaseWalletSDK {
         case walletReturnedError(String)
     }
 }
+
+public struct WalletExecutionError: Swift.Error {
+    public let code: Int
+    public let message: String
+}

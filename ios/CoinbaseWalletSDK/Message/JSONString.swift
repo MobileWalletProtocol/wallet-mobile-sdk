@@ -56,3 +56,6 @@ extension JSONString: RawRepresentable, Codable, CustomStringConvertible {
         self.rawValue
     }
 }
+
+public typealias JSONStringResult = Result<JSONString, WalletExecutionError>
+extension JSONStringResult: BaseContent {}

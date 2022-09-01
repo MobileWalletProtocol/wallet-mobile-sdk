@@ -7,18 +7,18 @@
 
 import Foundation
 
-public enum ReturnValue: CodableContent {
-    case result(value: JSONString)
-    case error(code: Int, message: String)
-}
+@available(iOS 13.0, *)
+public typealias ResponseResult = Result<BaseMessage<[JSONStringResult]>, Error>
 
 @available(iOS 13.0, *)
-public typealias ResponseResult = Result<BaseMessage<[ReturnValue]>, Error>
-
-@available(iOS 13.0, *)
-extension ResponseResult {
-    public var returnValues: [ReturnValue]? {
-        return (try? self.get())?.content
+extension ResponseContent.Value {
+    var asJSONStringResult: JSONStringResult {
+        switch self {
+        case let .result(value):
+            return .success(value)
+        case let .error(code, message):
+            return .failure(.init(code: code, message: message))
+        }
     }
 }
 
@@ -29,9 +29,10 @@ public typealias ResponseHandler = (ResponseResult) -> Void
 extension ResponseMessage {
     var result: ResponseResult {
         switch self.content {
-        case .response(_, let results):
+        case .response(_, let values):
+            let results: [JSONStringResult] = values.map { $0.asJSONStringResult }
             return .success(
-                BaseMessage<[ReturnValue]>.copy(self, replaceContentWith: results)
+                BaseMessage<[JSONStringResult]>.copy(self, replaceContentWith: results)
             )
         case .failure(_, let description):
             return .failure(CoinbaseWalletSDK.Error.walletReturnedError(description))
