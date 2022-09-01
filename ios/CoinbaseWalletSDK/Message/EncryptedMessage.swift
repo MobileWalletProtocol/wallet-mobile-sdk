@@ -9,14 +9,14 @@ import Foundation
 import CryptoKit
 
 @available(iOS 13.0, *)
-public protocol EncryptedContent: BaseContent {
+public protocol EncryptedContent: CodableContent {
     associatedtype Unencrypted: UnencryptedContent where Unencrypted.Encrypted == Self
     
     func decrypt(with symmetricKey: SymmetricKey?) throws -> Unencrypted
 }
 
 @available(iOS 13.0, *)
-typealias EncryptedMessage<C> = BaseMessage<C> where C: EncryptedContent
+typealias EncryptedMessage<C> = CodableMessage<C> where C: EncryptedContent
 
 @available(iOS 13.0, *)
 extension EncryptedMessage {

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum ReturnValue: BaseContent {
+public enum ReturnValue: CodableContent {
     case result(value: JSONString)
     case error(code: Int, message: String)
 }
