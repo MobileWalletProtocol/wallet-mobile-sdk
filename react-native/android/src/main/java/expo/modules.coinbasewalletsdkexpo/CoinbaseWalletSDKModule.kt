@@ -11,7 +11,6 @@ import expo.modules.kotlin.modules.ModuleDefinition
 import expo.modules.kotlin.records.Field
 import expo.modules.kotlin.records.Record
 
-
 class ActionRecord : Record {
     @Field
     var method: String = ""
@@ -22,18 +21,6 @@ class ActionRecord : Record {
     @Field
     var optional: Boolean = false
 }
-
-class AccountRecord : Record {
-    @Field
-    var chain: String = ""
-
-    @Field
-    var networkId: Int = 1
-
-    @Field
-    var address: String = ""
-}
-
 
 class CoinbaseWalletSDKModule : Module() {
     private lateinit var sdk: CoinbaseWalletSDK
@@ -62,19 +49,12 @@ class CoinbaseWalletSDKModule : Module() {
                 )
             }
 
-            sdk.initiateHandshake(handshakeActions) { result /*, account */ -> 
+            sdk.initiateHandshake(handshakeActions) { result, account ->
                 result
                     .onSuccess { responses ->
                         val results: List<ReturnValueRecord> = responses.map { it.asRecord }
-                        promise.resolve(listOf(results, null))
-                        /* 
-                        TODO
-                        val accountRecord = AccountRecord()
-                        accountRecord.chain = account.chain
-                        accountRecord.networkId = account.networkId
-                        accountRecord.address = account.address
+                        val accountRecord = account?.asRecord
                         promise.resolve(listOf(results, accountRecord))
-                        */
                     }
                     .onFailure { error ->
                         promise.reject("handshake-error", error.message, error)
@@ -123,11 +103,11 @@ class CoinbaseWalletSDKModule : Module() {
         }
 
         Function("isCoinbaseWalletInstalled") {
-            return@Function sdk.isWalletInstalled
+            return@Function sdk.isCoinbaseWalletInstalled
         }
 
         Function("isConnected") {
-            return@Function sdk.hasEstablishedConnection
+            return@Function sdk.isConnected
         }
 
         Function("resetSession") {

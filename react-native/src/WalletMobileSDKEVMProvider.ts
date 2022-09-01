@@ -398,7 +398,7 @@ export class WalletMobileSDKEVMProvider
       params: {},
     };
 
-    const [res, account] = await this._makeHandshakeRequest(action);
+    const [, account] = await this._makeHandshakeRequest(action);
     this._setAddresses([account.address]);
     return {
       jsonrpc: "2.0",
@@ -698,7 +698,9 @@ export class WalletMobileSDKEVMProvider
       });
   }
 
-  private async _makeHandshakeRequest(action: Action): Promise<[unknown, Account]> {
+  private async _makeHandshakeRequest(
+    action: Action
+  ): Promise<[unknown, Account]> {
     try {
       const [[res], account] = await initiateHandshake([action]);
       if (!res.result || !account) {
