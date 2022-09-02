@@ -1,6 +1,6 @@
 //
-//  HostSupport.swift
-//  CoinbaseWalletSDK-Host
+//  CoinbaseWalletHostSDK.swift
+//  CoinbaseWalletSDK
 //
 //  Created by Jungho Bang on 9/2/22.
 //
