@@ -16,6 +16,11 @@ public final class CoinbaseWalletSDK {
         return UIApplication.shared.canOpenURL(URL(string: "cbwallet://")!)
     }
     
+    static var version: String = {
+        let sdkBundle = Bundle(for: CoinbaseWalletSDK.self)
+        return sdkBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
+    }()
+    
     // MARK: - Constructor
     
     static private var host: URL?
@@ -55,7 +60,6 @@ public final class CoinbaseWalletSDK {
     private let appId: String
     private let host: URL
     private let callback: URL
-    private let version: String
     
     public lazy var keyManager: KeyManager = {
         KeyManager(host: self.host)
@@ -72,9 +76,6 @@ public final class CoinbaseWalletSDK {
         self.callback = callback
         
         self.appId = Bundle.main.bundleIdentifier!
-        
-        let sdkBundle = Bundle(for: Self.self)
-        self.version = sdkBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
     }
     
     // MARK: - Send message
@@ -102,7 +103,7 @@ public final class CoinbaseWalletSDK {
                 callback: callback,
                 initialActions: initialActions
             ),
-            version: version,
+            version: CoinbaseWalletSDK.version,
             timestamp: Date(),
             callbackUrl: callback.absoluteString
         )
@@ -127,7 +128,7 @@ public final class CoinbaseWalletSDK {
             uuid: UUID(),
             sender: keyManager.ownPublicKey,
             content: .request(actions: request.actions, account: request.account),
-            version: version,
+            version: CoinbaseWalletSDK.version,
             timestamp: Date(),
             callbackUrl: callback.absoluteString
         )

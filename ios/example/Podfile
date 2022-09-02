@@ -1,6 +1,13 @@
+workspace 'Example.xcworkspace'
 platform :ios, '13.0'
 use_frameworks!
 
-target 'NativeWeb3App' do
+target 'SampleClient' do
+  project 'SampleClient'
   pod 'CoinbaseWalletSDK', path: '../../'
+end
+
+target 'SampleWallet' do
+  project 'SampleWallet'
+  pod 'CoinbaseWalletSDK/Host', path: '../../'
 end
