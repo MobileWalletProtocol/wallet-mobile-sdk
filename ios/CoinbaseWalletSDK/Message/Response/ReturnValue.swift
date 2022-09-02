@@ -1,5 +1,5 @@
 //
-//  ActionResult.swift
+//  ReturnValue.swift
 //  WalletSegue
 //
 //  Created by Jungho Bang on 6/24/22.
