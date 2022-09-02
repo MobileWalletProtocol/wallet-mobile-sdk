@@ -61,7 +61,7 @@ public final class CoinbaseWalletSDK {
     private let host: URL
     private let callback: URL
     
-    public lazy var keyManager: KeyManager = {
+    private lazy var keyManager: KeyManager = {
         KeyManager(host: self.host)
     }()
     private lazy var taskManager: TaskManager = {
@@ -197,8 +197,12 @@ public final class CoinbaseWalletSDK {
         return keyManager.symmetricKey != nil
     }
     
-    public var sessionPublicKey: PublicKey {
+    public var ownPublicKey: PublicKey {
         return keyManager.ownPublicKey
+    }
+    
+    public var peerPublicKey: PublicKey? {
+        return keyManager.peerPublicKey
     }
     
     @discardableResult

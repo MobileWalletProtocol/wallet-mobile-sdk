@@ -9,7 +9,7 @@ import Foundation
 import CryptoKit
 
 @available(iOS 13.0, *)
-public final class Cipher {
+final class Cipher {
     static func encrypt<C: Encodable>(
         _ content: C,
         with symmetricKey: SymmetricKey
@@ -30,7 +30,7 @@ public final class Cipher {
         return try JSONDecoder().decode(C.self, from: decrypted)
     }
     
-    public static func deriveSymmetricKey(
+    static func deriveSymmetricKey(
         with ownPrivateKey: CoinbaseWalletSDK.PrivateKey,
         _ peerPublicKey: CoinbaseWalletSDK.PublicKey
     ) throws -> SymmetricKey {

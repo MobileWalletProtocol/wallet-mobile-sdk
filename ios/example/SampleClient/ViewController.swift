@@ -132,8 +132,8 @@ class ViewController: UITableViewController {
             self.isConnectedLabel.textColor = isConnected ? .green : .red
             self.isConnectedLabel.text = "\(isConnected)"
             
-            self.ownPubKeyLabel.text = self.cbwallet.keyManager.ownPublicKey.rawRepresentation.base64EncodedString()
-            self.peerPubKeyLabel.text = self.cbwallet.keyManager.peerPublicKey?.rawRepresentation.base64EncodedString() ?? "(nil)"
+            self.ownPubKeyLabel.text = self.cbwallet.ownPublicKey.rawRepresentation.base64EncodedString()
+            self.peerPubKeyLabel.text = self.cbwallet.peerPublicKey?.rawRepresentation.base64EncodedString() ?? "(nil)"
         }
     }
     
@@ -152,12 +152,6 @@ class ViewController: UITableViewController {
     func logURL(_ url: URL?, function: String = #function) {
         guard let url = url else { return }
         self.log("URL: \(url)", function: function)
-        
-        guard
-            !cbwallet.isConnected(),
-            let message: RequestMessage = try? MessageConverter.decode(url, with: nil)
-        else { return }
-        self.logObject(message, function: function)
     }
     
     private func log(_ text: String, function: String = #function) {
