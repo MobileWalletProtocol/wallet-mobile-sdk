@@ -111,7 +111,7 @@ public final class CoinbaseWalletSDK {
                 let requestAccountsIndex = initialActions?.firstIndex(where: { $0.method == "eth_requestAccounts" }),
                 let content = try? result.get().content,
                 content.indices.contains(requestAccountsIndex),
-                case .result(let accountJson) = content[requestAccountsIndex],
+                case .success(let accountJson) = content[requestAccountsIndex],
                 let account = try? accountJson.decode(as: Account.self)
             else {
                 onResponse(result, nil)

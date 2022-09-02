@@ -14,40 +14,40 @@ import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
 
-@Serializable(with = ReturnValueSerializer::class)
-sealed class ReturnValue {
+@Serializable(with = ActionResultSerializer::class)
+sealed class ActionResult {
     @Serializable
-    class Result(val value: String) : ReturnValue()
+    class Result(val value: String) : ActionResult()
 
     @Serializable
-    class Error(val code: Long, val message: String) : ReturnValue()
+    class Error(val code: Long, val message: String) : ActionResult()
 }
 
-internal object ReturnValueSerializer : KSerializer<ReturnValue> {
+internal object ActionResultSerializer : KSerializer<ActionResult> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("ReturnValue")
 
-    override fun serialize(encoder: Encoder, value: ReturnValue) {
+    override fun serialize(encoder: Encoder, value: ActionResult) {
         val output = encoder as? JsonEncoder ?: throw CoinbaseWalletSDKError.EncodingFailed
         val formatter = output.json
 
         val json = buildJsonObject {
             when (value) {
-                is ReturnValue.Result -> put("result", formatter.encodeToJsonElement(value))
-                is ReturnValue.Error -> put("error", formatter.encodeToJsonElement(value))
+                is ActionResult.Result -> put("result", formatter.encodeToJsonElement(value))
+                is ActionResult.Error -> put("error", formatter.encodeToJsonElement(value))
             }
         }
 
         output.encodeJsonElement(json)
     }
 
-    override fun deserialize(decoder: Decoder): ReturnValue {
+    override fun deserialize(decoder: Decoder): ActionResult {
         val input = decoder as? JsonDecoder ?: throw CoinbaseWalletSDKError.DecodingFailed
         val formatter = input.json
         val json = input.decodeJsonElement().jsonObject
 
         return when (val key = json.keys.firstOrNull()) {
-            "result" -> formatter.decodeFromJsonElement<ReturnValue.Result>(json.getValue(key))
-            "error" -> formatter.decodeFromJsonElement<ReturnValue.Error>(json.getValue(key))
+            "result" -> formatter.decodeFromJsonElement<ActionResult.Result>(json.getValue(key))
+            "error" -> formatter.decodeFromJsonElement<ActionResult.Error>(json.getValue(key))
             else -> throw CoinbaseWalletSDKError.DecodingFailed
         }
     }

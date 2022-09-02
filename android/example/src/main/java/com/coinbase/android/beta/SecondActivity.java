@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.coinbase.android.nativesdk.CoinbaseWalletSDK;
 import com.coinbase.android.nativesdk.message.request.Action;
 import com.coinbase.android.nativesdk.message.request.Web3JsonRPC;
-import com.coinbase.android.nativesdk.message.response.ReturnValue;
+import com.coinbase.android.nativesdk.message.response.ActionResult;
 
 import java.util.ArrayList;
 
@@ -49,14 +49,14 @@ public class SecondActivity extends AppCompatActivity {
         client.initiateHandshake(
                 actions,
                 (results, account) -> {
-                    for (ReturnValue result : results) {
-                        if (result instanceof ReturnValue.Result) {
-                            ((ReturnValue.Result) result).getValue();
+                    for (ActionResult result : results) {
+                        if (result instanceof ActionResult.Result) {
+                            ((ActionResult.Result) result).getValue();
                         }
 
-                        if (result instanceof ReturnValue.Error) {
-                            ((ReturnValue.Error) result).getCode();
-                            ((ReturnValue.Error) result).getMessage();
+                        if (result instanceof ActionResult.Error) {
+                            ((ActionResult.Error) result).getCode();
+                            ((ActionResult.Error) result).getMessage();
                         }
                     }
                 },

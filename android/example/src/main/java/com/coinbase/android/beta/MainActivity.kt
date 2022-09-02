@@ -13,7 +13,7 @@ import com.coinbase.android.nativesdk.CoinbaseWalletSDK
 import com.coinbase.android.nativesdk.message.request.Account
 import com.coinbase.android.nativesdk.message.request.Action
 import com.coinbase.android.nativesdk.message.request.RequestContent
-import com.coinbase.android.nativesdk.message.response.ReturnValue
+import com.coinbase.android.nativesdk.message.response.ActionResult
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -51,9 +51,9 @@ class MainActivity : AppCompatActivity() {
             val handShakeActions = ActionsManager.handShakeActions
             client.initiateHandshake(
                 initialActions = handShakeActions
-            ) { result: Result<List<ReturnValue>>, account: Account? ->
-                result.onSuccess { returnValues: List<ReturnValue> ->
-                    returnValues.handleSuccess("Handshake", handShakeActions, account)
+            ) { result: Result<List<ActionResult>>, account: Account? ->
+                result.onSuccess { actionResults: List<ActionResult> ->
+                    actionResults.handleSuccess("Handshake", handShakeActions, account)
                 }
                 result.onFailure { err ->
                     err.handleError("HandShake")
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun List<ReturnValue>.handleSuccess(
+    private fun List<ActionResult>.handleSuccess(
         requestType: String,
         actions: List<Action>,
         account: Account? = null
@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                 this@handleSuccess.forEachIndexed { index, returnValue ->
                     append(
                         "${actions[index].method} Result: " +
-                                "${if (returnValue is ReturnValue.Result) "Success" else "Error"}\n"
+                                "${if (returnValue is ActionResult.Result) "Success" else "Error"}\n"
                     )
 
                     if (account != null) {
@@ -105,8 +105,8 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     val result = when (returnValue) {
-                        is ReturnValue.Result -> returnValue.value
-                        is ReturnValue.Error -> returnValue.message
+                        is ActionResult.Result -> returnValue.value
+                        is ActionResult.Error -> returnValue.message
                     }
                     append("${result}\n\n")
                 }
