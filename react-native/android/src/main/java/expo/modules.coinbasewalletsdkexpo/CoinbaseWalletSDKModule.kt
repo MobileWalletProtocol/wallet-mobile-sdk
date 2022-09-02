@@ -52,7 +52,7 @@ class CoinbaseWalletSDKModule : Module() {
             sdk.initiateHandshake(handshakeActions) { result, account ->
                 result
                     .onSuccess { responses ->
-                        val results: List<ReturnValueRecord> = responses.map { it.asRecord }
+                        val results: List<ActionResultRecord> = responses.map { it.asRecord }
                         val accountRecord = account?.asRecord
                         promise.resolve(listOf(results, accountRecord))
                     }
@@ -83,7 +83,7 @@ class CoinbaseWalletSDKModule : Module() {
             sdk.makeRequest(request) { result ->
                 result
                     .onSuccess { responses ->
-                        val results: List<ReturnValueRecord> = responses.map { it.asRecord }
+                        val results: List<ActionResultRecord> = responses.map { it.asRecord }
                         promise.resolve(results)
                     }
                     .onFailure { error ->
