@@ -159,16 +159,16 @@ public class CoinbaseWalletSDKModule: Module {
     }
 }
 
-extension ReturnValue {
+extension ActionResult {
     var asRecord: ReturnValueRecord.Dict {
         let record = ReturnValueRecord()
 
         switch self {
-        case .result(let value):
+        case .success(let value):
             record.result = value.rawValue
-        case .error(let code, let message):
-            record.errorCode = code
-            record.errorMessage = message
+        case .failure(let error):
+            record.errorCode = error.code
+            record.errorMessage = error.message
         }
 
         return record.toDictionary()
