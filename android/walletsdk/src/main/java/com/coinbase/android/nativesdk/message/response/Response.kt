@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 
-typealias ResponseResult = Result<List<ReturnValue>>
+typealias ResponseResult = Result<List<ActionResult>>
 typealias ResponseHandler = (ResponseResult) -> Unit
 typealias ResponseMessage = Message<ResponseContent>
 
@@ -15,7 +15,7 @@ sealed class ResponseContent {
     @Serializable
     class Response(
         val requestId: String,
-        val values: List<ReturnValue>
+        val values: List<ActionResult>
     ) : ResponseContent()
 
     @Serializable

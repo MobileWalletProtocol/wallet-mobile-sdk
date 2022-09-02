@@ -15,7 +15,7 @@ import com.coinbase.android.nativesdk.message.request.nonHandshakeActions
 import com.coinbase.android.nativesdk.message.response.FailureResponseCallback
 import com.coinbase.android.nativesdk.message.response.ResponseHandler
 import com.coinbase.android.nativesdk.message.response.ResponseResult
-import com.coinbase.android.nativesdk.message.response.ReturnValue
+import com.coinbase.android.nativesdk.message.response.ActionResult
 import com.coinbase.android.nativesdk.message.response.SuccessHandshakeResponseCallback
 import com.coinbase.android.nativesdk.message.response.SuccessRequestResponseCallback
 import com.coinbase.android.nativesdk.task.TaskManager
@@ -101,7 +101,7 @@ class CoinbaseWalletSDK(
 
             // Get response from Wallet at index
             val requestAccountsResult = result.getOrNull()?.getOrNull(requestAccountsIndex)
-            if (requestAccountsResult !is ReturnValue.Result) {
+            if (requestAccountsResult !is ActionResult.Result) {
                 onResponse(result, null)
                 return@send
             }
