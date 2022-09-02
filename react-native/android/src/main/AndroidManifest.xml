@@ -1,2 +1,8 @@
-<manifest package="expo.modules.coinbasewalletsdkexpo">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="expo.modules.coinbasewalletsdkexpo">
+
+    <queries>
+        <package android:name="org.toshi" />
+        <package android:name="org.toshi.alpha" />
+    </queries>
 </manifest>
