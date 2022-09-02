@@ -68,7 +68,7 @@ class ViewController: UITableViewController {
         ) { result, account in
             switch result {
             case .success(let response):
-                self.logObject(label: "Response:\n", response)
+                self.log("Response: \(response.content)")
                 
                 guard let account = account else { return }
                 self.logObject(label: "Account:\n", account)
@@ -105,20 +105,20 @@ class ViewController: UITableViewController {
                 ))
             ])
         ) { result in
-            guard let returnValues = result.returnValues else {
-                self.log("\(result)")
+            guard case .success(let response) = result else {
+                self.log("error: \(result)")
                 return
             }
             
-            for returnValue in returnValues {
+            for returnValue in response.content {
                 switch returnValue {
-                case .result(let value):
+                case .success(let value):
                     self.log("result (raw JSON): \(value)")
                     if let decoded = value.decode() {
                         self.log("result (decoded): \(decoded)")
                     }
-                case .error(let code, let message):
-                    self.log("error \(code): \(message)")
+                case .failure(let error):
+                    self.log("error \(error.code): \(error.message)")
                 }
             }
         }
