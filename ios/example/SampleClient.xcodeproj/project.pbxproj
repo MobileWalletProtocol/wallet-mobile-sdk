@@ -12,19 +12,21 @@
 		5DA9B3D6286A755E0089D6DB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DA9B3D4286A755E0089D6DB /* Main.storyboard */; };
 		5DA9B3D8286A755F0089D6DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5DA9B3D7286A755F0089D6DB /* Assets.xcassets */; };
 		5DA9B3DB286A755F0089D6DB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DA9B3D9286A755F0089D6DB /* LaunchScreen.storyboard */; };
-		9A156AE0D18D300163D57907 /* Pods_NativeWeb3App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 333C157DDC56839FC68B8E8F /* Pods_NativeWeb3App.framework */; };
+		D6752D43EA87EC720AB457B0 /* Pods_SampleClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D748670EFBABCFCAAF467051 /* Pods_SampleClient.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		333C157DDC56839FC68B8E8F /* Pods_NativeWeb3App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NativeWeb3App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5DA9B3CB286A755E0089D6DB /* NativeWeb3App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NativeWeb3App.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DA9B3CB286A755E0089D6DB /* SampleClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DA9B3CE286A755E0089D6DB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5DA9B3D2286A755E0089D6DB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5DA9B3D5286A755E0089D6DB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5DA9B3D7286A755F0089D6DB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5DA9B3DA286A755F0089D6DB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5DA9B3DC286A755F0089D6DB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6AD987FC34FA605B42114137 /* Pods-SampleClient.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleClient.release.xcconfig"; path = "Target Support Files/Pods-SampleClient/Pods-SampleClient.release.xcconfig"; sourceTree = "<group>"; };
 		AD64CFD01D3AB9B726DF335B /* Pods-NativeWeb3App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NativeWeb3App.release.xcconfig"; path = "Target Support Files/Pods-NativeWeb3App/Pods-NativeWeb3App.release.xcconfig"; sourceTree = "<group>"; };
+		BE1C572549E74BC10010E50C /* Pods-SampleClient.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleClient.debug.xcconfig"; path = "Target Support Files/Pods-SampleClient/Pods-SampleClient.debug.xcconfig"; sourceTree = "<group>"; };
+		D748670EFBABCFCAAF467051 /* Pods_SampleClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SampleClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC120F48CB37E5C1FAFE2CAE /* Pods-NativeWeb3App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NativeWeb3App.debug.xcconfig"; path = "Target Support Files/Pods-NativeWeb3App/Pods-NativeWeb3App.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -33,7 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A156AE0D18D300163D57907 /* Pods_NativeWeb3App.framework in Frameworks */,
+				D6752D43EA87EC720AB457B0 /* Pods_SampleClient.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,7 +45,7 @@
 		3E18EF9C1E2A7D3BF660A5CD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				333C157DDC56839FC68B8E8F /* Pods_NativeWeb3App.framework */,
+				D748670EFBABCFCAAF467051 /* Pods_SampleClient.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -53,6 +55,8 @@
 			children = (
 				FC120F48CB37E5C1FAFE2CAE /* Pods-NativeWeb3App.debug.xcconfig */,
 				AD64CFD01D3AB9B726DF335B /* Pods-NativeWeb3App.release.xcconfig */,
+				BE1C572549E74BC10010E50C /* Pods-SampleClient.debug.xcconfig */,
+				6AD987FC34FA605B42114137 /* Pods-SampleClient.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -60,7 +64,7 @@
 		5DA9B3C2286A755E0089D6DB = {
 			isa = PBXGroup;
 			children = (
-				5DA9B3CD286A755E0089D6DB /* SampleApp */,
+				5DA9B3CD286A755E0089D6DB /* SampleClient */,
 				5DA9B3CC286A755E0089D6DB /* Products */,
 				51AC5D6DCCB61B979D9D716E /* Pods */,
 				3E18EF9C1E2A7D3BF660A5CD /* Frameworks */,
@@ -70,12 +74,12 @@
 		5DA9B3CC286A755E0089D6DB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5DA9B3CB286A755E0089D6DB /* NativeWeb3App.app */,
+				5DA9B3CB286A755E0089D6DB /* SampleClient.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5DA9B3CD286A755E0089D6DB /* SampleApp */ = {
+		5DA9B3CD286A755E0089D6DB /* SampleClient */ = {
 			isa = PBXGroup;
 			children = (
 				5DA9B3CE286A755E0089D6DB /* AppDelegate.swift */,
@@ -85,15 +89,15 @@
 				5DA9B3D9286A755F0089D6DB /* LaunchScreen.storyboard */,
 				5DA9B3DC286A755F0089D6DB /* Info.plist */,
 			);
-			path = SampleApp;
+			path = SampleClient;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5DA9B3CA286A755E0089D6DB /* NativeWeb3App */ = {
+		5DA9B3CA286A755E0089D6DB /* SampleClient */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5DA9B3DF286A755F0089D6DB /* Build configuration list for PBXNativeTarget "NativeWeb3App" */;
+			buildConfigurationList = 5DA9B3DF286A755F0089D6DB /* Build configuration list for PBXNativeTarget "SampleClient" */;
 			buildPhases = (
 				29FDABA7E59E1339DA4167A7 /* [CP] Check Pods Manifest.lock */,
 				5DA9B3C7286A755E0089D6DB /* Sources */,
@@ -105,9 +109,9 @@
 			);
 			dependencies = (
 			);
-			name = NativeWeb3App;
+			name = SampleClient;
 			productName = NativeWeb3App;
-			productReference = 5DA9B3CB286A755E0089D6DB /* NativeWeb3App.app */;
+			productReference = 5DA9B3CB286A755E0089D6DB /* SampleClient.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -125,7 +129,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 5DA9B3C6286A755E0089D6DB /* Build configuration list for PBXProject "SampleApp" */;
+			buildConfigurationList = 5DA9B3C6286A755E0089D6DB /* Build configuration list for PBXProject "SampleClient" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -138,7 +142,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5DA9B3CA286A755E0089D6DB /* NativeWeb3App */,
+				5DA9B3CA286A755E0089D6DB /* SampleClient */,
 			);
 		};
 /* End PBXProject section */
@@ -172,7 +176,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-NativeWeb3App-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SampleClient-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -185,15 +189,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NativeWeb3App/Pods-NativeWeb3App-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SampleClient/Pods-SampleClient-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NativeWeb3App/Pods-NativeWeb3App-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-SampleClient/Pods-SampleClient-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NativeWeb3App/Pods-NativeWeb3App-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SampleClient/Pods-SampleClient-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -346,7 +350,7 @@
 		};
 		5DA9B3E0286A755F0089D6DB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FC120F48CB37E5C1FAFE2CAE /* Pods-NativeWeb3App.debug.xcconfig */;
+			baseConfigurationReference = BE1C572549E74BC10010E50C /* Pods-SampleClient.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -365,7 +369,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.coinbase.NativeWeb3App;
+				PRODUCT_BUNDLE_IDENTIFIER = com.coinbase.SampleClient;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -375,7 +379,7 @@
 		};
 		5DA9B3E1286A755F0089D6DB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AD64CFD01D3AB9B726DF335B /* Pods-NativeWeb3App.release.xcconfig */;
+			baseConfigurationReference = 6AD987FC34FA605B42114137 /* Pods-SampleClient.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -394,7 +398,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.coinbase.NativeWeb3App;
+				PRODUCT_BUNDLE_IDENTIFIER = com.coinbase.SampleClient;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -405,7 +409,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5DA9B3C6286A755E0089D6DB /* Build configuration list for PBXProject "SampleApp" */ = {
+		5DA9B3C6286A755E0089D6DB /* Build configuration list for PBXProject "SampleClient" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5DA9B3DD286A755F0089D6DB /* Debug */,
@@ -414,7 +418,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5DA9B3DF286A755F0089D6DB /* Build configuration list for PBXNativeTarget "NativeWeb3App" */ = {
+		5DA9B3DF286A755F0089D6DB /* Build configuration list for PBXNativeTarget "SampleClient" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5DA9B3E0286A755F0089D6DB /* Debug */,
