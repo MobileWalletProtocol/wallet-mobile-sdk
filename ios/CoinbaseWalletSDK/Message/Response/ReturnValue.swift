@@ -7,12 +7,20 @@
 
 import Foundation
 
+public typealias ActionResult = Result<JSONString, ActionError>
+extension ActionResult: BaseContent {}
+
+public struct ActionError: Swift.Error {
+    public let code: Int
+    public let message: String
+}
+
 @available(iOS 13.0, *)
-public typealias ResponseResult = Result<BaseMessage<[JSONStringResult]>, Error>
+public typealias ResponseResult = Result<BaseMessage<[ActionResult]>, Error>
 
 @available(iOS 13.0, *)
 extension ResponseContent.Value {
-    var asJSONStringResult: JSONStringResult {
+    var asActionResult: ActionResult {
         switch self {
         case let .result(value):
             return .success(value)
@@ -30,9 +38,9 @@ extension ResponseMessage {
     var result: ResponseResult {
         switch self.content {
         case .response(_, let values):
-            let results: [JSONStringResult] = values.map { $0.asJSONStringResult }
+            let results: [ActionResult] = values.map { $0.asActionResult }
             return .success(
-                BaseMessage<[JSONStringResult]>.copy(self, replaceContentWith: results)
+                BaseMessage<[ActionResult]>.copy(self, replaceContentWith: results)
             )
         case .failure(_, let description):
             return .failure(CoinbaseWalletSDK.Error.walletReturnedError(description))
