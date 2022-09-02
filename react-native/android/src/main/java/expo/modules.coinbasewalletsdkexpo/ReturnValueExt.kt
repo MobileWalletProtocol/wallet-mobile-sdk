@@ -1,10 +1,10 @@
 package expo.modules.coinbasewalletsdkexpo
 
-import com.coinbase.android.nativesdk.message.response.ActionResult
+import com.coinbase.android.nativesdk.message.response.ReturnValue
 import expo.modules.kotlin.records.Field
 import expo.modules.kotlin.records.Record
 
-class ActionResultRecord : Record {
+class ReturnValueRecord : Record {
     @Field
     var result: String? = null
 
@@ -15,12 +15,12 @@ class ActionResultRecord : Record {
     var errorCode: Int? = null
 }
 
-val ActionResult.asRecord: ActionResultRecord
+val ReturnValue.asRecord: ReturnValueRecord
     get() {
-        val record = ActionResultRecord()
+        val record = ReturnValueRecord()
         when (this) {
-            is ActionResult.Result -> record.result = value
-            is ActionResult.Error -> {
+            is ReturnValue.Result -> record.result = value
+            is ReturnValue.Error -> {
                 record.errorCode = code.toInt()
                 record.errorMessage = message
             }
