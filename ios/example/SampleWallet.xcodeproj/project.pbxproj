@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		5D3DD791286FB22000994152 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3DD790286FB22000994152 /* AppDelegate.swift */; };
 		5D3DD798286FB22000994152 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D3DD796286FB22000994152 /* Main.storyboard */; };
-		5D3DD79A286FB22100994152 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D3DD799286FB22100994152 /* Assets.xcassets */; };
-		5D3DD79D286FB22100994152 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D3DD79B286FB22100994152 /* LaunchScreen.storyboard */; };
 		D6FF46E37F6C3795EE2EFC4E /* Pods_SampleWallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FF03AF7C2BAC9156E0E106E /* Pods_SampleWallet.framework */; };
 /* End PBXBuildFile section */
 
@@ -20,8 +18,6 @@
 		5D3DD78D286FB22000994152 /* SampleWallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleWallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D3DD790286FB22000994152 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5D3DD797286FB22000994152 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		5D3DD799286FB22100994152 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		5D3DD79C286FB22100994152 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5D3DD79E286FB22100994152 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5FF03AF7C2BAC9156E0E106E /* Pods_SampleWallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SampleWallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -70,8 +66,6 @@
 			children = (
 				5D3DD790286FB22000994152 /* AppDelegate.swift */,
 				5D3DD796286FB22000994152 /* Main.storyboard */,
-				5D3DD799286FB22100994152 /* Assets.xcassets */,
-				5D3DD79B286FB22100994152 /* LaunchScreen.storyboard */,
 				5D3DD79E286FB22100994152 /* Info.plist */,
 			);
 			path = SampleWallet;
@@ -145,8 +139,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D3DD79D286FB22100994152 /* LaunchScreen.storyboard in Resources */,
-				5D3DD79A286FB22100994152 /* Assets.xcassets in Resources */,
 				5D3DD798286FB22000994152 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -213,14 +205,6 @@
 				5D3DD797286FB22000994152 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		5D3DD79B286FB22100994152 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5D3DD79C286FB22100994152 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -344,7 +328,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4515DD36563B470F9D13F93B /* Pods-SampleWallet.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -352,7 +335,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SampleWallet/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -373,7 +355,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1372E29251AC61A1A0F6DD2E /* Pods-SampleWallet.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -381,7 +362,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SampleWallet/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

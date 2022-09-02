@@ -18,7 +18,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    #warning("not persisted")
     private var ownPrivateKey: CoinbaseWalletSDK.PrivateKey?
     private var peerPublicKey: CoinbaseWalletSDK.PublicKey?
     private var requestMessage: RequestMessage?
@@ -45,7 +44,7 @@ extension AppDelegate: UIAlertViewDelegate {
         }
         
         let alert = AlertView(
-            title: "WalletSegue Request",
+            title: "Request",
             message: "decrypted content: \(request.content)",
             delegate: self,
             cancelButtonTitle: "Deny",
@@ -59,23 +58,24 @@ extension AppDelegate: UIAlertViewDelegate {
         
         let content: ResponseContent
         let sender: CoinbaseWalletSDK.PublicKey
-        if buttonIndex == 0 { // failure
+        if buttonIndex == 0 { // cancel
             content = .failure(
                 requestId: requestMessage.uuid,
                 description: "Request denied"
             )
             sender = self.peerPublicKey ?? requestMessage.sender
         } else {
-            let returnValues: [ReturnValue]
+            let returnValues: [ResponseContent.Value]
             switch requestMessage.content {
-            case let .handshake(appId, callback, initialActions):
+            case .handshake:
                 self.peerPublicKey = requestMessage.sender
                 self.ownPrivateKey = CoinbaseWalletSDK.PrivateKey()
+                let account = Account(chain: "eth", networkId: 0, address: "0x571a6a108adb08f9ca54fe8605280F9EE0eD4AF6")
                 returnValues = [
-                    .result(value: "0x571a6a108adb08f9ca54fe8605280F9EE0eD4AF6")
+                    .result(value: JSONString(encode: account)!)
                 ]
-            case let .request(actions, account):
-                let error = ReturnValue.error(code: 713, message: "New CBWallet app will be able to actually handle those requests")
+            case let .request(actions, _):
+                let error: ResponseContent.Value = .error(code: 713, message: "New CBWallet app will be able to actually handle those requests")
                 returnValues = actions.map({ _ in error })
             }
             
@@ -87,11 +87,8 @@ extension AppDelegate: UIAlertViewDelegate {
         }
         
         let response = ResponseMessage(
-            uuid: UUID(),
             sender: sender,
-            content: content,
-            version: "0.0.0",
-            timestamp: Date()
+            content: content
         )
         
         let url = try! MessageConverter.encode(

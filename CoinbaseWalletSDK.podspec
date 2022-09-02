@@ -9,5 +9,16 @@ Pod::Spec.new do |s|
   s.license               = { :type => 'Apache', :file => 'LICENSE' }
   s.ios.deployment_target = '12.0'
   s.swift_version         = '5.0'
-  s.source_files          = 'ios/CoinbaseWalletSDK/**/*.swift'
+  
+  s.subspec 'Client' do |ss|
+    ss.source_files = 'ios/CoinbaseWalletSDK/**/*.swift'
+    ss.exclude_files = 'ios/CoinbaseWalletSDK/Host/**/*.swift'
+  end
+  
+  s.subspec 'Host' do |ss|
+    ss.dependency 'CoinbaseWalletSDK/Client'
+    ss.source_files = 'ios/CoinbaseWalletSDK/Host/**/*.swift'
+  end
+  
+  s.default_subspec = 'Client'
 end

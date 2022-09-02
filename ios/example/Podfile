@@ -1,4 +1,4 @@
-workspace 'Samples.xcworkspace'
+workspace 'Example.xcworkspace'
 platform :ios, '13.0'
 use_frameworks!
 
@@ -9,5 +9,5 @@ end
 
 target 'SampleWallet' do
   project 'SampleWallet'
-  pod 'CoinbaseWalletSDK', path: '../../'
+  pod 'CoinbaseWalletSDK/Host', path: '../../'
 end
