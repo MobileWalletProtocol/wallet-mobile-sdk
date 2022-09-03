@@ -9,8 +9,8 @@ import Foundation
 import CryptoKit
 
 @available(iOS 13.0, *)
-public final class MessageConverter {
-    public static func encode<C>(
+final class MessageConverter {
+    static func encode<C>(
         _ message: Message<C>,
         to recipient: URL,
         with symmetricKey: SymmetricKey?
@@ -32,7 +32,7 @@ public final class MessageConverter {
         return url
     }
     
-    public static func decode<C>(
+    static func decode<C>(
         _ url: URL,
         with symmetricKey: SymmetricKey?
     ) throws -> Message<C> {

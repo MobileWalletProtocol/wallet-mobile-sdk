@@ -15,13 +15,13 @@ extension CoinbaseWalletSDK {
 }
 
 @available(iOS 13.0, *)
-public final class KeyManager {
+final class KeyManager {
     private(set) var ownPrivateKey: CoinbaseWalletSDK.PrivateKey
-    public var ownPublicKey: CoinbaseWalletSDK.PublicKey {
+    var ownPublicKey: CoinbaseWalletSDK.PublicKey {
         return ownPrivateKey.publicKey
     }
     
-    public private(set) var peerPublicKey: CoinbaseWalletSDK.PublicKey?
+    private(set) var peerPublicKey: CoinbaseWalletSDK.PublicKey?
     
     private(set) var symmetricKey: SymmetricKey?
     

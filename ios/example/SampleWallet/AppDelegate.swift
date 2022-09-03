@@ -32,11 +32,11 @@ extension AppDelegate: UIAlertViewDelegate {
             return nil
         }
         
-        return try? Cipher.deriveSymmetricKey(with: o, p)
+        return try? CoinbaseWalletHostSDK.deriveSymmetricKey(with: o, p)
     }
     
     func handleWalletSegue(url: URL) {
-        guard let request: RequestMessage = try? MessageConverter.decode(url, with: symmetricKey) else { return }
+        guard let request: RequestMessage = try? CoinbaseWalletHostSDK.decode(url, with: symmetricKey) else { return }
         
         self.requestMessage = request
         if case .handshake(_, let callback, _) = request.content {
@@ -91,7 +91,7 @@ extension AppDelegate: UIAlertViewDelegate {
             content: content
         )
         
-        let url = try! MessageConverter.encode(
+        let url = try! CoinbaseWalletHostSDK.encode(
             response,
             to: peerCallback!,
             with: symmetricKey

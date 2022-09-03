@@ -1,6 +1,6 @@
 //
 //  ResponseMessage+init.swift
-//  CoinbaseWalletSDK-Host
+//  CoinbaseWalletSDK
 //
 //  Created by Jungho Bang on 9/2/22.
 //
