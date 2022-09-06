@@ -8,10 +8,7 @@ object ActionsManager {
 
     private val requestAccount = Web3JsonRPC.RequestAccounts().action()
 
-    private val personalSign = Web3JsonRPC.PersonalSign(
-        "0xabcdefabcdefabcdefabcdefabcdefabcdef",
-        "Hello world"
-    ).action()
+    private val personalSign = Web3JsonRPC.PersonalSign("", "Hello world").action()
 
     private val switchEthereumChain = Web3JsonRPC.SwitchEthereumChain("137").action()
 
