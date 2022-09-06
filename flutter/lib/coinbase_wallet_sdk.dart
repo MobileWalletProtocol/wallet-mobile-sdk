@@ -37,10 +37,17 @@ class CoinbaseWalletSDK {
     final result = await CoinbaseWalletSdkFlutterPlatform.instance
         .call('initiateHandshake', jsonEncode(actionsJson));
 
-    return (result ?? [])
-        .map((action) => ReturnValueWithAccount.fromJson(action))
+    final returnValuesWithAccounts = (result ?? [])
+        .map(
+          (e) {
+            final map = Map<String, dynamic>.from(e);
+            return ReturnValueWithAccount.fromJson(map);
+          },
+        )
         .cast<ReturnValueWithAccount>()
         .toList();
+
+    return returnValuesWithAccounts;
   }
 
   /// Send a web3 request to Coinbase Wallet app

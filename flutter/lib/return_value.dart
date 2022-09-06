@@ -10,7 +10,7 @@ class ReturnValue {
   factory ReturnValue.fromJson(Map<String, dynamic> json) {
     final error = json['error'];
     return ReturnValue(
-      value: json['value'] as String?,
+      value: json['result'] as String?,
       error: error == null
           ? null
           : ReturnValueError.fromJson(Map<String, dynamic>.from(error)),

@@ -122,17 +122,25 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
             switch responseResult {
             case .success(let returnValues):
                 var toFlutter = [[String: Any]]()
+                
                 returnValues.content.forEach { it in
+                    var response = [String: Any]()
+                    
+                    if let account = account {
+                        response["account"] = [
+                            "chain": account.chain,
+                            "networkId": account.networkId,
+                            "address": account.address
+                        ]
+                    }
                     switch it {
                     case .result(let value):
-                        var result: [String: Any] = ["value": value]
-                        if let account = account {
-                            result["account"] = account
-                        }
-                        toFlutter.append(result)
+                        response["result"] = value
                     case .error(let code, let message):
-                        toFlutter.append(["error": ["code": code, "message": message]])
+                        response["error"] = ["code": code, "message": message]
                     }
+                    
+                    toFlutter.append(response)
                 }
                 
                 let data = try JSONSerialization.data(withJSONObject: toFlutter, options: [])
