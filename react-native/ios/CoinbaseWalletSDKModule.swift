@@ -24,7 +24,7 @@ struct AccountRecord : Record {
     var address: String
 }
 
-struct ReturnValueRecord : Record {
+struct ActionResultRecord : Record {
     @Field
     var result: String? = nil
 
@@ -76,7 +76,7 @@ public class CoinbaseWalletSDKModule: Module {
             CoinbaseWalletSDK.shared.initiateHandshake(initialActions: actions) { result, account in
                 switch result {
                 case .success(let response):
-                    let results: [ReturnValueRecord.Dict] = response.content.map { $0.asRecord }
+                    let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
                     let accountRecord = account?.asRecord
                     promise.resolve([results, accountRecord])
                 case .failure(let error):
@@ -112,7 +112,7 @@ public class CoinbaseWalletSDKModule: Module {
             ) { result in
                 switch result {
                 case .success(let response):
-                    let results: [ReturnValueRecord.Dict] = response.content.map { $0.asRecord }
+                    let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
                     promise.resolve(results)
                 case .failure(let error):
                     promise.reject("request-error", error.localizedDescription)
@@ -159,16 +159,16 @@ public class CoinbaseWalletSDKModule: Module {
     }
 }
 
-extension ReturnValue {
-    var asRecord: ReturnValueRecord.Dict {
-        let record = ReturnValueRecord()
+extension ActionResult {
+    var asRecord: ActionResultRecord.Dict {
+        let record = ActionResultRecord()
 
         switch self {
-        case .result(let value):
+        case .success(let value):
             record.result = value.rawValue
-        case .error(let code, let message):
-            record.errorCode = code
-            record.errorMessage = message
+        case .failure(let error):
+            record.errorCode = error.code
+            record.errorMessage = error.message
         }
 
         return record.toDictionary()

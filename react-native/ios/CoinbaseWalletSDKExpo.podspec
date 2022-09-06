@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.static_framework = true
 
   s.dependency 'ExpoModulesCore'
-  s.dependency 'CoinbaseWalletSDK', '0.3.0'
+  s.dependency 'CoinbaseWalletSDK', '0.3.2'
 
   # Swift/Objective-C compatibility
   s.pod_target_xcconfig = {
