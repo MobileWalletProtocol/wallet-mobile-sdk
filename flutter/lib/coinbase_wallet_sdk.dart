@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:coinbase_wallet_sdk_flutter/account.dart';
 import 'package:coinbase_wallet_sdk_flutter/action.dart';
 import 'package:coinbase_wallet_sdk_flutter/coinbase_wallet_sdk_flutter_platform_interface.dart';
 import 'package:coinbase_wallet_sdk_flutter/configuration.dart';
@@ -27,7 +28,7 @@ class CoinbaseWalletSDK {
   }
 
   /// Initiate the handshake with Coinbase Wallet app
-  Future<List<ReturnValue>> initiateHandshake(
+  Future<List<ReturnValueWithAccount>> initiateHandshake(
     List<Action>? initialActions,
   ) async {
     final actionsJson =
@@ -36,10 +37,17 @@ class CoinbaseWalletSDK {
     final result = await CoinbaseWalletSdkFlutterPlatform.instance
         .call('initiateHandshake', jsonEncode(actionsJson));
 
-    return (result ?? [])
-        .map((action) => ReturnValue.fromJson(action))
-        .cast<ReturnValue>()
+    final returnValuesWithAccounts = (result ?? [])
+        .map(
+          (e) {
+            final map = Map<String, dynamic>.from(e);
+            return ReturnValueWithAccount.fromJson(map);
+          },
+        )
+        .cast<ReturnValueWithAccount>()
         .toList();
+
+    return returnValuesWithAccounts;
   }
 
   /// Send a web3 request to Coinbase Wallet app
@@ -48,7 +56,7 @@ class CoinbaseWalletSDK {
         .call('makeRequest', jsonEncode(request.toJson()));
 
     return (result ?? [])
-        .map((action) => ReturnValue.fromJson(action))
+        .map((e) => ReturnValue.fromJson(e))
         .cast<ReturnValue>()
         .toList();
   }
@@ -60,8 +68,8 @@ class CoinbaseWalletSDK {
 
   /// Check whether CoinbaseWallet app is installed
   Future<bool> isAppInstalled() async {
-    final result = await CoinbaseWalletSdkFlutterPlatform.instance
-        .call('isAppInstalled');
+    final result =
+        await CoinbaseWalletSdkFlutterPlatform.instance.call('isAppInstalled');
     return result ?? false;
   }
 
@@ -81,5 +89,25 @@ class CoinbaseWalletSDK {
     }
     await CoinbaseWalletSdkFlutterPlatform.instance
         .call('configure', configuration.toJson());
+  }
+}
+
+class ReturnValueWithAccount {
+  final String? value;
+  final ReturnValueError? error;
+  final Account? account;
+
+  ReturnValueWithAccount(ReturnValue returnValue, this.account)
+      : value = returnValue.value,
+        error = returnValue.error;
+
+  factory ReturnValueWithAccount.fromJson(Map<String, dynamic> json) {
+    final account = json['account'];
+    return ReturnValueWithAccount(
+      ReturnValue.fromJson(json),
+      account == null
+          ? null
+          : Account.fromJson(Map<String, dynamic>.from(account)),
+    );
   }
 }

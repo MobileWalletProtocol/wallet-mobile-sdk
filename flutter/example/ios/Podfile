@@ -31,7 +31,7 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  pod 'CoinbaseWalletSDK', '0.1.0' # :path => '/Users/hish/Developer/3rd-party/coinbase-wallet-sdk'
+  pod 'CoinbaseWalletSDK', '0.2.1'
 end
 
 post_install do |installer|

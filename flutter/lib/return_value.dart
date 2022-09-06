@@ -8,13 +8,12 @@ class ReturnValue {
   });
 
   factory ReturnValue.fromJson(Map<String, dynamic> json) {
-    final result = json['result'];
     final error = json['error'];
     return ReturnValue(
-      value: result == null ? null : result['value'] as String,
+      value: json['result'] as String?,
       error: error == null
           ? null
-          : ReturnValueError.fromJson(error as Map<String, dynamic>),
+          : ReturnValueError.fromJson(Map<String, dynamic>.from(error)),
     );
   }
 }

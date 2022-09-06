@@ -59,6 +59,7 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
         }
         
         CoinbaseWalletSDK.configure(host: hostURL,callback: callbackURL)
+        
         result(SwiftCoinbaseWalletSdkFlutterPlugin.success)
     }
     
@@ -69,8 +70,13 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
             actions = try JSONDecoder().decode([Action].self, from: jsonData)
         }
         
-        CoinbaseWalletSDK.shared.initiateHandshake(initialActions: actions) { responseResult in
-            self.handleResponse(code: "initiateHandshake", responseResult: responseResult, result: result)
+        CoinbaseWalletSDK.shared.initiateHandshake(initialActions: actions) { responseResult, account in
+            self.handleResponse(
+                code: "initiateHandshake",
+                responseResult: responseResult,
+                account: account,
+                result: result
+            )
         }
     }
     
@@ -86,7 +92,12 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
         let request = try JSONDecoder().decode(Request.self, from: jsonData)
         
         CoinbaseWalletSDK.shared.makeRequest(request) { responseResult in
-            self.handleResponse(code: "makeRequest", responseResult: responseResult, result: result)
+            self.handleResponse(
+                code: "makeRequest",
+                responseResult: responseResult,
+                account: nil,
+                result: result
+            )
         }
     }
     
@@ -101,18 +112,35 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    private func handleResponse(code: String, responseResult: ResponseResult, result: @escaping FlutterResult) {
+    private func handleResponse(
+        code: String,
+        responseResult: ResponseResult,
+        account: Account?,
+        result: @escaping FlutterResult
+    ) {
         do {
             switch responseResult {
             case .success(let returnValues):
                 var toFlutter = [[String: Any]]()
+                
                 returnValues.content.forEach { it in
+                    var response = [String: Any]()
+                    
+                    if let account = account {
+                        response["account"] = [
+                            "chain": account.chain,
+                            "networkId": account.networkId,
+                            "address": account.address
+                        ]
+                    }
                     switch it {
                     case .result(let value):
-                        toFlutter.append(["result": ["value": value]])
+                        response["result"] = value
                     case .error(let code, let message):
-                        toFlutter.append(["error": ["code": code, "message": message]])
+                        response["error"] = ["code": code, "message": message]
                     }
+                    
+                    toFlutter.append(response)
                 }
                 
                 let data = try JSONSerialization.data(withJSONObject: toFlutter, options: [])

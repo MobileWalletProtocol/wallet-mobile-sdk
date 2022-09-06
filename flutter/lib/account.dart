@@ -16,4 +16,12 @@ class Account {
       'address': address,
     };
   }
+
+  factory Account.fromJson(Map<String, dynamic> json) {
+    return Account(
+      chain: json['chain'] as String,
+      networkId: json['networkId'] as int,
+      address: json['address'] as String,
+    );
+  }
 }
