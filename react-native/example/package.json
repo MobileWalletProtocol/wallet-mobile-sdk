@@ -10,8 +10,11 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@coinbase/wallet-mobile-sdk": "0.3.1",
+    "expo": "^46.0.0",
     "react": "18.1.0",
-    "react-native": "0.70.0"
+    "react-native": "0.70.0",
+    "react-native-mmkv": "2.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
