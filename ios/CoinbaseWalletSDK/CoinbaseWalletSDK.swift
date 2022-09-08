@@ -12,11 +12,11 @@ import UIKit
 @available(iOS 13.0, *)
 public final class CoinbaseWalletSDK {
     
-    public static func isCoinbaseWalletInstalled() -> Bool {
+    static public func isCoinbaseWalletInstalled() -> Bool {
         return UIApplication.shared.canOpenURL(URL(string: "cbwallet://")!)
     }
     
-    static var version: String = {
+    static private(set) var version: String = {
         let sdkBundle = Bundle(for: CoinbaseWalletSDK.self)
         return sdkBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
     }()
@@ -55,6 +55,10 @@ public final class CoinbaseWalletSDK {
         return CoinbaseWalletSDK(host: host, callback: callback)
     }()
     
+    static public func appendVersionTag(_ tag: String) {
+        self.version += "/\(tag)"
+    }
+    
     // MARK: - Properties
     
     private let appId: String
@@ -80,6 +84,10 @@ public final class CoinbaseWalletSDK {
     
     // MARK: - Send message
     
+    /// Make handshake request to get session key from wallet
+    /// - Parameters:
+    ///   - initialActions: Batch of actions that you'd want to execute after successful handshake. `eth_requestAccounts` by default.
+    ///   - onResponse: Response callback with regular response result and optional parsed `Account` object.
     public func initiateHandshake(
         initialActions: [Action]? = [Action(jsonRpc: .eth_requestAccounts)],
         onResponse: @escaping (ResponseResult, Account?) -> Void
@@ -123,6 +131,7 @@ public final class CoinbaseWalletSDK {
         }
     }
     
+    /// Make regular requests. It requires session key you get after successful handshake.
     public func makeRequest(_ request: Request, onResponse: @escaping ResponseHandler) {
         let message = RequestMessage(
             uuid: UUID(),
@@ -163,6 +172,9 @@ public final class CoinbaseWalletSDK {
         return url.host == callback.host && url.path == callback.path
     }
 
+    /// Handle incoming deep links
+    /// - Parameter url: deep link url
+    /// - Returns: `false` if the input was not response message type, `true` if SDK handled the input, or throws error if it failed to decode response.
     @discardableResult
     public func handleResponse(_ url: URL) throws -> Bool {
         guard isWalletSegueMessage(url) else {
