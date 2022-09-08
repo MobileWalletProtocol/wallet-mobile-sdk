@@ -33,15 +33,8 @@ class CoinbaseWalletSDK(
     private val hostPackageName: String = CBW_PACKAGE_NAME,
     private val openIntent: (Intent) -> Unit
 ) {
-    companion object {
-        private var sdkVersion = BuildConfig.LIBRARY_VERSION_NAME
-
-        fun appendVersionTag(tag: String) {
-            sdkVersion += "/$tag"
-        }
-    }
-
     private val domain: Uri
+    private var sdkVersion = BuildConfig.LIBRARY_VERSION_NAME
     private val keyManager by lazy { KeyManager(appContext, hostPackageName) }
     private val taskManager by lazy { TaskManager() }
 
@@ -72,6 +65,10 @@ class CoinbaseWalletSDK(
         hostPackageName,
         { intent -> openIntent.call(intent) }
     )
+
+    fun appendVersionTag(tag: String) {
+        sdkVersion += "/$tag"
+    }
 
     /**
      * Make handshake request to get session key from wallet
