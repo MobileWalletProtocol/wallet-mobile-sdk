@@ -1100,6 +1100,16 @@
     eth-rpc-errors "4.0.3"
     react-native-mmkv "2.4.3"
 
+"@coinbase/wallet-mobile-sdk@file:..":
+  version "0.3.1"
+  dependencies:
+    "@coinbase/wallet-sdk" "^3.5.1"
+    "@metamask/safe-event-emitter" "2.0.0"
+    bn.js "5.2.1"
+    buffer "6.0.3"
+    eth-rpc-errors "4.0.3"
+    react-native-mmkv "2.4.3"
+
 "@coinbase/wallet-sdk@^3.5.1":
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/@coinbase/wallet-sdk/-/wallet-sdk-3.5.2.tgz#106e8b364a5203f6570561b103974677e18c4417"
