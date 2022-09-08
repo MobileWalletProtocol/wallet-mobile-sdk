@@ -1,0 +1,55 @@
+name: iOS Version Update PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      packageVersion:
+        description: "The version to publish in MAJOR.MINOR.PATCH format"
+        required: true
+        default: ""
+
+jobs:
+  authorize:
+    name: Authorize
+    runs-on: ubuntu-latest
+    steps:
+      - name: ${{ github.actor }} permission check to update release version
+        uses: "lannonbr/repo-permission-check-action@2.0.2"
+        with:
+          permission: "write"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  version:
+    name: Updates package version
+    runs-on: macOS-latest
+    needs: [authorize]
+    env:
+      PACKAGE_VERSION: ${{ github.event.inputs.packageVersion }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7.5'
+          bundler-cache: true
+
+      - name: Update version
+        run: bundle exec fastlane run version_bump_podspec version_number:${{ env.PACKAGE_VERSION }}
+
+      - name: Update example
+        run: bundle exec pod install
+        working-directory: ios/example
+
+      - name: Commit and branch updated version
+        uses: peter-evans/create-pull-request@v4
+        with:
+          title: "[Version update] iOS - v${{ env.PACKAGE_VERSION }}"
+          body: "Automated workflow: version update"
+          branch: release-ios-v${{ env.PACKAGE_VERSION }}
+          delete-branch: true
+          commit-message: "ios-v${{ env.PACKAGE_VERSION }}"
+          labels: version-update
