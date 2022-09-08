@@ -1,0 +1,4 @@
+---
+BUNDLE_PATH: "/Users/runner/work/wallet-mobile-sdk/wallet-mobile-sdk/vendor/bundle"
+BUNDLE_DEPLOYMENT: "true"
+BUNDLE_JOBS: "4"
