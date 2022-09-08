@@ -163,11 +163,9 @@ const App = function () {
       <StatusBar />
       <ScrollView style={styles.scrollViewStyle}>
         <Section title="Methods">
-          {!isConnected && (
+          {!isConnected ? (
             <Button title="Connect Wallet" onPress={connectWallet} />
-          )}
-
-          {isConnected && (
+          ) : (
             <>
               <Button title="Reset Connection" onPress={resetConnection} />
               <Button title="Personal Sign" onPress={personalSign} />
@@ -189,7 +187,7 @@ const App = function () {
       </ScrollView>
       <ScrollView style={styles.scrollViewStyle}>
         <Section title="Output">
-          <Text>{log}</Text>
+          <Text style={{color: Colors.black}}>{log}</Text>
         </Section>
       </ScrollView>
     </SafeAreaView>
