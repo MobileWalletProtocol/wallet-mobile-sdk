@@ -33,8 +33,15 @@ class CoinbaseWalletSDK(
     private val hostPackageName: String = CBW_PACKAGE_NAME,
     private val openIntent: (Intent) -> Unit
 ) {
+    companion object {
+        private var sdkVersion = BuildConfig.LIBRARY_VERSION_NAME
+
+        fun appendVersionTag(tag: String) {
+            sdkVersion += "/$tag"
+        }
+    }
+
     private val domain: Uri
-    private val sdkVersion = BuildConfig.LIBRARY_VERSION_NAME
     private val keyManager by lazy { KeyManager(appContext, hostPackageName) }
     private val taskManager by lazy { TaskManager() }
 
@@ -66,6 +73,11 @@ class CoinbaseWalletSDK(
         { intent -> openIntent.call(intent) }
     )
 
+    /**
+     * Make handshake request to get session key from wallet
+     * @param initialActions Batch of actions that you'd want to execute after successful handshake. `eth_requestAccounts` by default.
+     * @param onResponse Response callback with regular response result and optional parsed [Account] object.
+     */
     fun initiateHandshake(
         initialActions: List<Action>? = null,
         onResponse: (ResponseResult, Account?) -> Unit
@@ -128,6 +140,9 @@ class CoinbaseWalletSDK(
         }
     }
 
+    /**
+     * Make regular requests. It requires session key you get after successful handshake.
+     */
     fun makeRequest(
         request: RequestContent.Request,
         onResponse: ResponseHandler
@@ -156,6 +171,11 @@ class CoinbaseWalletSDK(
         }
     }
 
+    /**
+     * Handle incoming deep links
+     * @param url deep link url
+     * @return `false` if the input was not response message type, or `true` if SDK handled the input
+     */
     fun handleResponse(url: Uri): Boolean {
         if (!isWalletSegueResponseURL(url)) {
             return false

@@ -86,7 +86,7 @@ public final class CoinbaseWalletSDK {
     
     /// Make handshake request to get session key from wallet
     /// - Parameters:
-    ///   - initialActions: Batch of actions that you'd want to execute after succesful handshake. `eth_requestAccounts` by deafult.
+    ///   - initialActions: Batch of actions that you'd want to execute after successful handshake. `eth_requestAccounts` by default.
     ///   - onResponse: Response callback with regular response result and optional parsed `Account` object.
     public func initiateHandshake(
         initialActions: [Action]? = [Action(jsonRpc: .eth_requestAccounts)],
