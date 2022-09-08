@@ -1,0 +1,16 @@
+current directory: /Users/runner/work/wallet-mobile-sdk/wallet-mobile-sdk/vendor/bundle/ruby/2.7.0/gems/unf_ext-0.0.8.2/ext/unf_ext
+/Users/runner/hostedtoolcache/Ruby/2.7.5/x64/bin/ruby -I /Users/runner/hostedtoolcache/Ruby/2.7.5/x64/lib/ruby/2.7.0 -r ./siteconf20220908-1071-b5ac04.rb extconf.rb
+checking for -lstdc++... yes
+creating Makefile
+
+current directory: /Users/runner/work/wallet-mobile-sdk/wallet-mobile-sdk/vendor/bundle/ruby/2.7.0/gems/unf_ext-0.0.8.2/ext/unf_ext
+make "DESTDIR=" clean
+
+current directory: /Users/runner/work/wallet-mobile-sdk/wallet-mobile-sdk/vendor/bundle/ruby/2.7.0/gems/unf_ext-0.0.8.2/ext/unf_ext
+make "DESTDIR="
+compiling unf.cc
+linking shared-object unf_ext.bundle
+
+current directory: /Users/runner/work/wallet-mobile-sdk/wallet-mobile-sdk/vendor/bundle/ruby/2.7.0/gems/unf_ext-0.0.8.2/ext/unf_ext
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 unf_ext.bundle ./.gem.20220908-1071-cj319z
