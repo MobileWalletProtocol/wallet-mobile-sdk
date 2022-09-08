@@ -44,9 +44,12 @@ jobs:
         run: bundle exec pod install
         working-directory: ios/example
 
-      - name: Commit and branch updated version
+      - name: Open pull request
         uses: peter-evans/create-pull-request@v4
         with:
+          add-paths: |
+            CoinbaseWalletSDK.podspec
+            ios/example/Podfile.lock
           title: "[Version update] iOS - v${{ env.PACKAGE_VERSION }}"
           body: "Automated workflow: version update"
           branch: release-ios-v${{ env.PACKAGE_VERSION }}
