@@ -23,8 +23,8 @@ if (secretPropsFile.exists()) {
     ext["signing.key"] = System.getenv('SIGNING_KEY')
     ext["snapshot"] = System.getenv('SNAPSHOT')
 }
-def versionName = "0.3.2"
-def snapshotVersionName = "0.3.2-SNAPSHOT"
+def versionName = "0.3.3"
+def snapshotVersionName = "0.3.3-SNAPSHOT"
 
 if (snapshot) {
     ext["rootVersionName"] = snapshotVersionName
