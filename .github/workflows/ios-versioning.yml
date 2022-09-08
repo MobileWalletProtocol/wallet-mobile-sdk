@@ -47,12 +47,12 @@ jobs:
       - name: Open pull request
         uses: peter-evans/create-pull-request@v4
         with:
+          add-paths: |
+            CoinbaseWalletSDK.podspec
+            ios/example/Podfile.lock
           title: "[Version update] iOS - v${{ env.PACKAGE_VERSION }}"
           body: "Automated workflow: version update"
           branch: release-ios-v${{ env.PACKAGE_VERSION }}
           delete-branch: true
           commit-message: "ios-v${{ env.PACKAGE_VERSION }}"
           labels: version-update
-          add-paths: |
-            CoinbaseWalletSDK.podspec
-            ios/example/Podfile.lock
