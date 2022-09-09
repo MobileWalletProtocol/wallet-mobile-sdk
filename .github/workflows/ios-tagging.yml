@@ -21,9 +21,12 @@ jobs:
     name: Auto Tag
     needs: authorize
     runs-on: ubuntu-latest
+    outputs:
+      tagcreated: ${{ steps.autotag.outputs.tagcreated }}
     steps:
       - uses: actions/checkout@v2
-      - uses: ButlerLogic/action-autotag@1.1.1
+      - id: autotag
+        uses: ButlerLogic/action-autotag@1.1.1
         with:
           strategy: regex
           root: "CoinbaseWalletSDK.podspec"
