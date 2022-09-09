@@ -1,9 +1,10 @@
-name: iOS Version Tag [automated]
+name: iOS tagging [auto]
 
 on:
   push:
     branches:
       - master
+      - test-branch
 
 jobs:
   autotag:
