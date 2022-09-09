@@ -38,7 +38,7 @@ class CoinbaseWalletSDKModule : Module() {
                 hostPackageName = hostPackageName ?: "org.toshi",
                 openIntent = { IntentLauncher.launcher?.launch(it) }
             )
-            sdk.appendVersionTag('rn')
+            sdk.appendVersionTag("rn")
         }
 
         AsyncFunction("initiateHandshake") { initialActions: List<ActionRecord>, promise: Promise ->
