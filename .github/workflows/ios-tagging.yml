@@ -36,4 +36,4 @@ jobs:
     # if: ${{ jobs.autotag.outputs.tagcreated == 'yes' }}
     runs-on: ubuntu-latest
     steps: 
-      - run: echo ${{ jobs.autotag.outputs.tagcreated }}
+      - run: echo ${{ needs.autotag.outputs.tagcreated }}
