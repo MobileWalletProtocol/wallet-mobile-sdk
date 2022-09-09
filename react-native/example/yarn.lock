@@ -1088,18 +1088,6 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@coinbase/wallet-mobile-sdk@0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@coinbase/wallet-mobile-sdk/-/wallet-mobile-sdk-0.3.1.tgz#5550f4e803689d2070820a2490397058de595f9e"
-  integrity sha512-qpQWBDJc1DAGtZhrlgBf09x9zrEVdNQ/ekGAg9+wP5+Wlpjneu+9DCz/rMpbiQt8m1NP44sWouTjapGP77iYqQ==
-  dependencies:
-    "@coinbase/wallet-sdk" "^3.5.1"
-    "@metamask/safe-event-emitter" "2.0.0"
-    bn.js "5.2.1"
-    buffer "6.0.3"
-    eth-rpc-errors "4.0.3"
-    react-native-mmkv "2.4.3"
-
 "@coinbase/wallet-mobile-sdk@file:..":
   version "0.3.1"
   dependencies:
