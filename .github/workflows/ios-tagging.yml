@@ -24,10 +24,11 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ButlerLogic/action-autotag@1.1.1
         with:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           strategy: regex
           root: "CoinbaseWalletSDK.podspec"
           regex_pattern: "s.version\\s*=\\s*'((\\d+)\\.(\\d+)\\.(\\d+))'"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
