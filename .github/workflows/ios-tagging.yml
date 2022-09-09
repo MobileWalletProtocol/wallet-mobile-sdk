@@ -4,10 +4,11 @@ on:
   push:
     branches:
       - master
+      - test-branch
 
 jobs:
   tag_merged_version:
-    if: startsWith(github.event.head_commit.message, 'ios-v') && contains(pull_request.user.login, 'github-actions')
+    if: startsWith(github.event.head_commit.message, 'ios-v') && contains(github.event.pull_request.user.login, 'github-actions')
     runs-on: ubuntu-latest
 
     steps:
