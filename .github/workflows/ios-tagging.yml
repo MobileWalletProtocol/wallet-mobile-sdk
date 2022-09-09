@@ -7,40 +7,40 @@ on:
       - test-branch
 
 jobs:
-  authorize:
-    name: Authorize
-    runs-on: ubuntu-latest
-    steps:
-      - name: ${{ github.actor }} permission check to update release version
-        uses: "lannonbr/repo-permission-check-action@2.0.2"
-        with:
-          permission: "write"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # authorize:
+  #   name: Authorize
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: ${{ github.actor }} permission check to update release version
+  #       uses: "lannonbr/repo-permission-check-action@2.0.2"
+  #       with:
+  #         permission: "write"
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  autotag:
-    name: Auto Tag
-    needs: authorize
-    runs-on: ubuntu-latest
-    outputs:
-      tagcreated: ${{ steps.autotag.outputs.tagcreated }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  # autotag:
+  #   name: Auto Tag
+  #   needs: authorize
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     tagcreated: ${{ steps.autotag.outputs.tagcreated }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - id: autotag
-        uses: ButlerLogic/action-autotag@1.1.1
-        with:
-          strategy: regex
-          root: "CoinbaseWalletSDK.podspec"
-          regex_pattern: "s.version\\s*=\\s*'((\\d+)\\.(\\d+)\\.(\\d+))'"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - id: autotag
+  #       uses: ButlerLogic/action-autotag@1.1.1
+  #       with:
+  #         strategy: regex
+  #         root: "CoinbaseWalletSDK.podspec"
+  #         regex_pattern: "s.version\\s*=\\s*'((\\d+)\\.(\\d+)\\.(\\d+))'"
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy:
     name: Deploy
-    needs: autotag
-    if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
+    # needs: autotag
+    # if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
     runs-on: macOS-latest
     steps: 
       - name: Checkout
@@ -55,7 +55,6 @@ jobs:
       - name: Deploy to Cocoapods
         run: |
           set -eo pipefail
-          pod lib lint --allow-warnings
-          pod trunk push --allow-warnings
+          pod trunk push CoinbaseWalletSDK.podspec --allow-warnings
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
