@@ -36,7 +36,7 @@ jobs:
   deploy:
     name: Deploy
     needs: autotag
-    # if: ${{ jobs.autotag.outputs.tagcreated == 'yes' }}
-    runs-on: ubuntu-latest
+    if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
+    runs-on: macOS-latest
     steps: 
-      - run: echo ${{ needs.autotag.outputs.tagcreated }}
+      - run: echo yay
