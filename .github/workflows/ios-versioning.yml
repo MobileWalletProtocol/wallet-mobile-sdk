@@ -54,5 +54,5 @@ jobs:
           body: "Automated workflow: version update"
           branch: release-ios-v${{ env.PACKAGE_VERSION }}
           delete-branch: true
-          commit-message: "ios-v${{ env.PACKAGE_VERSION }}"
+          commit-message: "[Version update] iOS - v${{ env.PACKAGE_VERSION }}"
           labels: version-update

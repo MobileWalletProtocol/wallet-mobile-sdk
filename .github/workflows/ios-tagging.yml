@@ -17,6 +17,7 @@ jobs:
           permission: "write"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   autotag:
     name: Auto Tag
     needs: authorize
@@ -24,7 +25,9 @@ jobs:
     outputs:
       tagcreated: ${{ steps.autotag.outputs.tagcreated }}
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - id: autotag
         uses: ButlerLogic/action-autotag@1.1.1
         with:
@@ -33,10 +36,26 @@ jobs:
           regex_pattern: "s.version\\s*=\\s*'((\\d+)\\.(\\d+)\\.(\\d+))'"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   deploy:
     name: Deploy
     needs: autotag
     if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
     runs-on: macOS-latest
     steps: 
-      - run: echo yay
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7.5'
+          bundler-cache: true
+      
+      - name: Deploy to Cocoapods
+        run: |
+          set -eo pipefail
+          pod lib lint --allow-warnings
+          pod trunk push --allow-warnings
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
