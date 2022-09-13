@@ -16,11 +16,6 @@ public final class CoinbaseWalletSDK {
         return UIApplication.shared.canOpenURL(URL(string: "cbwallet://")!)
     }
     
-    static private(set) var version: String = {
-        let sdkBundle = Bundle(for: CoinbaseWalletSDK.self)
-        return sdkBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
-    }()
-    
     // MARK: - Constructor
     
     static private var host: URL?
@@ -54,10 +49,6 @@ public final class CoinbaseWalletSDK {
         
         return CoinbaseWalletSDK(host: host, callback: callback)
     }()
-    
-    static public func appendVersionTag(_ tag: String) {
-        self.version += "/\(tag)"
-    }
     
     // MARK: - Properties
     

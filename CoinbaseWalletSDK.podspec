@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name                  = 'CoinbaseWalletSDK'
-  s.version               = '0.3.4'
+  s.version               = '0.3.5'
   s.summary               = 'Swift implementation of WalletSegue protocol to interact with Coinbase Wallet iOS app'
   s.source                = { :git => 'https://github.com/coinbase/wallet-mobile-sdk.git', :tag => s.version }
   s.author                = 'Coinbase Wallet'
@@ -18,6 +18,13 @@ Pod::Spec.new do |s|
   s.subspec 'Host' do |ss|
     ss.dependency 'CoinbaseWalletSDK/Client'
     ss.source_files = 'ios/CoinbaseWalletSDK/Host/**/*.swift'
+  end
+  
+  s.subspec 'CrossPlatform' do |ss|
+    ss.dependency 'CoinbaseWalletSDK/Client'
+    ss.pod_target_xcconfig = {
+      'OTHER_SWIFT_FLAGS' => '-DCROSS_PLATFORM'
+    }
   end
   
   s.default_subspec = 'Client'
