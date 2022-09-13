@@ -31,12 +31,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.7.5'
-          bundler-cache: true
-
       - name: Update version on podspec
         uses: jacobtomlinson/gha-find-replace@v2
         with:
@@ -45,6 +39,12 @@ jobs:
           replace: "$1'${{ env.PACKAGE_VERSION }}'"
           include: 'CoinbaseWalletSDK.podspec'
       
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7.5'
+          bundler-cache: true
+
       # - name: Update version
       #   run: bundle exec fastlane run version_bump_podspec version_number:${{ env.PACKAGE_VERSION }}
 
