@@ -61,7 +61,7 @@ jobs:
   deploy_android:
     name: Deploy Android SDK
     # needs: autotag
-    if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
+    # if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
     runs-on: macOS-latest
     steps: 
       - name: Checkout
