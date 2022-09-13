@@ -35,6 +35,11 @@ jobs:
           sed -i '' -E "s/= '[0-9]+\.[0-9]+\.[0-9]+/= '${{ env.PACKAGE_VERSION }}/" CoinbaseWalletSDK.podspec
           sed -i '' -E 's/= "[0-9]+\.[0-9]+\.[0-9]+/= "${{ env.PACKAGE_VERSION }}/' ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
       
+      - name: Update Android version
+        run: |
+          sed -i '' -E 's/(versionName) "[0-9]+\.[0-9]+\.[0-9]+/\1 "${{ env.PACKAGE_VERSION }}/' android/walletsdk/build.gradle
+          sed -i '' -E 's/(versionName =) "[0-9]+\.[0-9]+\.[0-9]+/\1 "${{ env.PACKAGE_VERSION }}/' android/scripts/publish-root.gradle
+          
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -52,9 +57,11 @@ jobs:
             CoinbaseWalletSDK.podspec
             ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
             ios/example/Podfile.lock
-          title: "[Version update] iOS - v${{ env.PACKAGE_VERSION }}"
+            android/walletsdk/build.gradle
+            android/scripts/publish-root.gradle
+          title: "[Version update] v${{ env.PACKAGE_VERSION }}"
           body: "Automated workflow: version update"
-          branch: release-ios-v${{ env.PACKAGE_VERSION }}
+          branch: version-update-v${{ env.PACKAGE_VERSION }}
           delete-branch: true
-          commit-message: "[Version update] iOS - v${{ env.PACKAGE_VERSION }}"
+          commit-message: "[Version update] v${{ env.PACKAGE_VERSION }}"
           labels: version-update
