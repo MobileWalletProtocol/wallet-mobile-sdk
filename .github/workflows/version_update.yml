@@ -1,4 +1,4 @@
-name: iOS Version Update PR
+name: Version Update PR
 
 on:
   workflow_dispatch:
@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Update version
+      - name: Update iOS version
         run: |
           sed -i '' -E "s/= '[0-9]+\.[0-9]+\.[0-9]+/= '${{ env.PACKAGE_VERSION }}/" CoinbaseWalletSDK.podspec
           sed -i '' -E 's/= "[0-9]+\.[0-9]+\.[0-9]+/= "${{ env.PACKAGE_VERSION }}/' ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
@@ -41,7 +41,7 @@ jobs:
           ruby-version: '2.7.5'
           bundler-cache: true
 
-      - name: Update example
+      - name: Update iOS example
         run: bundle exec pod install
         working-directory: ios/example
 
