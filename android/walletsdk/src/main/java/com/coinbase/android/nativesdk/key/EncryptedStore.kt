@@ -1,5 +1,6 @@
 package com.coinbase.android.nativesdk.key
 
+import android.app.KeyguardManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.security.keystore.KeyGenParameterSpec
@@ -129,13 +130,18 @@ class EncryptedStore(
         // Create main key that secures encrypted storage
         val purposes = KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
 
-        val keyGenSpec = KeyGenParameterSpec.Builder(MAIN_KEY_ALIAS, purposes)
-            .setUserAuthenticationRequired(true)
-            .setUserAuthenticationValidityDurationSeconds(172_800) // 2 days
-            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-            .setKeySize(256)
-            .build()
+        val keyGenSpec = with(KeyGenParameterSpec.Builder(MAIN_KEY_ALIAS, purposes)) {
+            val keyguard = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+            if (keyguard.isDeviceSecure) {
+                setUserAuthenticationRequired(true)
+                setUserAuthenticationValidityDurationSeconds(172_800) // 2 days
+            }
+
+            setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+            setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+            setKeySize(256)
+            build()
+        }
 
         val mainKey = MasterKeys.getOrCreate(keyGenSpec)
 
