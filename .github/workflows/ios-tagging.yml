@@ -32,7 +32,7 @@ jobs:
         with:
           strategy: regex
           root: "CoinbaseWalletSDK.podspec"
-          regex_pattern: "s.version\\s*=\\s*'((\\d+)\\.(\\d+)\\.(\\d+))'"
+          regex_pattern: "s.version\\s*=\\s*'(\\d+\\.\\d+\\.\\d+)'"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

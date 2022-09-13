@@ -37,8 +37,16 @@ jobs:
           ruby-version: '2.7.5'
           bundler-cache: true
 
-      - name: Update version
-        run: bundle exec fastlane run version_bump_podspec version_number:${{ env.PACKAGE_VERSION }}
+      - name: Update version on podspec
+        uses: mingjun97/file-regex-replace
+        with:
+          regex: "(s.version\\s*=\\s*)'((\\d+)\\.(\\d+)\\.(\\d+))'"
+          replacement: "$1'${{ env.PACKAGE_VERSION }}'"
+          include: 'CoinbaseWalletSDK\.podspec'
+          path: '.'                   # Optional, defaults to '.'
+      
+      # - name: Update version
+      #   run: bundle exec fastlane run version_bump_podspec version_number:${{ env.PACKAGE_VERSION }}
 
       - name: Update example
         run: bundle exec pod install
