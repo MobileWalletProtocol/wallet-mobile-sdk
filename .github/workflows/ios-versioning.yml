@@ -21,32 +21,20 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   version:
-    name: Update version
-    runs-on: ubuntu-latest
-    env:
-      PACKAGE_VERSION: ${{ github.event.inputs.packageVersion }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Update version on podspec
-        uses: jacobtomlinson/gha-find-replace@v2
-        with:
-          regex: true
-          find: "(s.version\\s*=\\s*)'((\\d+)\\.(\\d+)\\.(\\d+))'"
-          replace: "$1'${{ env.PACKAGE_VERSION }}'"
-          include: 'CoinbaseWalletSDK.podspec'
-          
-  example:
-    name: Update example app
+    name: Update package version
     runs-on: macOS-latest
-    needs: [authorize, version]
+    needs: [authorize]
     env:
       PACKAGE_VERSION: ${{ github.event.inputs.packageVersion }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Update version
+        run: |
+          sed -i '' -E "s/= '[0-9]+\.[0-9]+\.[0-9]+/= '${{ env.PACKAGE_VERSION }}/" CoinbaseWalletSDK.podspec
+          sed -i '' -E 's/= "[0-9]+\.[0-9]+\.[0-9]+/= "${{ env.PACKAGE_VERSION }}/' ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
+      
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
