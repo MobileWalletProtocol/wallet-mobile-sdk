@@ -83,9 +83,9 @@ jobs:
         run: ./gradlew publishReleasePublicationToSonatypeRepository closeAndReleaseSonatypeStagingRepository
         env:
           CI: true
-          signing.keyId: ${{ secrets.ANDROID_SIGNING_KEYID }}
-          signing.password: ${{ secrets.ANDROID_SIGNING_PASSWORD }}
-          signing.key: ${{ secrets.ANDROID_SIGNING_KEY }}
-          ossrhUsername: ${{ secrets.OSSRH_USERNAME }}
-          ossrhPassword: ${{ secrets.OSSRH_PASSWORD }}
-          sonatypeStagingProfileId: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+          SIGNING_KEY_ID: ${{ secrets.ANDROID_SIGNING_KEYID }}
+          SIGNING_PASSWORD: ${{ secrets.ANDROID_SIGNING_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.ANDROID_SIGNING_KEY }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
