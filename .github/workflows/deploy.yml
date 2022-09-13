@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - test-branch
 
 jobs:
   authorize:
