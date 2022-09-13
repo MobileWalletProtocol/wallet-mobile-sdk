@@ -41,9 +41,6 @@ jobs:
           ruby-version: '2.7.5'
           bundler-cache: true
 
-      # - name: Update version
-      #   run: bundle exec fastlane run version_bump_podspec version_number:${{ env.PACKAGE_VERSION }}
-
       - name: Update example
         run: bundle exec pod install
         working-directory: ios/example
@@ -53,6 +50,7 @@ jobs:
         with:
           add-paths: |
             CoinbaseWalletSDK.podspec
+            ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
             ios/example/Podfile.lock
           title: "[Version update] iOS - v${{ env.PACKAGE_VERSION }}"
           body: "Automated workflow: version update"
