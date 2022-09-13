@@ -38,12 +38,12 @@ jobs:
           bundler-cache: true
 
       - name: Update version on podspec
-        uses: mingjun97/file-regex-replace
+        uses: jacobtomlinson/gha-find-replace@v2
         with:
-          regex: "(s.version\\s*=\\s*)'((\\d+)\\.(\\d+)\\.(\\d+))'"
-          replacement: "$1'${{ env.PACKAGE_VERSION }}'"
-          include: 'CoinbaseWalletSDK\.podspec'
-          path: '.'                   # Optional, defaults to '.'
+          regex: true
+          find: "(s.version\\s*=\\s*)'((\\d+)\\.(\\d+)\\.(\\d+))'"
+          replace: "$1'${{ env.PACKAGE_VERSION }}'"
+          include: 'CoinbaseWalletSDK.podspec'
       
       # - name: Update version
       #   run: bundle exec fastlane run version_bump_podspec version_number:${{ env.PACKAGE_VERSION }}
