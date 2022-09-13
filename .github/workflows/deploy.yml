@@ -17,43 +17,71 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  autotag:
-    name: Auto Tag
-    needs: authorize
-    runs-on: ubuntu-latest
-    outputs:
-      tagcreated: ${{ steps.autotag.outputs.tagcreated }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  # autotag:
+  #   name: Auto Tag
+  #   needs: authorize
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     tagcreated: ${{ steps.autotag.outputs.tagcreated }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - id: autotag
-        uses: ButlerLogic/action-autotag@1.1.1
-        with:
-          strategy: regex
-          root: "CoinbaseWalletSDK.podspec"
-          regex_pattern: "s.version\\s*=\\s*'(\\d+\\.\\d+\\.\\d+)'"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - id: autotag
+  #       uses: ButlerLogic/action-autotag@1.1.1
+  #       with:
+  #         strategy: regex
+  #         root: "CoinbaseWalletSDK.podspec"
+  #         regex_pattern: "s.version\\s*=\\s*'(\\d+\\.\\d+\\.\\d+)'"
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy_ios:
-    name: Deploy iOS SDK
-    needs: autotag
+  # deploy_ios:
+  #   name: Deploy iOS SDK
+  #   needs: autotag
+  #   if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
+  #   runs-on: macOS-latest
+  #   steps: 
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+
+  #     - name: Setup ruby
+  #       uses: ruby/setup-ruby@v1
+  #       with:
+  #         ruby-version: '2.7.5'
+  #         bundler-cache: true
+      
+  #     - name: Deploy to Cocoapods
+  #       run: |
+  #         set -eo pipefail
+  #         pod trunk push CoinbaseWalletSDK.podspec --allow-warnings
+  #       env:
+  #         COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+
+  deploy_android:
+    name: Deploy Android SDK
+    # needs: autotag
     if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
     runs-on: macOS-latest
     steps: 
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup ruby
-        uses: ruby/setup-ruby@v1
+      - name: Setup java
+        uses: actions/setup-java@v3
         with:
-          ruby-version: '2.7.5'
-          bundler-cache: true
+          distribution: temurin
+          java-version: 11
       
-      - name: Deploy to Cocoapods
-        run: |
-          set -eo pipefail
-          pod trunk push CoinbaseWalletSDK.podspec --allow-warnings
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+    
+      - name: Execute Gradle build
+        run: ./gradlew publishReleasePublicationToSonatypeRepository closeAndReleaseSonatypeStagingRepository
         env:
-          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+          signing.keyId: ${{ secrets.signing.keyId }}
+          signing.password: ${{ secrets.signing.password }}
+          signing.key: ${{ secrets.signing.key }}
+          ossrhUsername: ${{ secrets.ossrhUsername }}
+          ossrhPassword: ${{ secrets.ossrhPassword }}
+          sonatypeStagingProfileId: ${{ secrets.sonatypeStagingProfileId }}
