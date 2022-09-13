@@ -24,7 +24,7 @@ if (secretPropsFile.exists()) {
     ext["snapshot"] = System.getenv('SNAPSHOT')
 }
 def versionName = "0.3.3"
-def snapshotVersionName = "0.3.3-SNAPSHOT"
+def snapshotVersionName = "${versionName}-SNAPSHOT"
 
 if (snapshot) {
     ext["rootVersionName"] = snapshotVersionName
