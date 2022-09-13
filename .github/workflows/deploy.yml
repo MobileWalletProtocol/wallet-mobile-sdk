@@ -1,4 +1,4 @@
-name: iOS Tag & Deploy [auto]
+name: Tag & Deploy [auto]
 
 on:
   push:
@@ -32,12 +32,12 @@ jobs:
         with:
           strategy: regex
           root: "CoinbaseWalletSDK.podspec"
-          regex_pattern: "s.version\\s*=\\s*'((\\d+)\\.(\\d+)\\.(\\d+))'"
+          regex_pattern: "s.version\\s*=\\s*'(\\d+\\.\\d+\\.\\d+)'"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy:
-    name: Deploy
+  deploy_ios:
+    name: Deploy iOS SDK
     needs: autotag
     if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
     runs-on: macOS-latest

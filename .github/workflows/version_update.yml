@@ -1,4 +1,4 @@
-name: iOS Version Update PR
+name: Version Update PR
 
 on:
   workflow_dispatch:
@@ -21,26 +21,27 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   version:
-    name: Updates package version
+    name: Update package version
     runs-on: macOS-latest
     needs: [authorize]
     env:
       PACKAGE_VERSION: ${{ github.event.inputs.packageVersion }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Update iOS version
+        run: |
+          sed -i '' -E "s/= '[0-9]+\.[0-9]+\.[0-9]+/= '${{ env.PACKAGE_VERSION }}/" CoinbaseWalletSDK.podspec
+          sed -i '' -E 's/= "[0-9]+\.[0-9]+\.[0-9]+/= "${{ env.PACKAGE_VERSION }}/' ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
+      
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.7.5'
           bundler-cache: true
 
-      - name: Update version
-        run: bundle exec fastlane run version_bump_podspec version_number:${{ env.PACKAGE_VERSION }}
-
-      - name: Update example
+      - name: Update iOS example
         run: bundle exec pod install
         working-directory: ios/example
 
@@ -49,6 +50,7 @@ jobs:
         with:
           add-paths: |
             CoinbaseWalletSDK.podspec
+            ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
             ios/example/Podfile.lock
           title: "[Version update] iOS - v${{ env.PACKAGE_VERSION }}"
           body: "Automated workflow: version update"

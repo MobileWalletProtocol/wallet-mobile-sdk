@@ -60,7 +60,7 @@ public class CoinbaseWalletSDKModule: Module {
                 host: host,
                 callback: URL(string: callbackURL)!
             )
-            CoinbaseWalletSDK.appendVersionTag('rn')
+            CoinbaseWalletSDK.appendVersionTag("rn")
         }
 
         AsyncFunction("initiateHandshake") { (initialActions: [ActionRecord], promise: Promise) in
