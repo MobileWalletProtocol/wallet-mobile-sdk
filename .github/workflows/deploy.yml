@@ -82,6 +82,7 @@ jobs:
       - name: Execute Gradle build
         run: ./gradlew publishReleasePublicationToSonatypeRepository closeAndReleaseSonatypeStagingRepository
         env:
+          CI: true
           signing.keyId: ${{ secrets.ANDROID_SIGNING_KEYID }}
           signing.password: ${{ secrets.ANDROID_SIGNING_PASSWORD }}
           signing.key: ${{ secrets.ANDROID_SIGNING_KEY }}
