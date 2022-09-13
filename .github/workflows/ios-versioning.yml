@@ -21,12 +21,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   version:
-    name: Updates package version
-    runs-on: macOS-latest
-    needs: [authorize]
+    name: Update version
+    runs-on: ubuntu-latest
     env:
       PACKAGE_VERSION: ${{ github.event.inputs.packageVersion }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -38,7 +36,17 @@ jobs:
           find: "(s.version\\s*=\\s*)'((\\d+)\\.(\\d+)\\.(\\d+))'"
           replace: "$1'${{ env.PACKAGE_VERSION }}'"
           include: 'CoinbaseWalletSDK.podspec'
-      
+          
+  example:
+    name: Update example app
+    runs-on: macOS-latest
+    needs: [authorize, version]
+    env:
+      PACKAGE_VERSION: ${{ github.event.inputs.packageVersion }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
