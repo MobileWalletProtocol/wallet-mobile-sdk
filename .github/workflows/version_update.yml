@@ -23,7 +23,7 @@ jobs:
   version:
     name: Update package version
     runs-on: macOS-latest
-    needs: [authorize]
+    needs: authorize
     env:
       PACKAGE_VERSION: ${{ github.event.inputs.packageVersion }}
     steps:
