@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ClientApp"
+rootProject.name = "Wallet SDK"
 include ':example', ':walletsdk'
