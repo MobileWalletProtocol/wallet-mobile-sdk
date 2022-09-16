@@ -1,4 +1,4 @@
-group 'xyz.tribes.coinbase.coinbase_wallet_sdk_flutter'
+group 'com.coinbase.coinbase_wallet_sdk'
 version '1.0-SNAPSHOT'
 
 buildscript {

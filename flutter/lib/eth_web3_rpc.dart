@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:coinbase_wallet_sdk_flutter/action.dart';
+import 'package:coinbase_wallet_sdk/action.dart';
 
 class RequestAccounts extends Action {
   const RequestAccounts()

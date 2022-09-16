@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:coinbase_wallet_sdk_flutter/coinbase_wallet_sdk.dart';
-import 'package:coinbase_wallet_sdk_flutter/configuration.dart';
-import 'package:coinbase_wallet_sdk_flutter/eth_web3_rpc.dart';
-import 'package:coinbase_wallet_sdk_flutter/request.dart';
+import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk.dart';
+import 'package:coinbase_wallet_sdk/configuration.dart';
+import 'package:coinbase_wallet_sdk/eth_web3_rpc.dart';
+import 'package:coinbase_wallet_sdk/request.dart';
 import 'package:flutter/material.dart';
 
 void main() {

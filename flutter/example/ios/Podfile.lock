@@ -1,5 +1,5 @@
 PODS:
-  - coinbase_wallet_sdk_flutter (0.0.1):
+  - coinbase_wallet_sdk (0.0.1):
     - CoinbaseWalletSDK/CrossPlatform (= 1.0.0)
     - Flutter
   - CoinbaseWalletSDK/Client (1.0.0)
@@ -8,20 +8,20 @@ PODS:
   - Flutter (1.0.0)
 
 DEPENDENCIES:
-  - coinbase_wallet_sdk_flutter (from `.symlinks/plugins/coinbase_wallet_sdk_flutter/ios`)
+  - coinbase_wallet_sdk (from `.symlinks/plugins/coinbase_wallet_sdk/ios`)
   - CoinbaseWalletSDK/CrossPlatform (from `../../../`)
   - Flutter (from `Flutter`)
 
 EXTERNAL SOURCES:
-  coinbase_wallet_sdk_flutter:
-    :path: ".symlinks/plugins/coinbase_wallet_sdk_flutter/ios"
+  coinbase_wallet_sdk:
+    :path: ".symlinks/plugins/coinbase_wallet_sdk/ios"
   CoinbaseWalletSDK:
     :path: "../../../"
   Flutter:
     :path: Flutter
 
 SPEC CHECKSUMS:
-  coinbase_wallet_sdk_flutter: ff01fa65fe62862da75ce13600c76fe8d113fdee
+  coinbase_wallet_sdk: 4aaccb45bc33d0c3b4140084cabbbdb2ce7ec0ee
   CoinbaseWalletSDK: 3844b5cf9578b7bbdc6e55c158df779694a6d8a2
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
 

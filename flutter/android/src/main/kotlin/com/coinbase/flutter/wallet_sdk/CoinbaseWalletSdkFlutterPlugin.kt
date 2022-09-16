@@ -1,4 +1,4 @@
-package xyz.tribes.coinbase.coinbase_wallet_sdk_flutter
+package com.coinbase.flutter.wallet_sdk
 
 import android.content.Context
 import android.content.Intent
@@ -50,7 +50,7 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
             openIntent = { intent -> act?.startActivityForResult(intent, 0) }
         )
         coinbase.appendVersionTag("flutter")
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "coinbase_wallet_sdk_flutter")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "coinbase_wallet_sdk")
         channel.setMethodCallHandler(this)
     }
 

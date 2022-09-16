@@ -1,5 +1,5 @@
-import 'package:coinbase_wallet_sdk_flutter/coinbase_wallet_sdk_flutter_method_channel.dart';
-import 'package:coinbase_wallet_sdk_flutter/coinbase_wallet_sdk_flutter_platform_interface.dart';
+import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk_method_channel.dart';
+import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // class MockCoinbaseWalletSdkFlutterPlatform

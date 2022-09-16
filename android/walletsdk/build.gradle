@@ -14,7 +14,7 @@ android {
         targetSdk 32
 
         versionCode 3
-        versionName "1.0.0"
+        versionName "1.0.1"
 
         buildConfigField "int", "LIBRARY_VERSION_CODE", "${versionCode}"
         buildConfigField "String", "LIBRARY_VERSION_NAME", "\"${versionName}\""
