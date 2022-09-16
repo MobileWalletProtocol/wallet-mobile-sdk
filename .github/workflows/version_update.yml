@@ -83,7 +83,7 @@ jobs:
             react-native/ios/CoinbaseWalletSDKExpo.podspec
             react-native/android/build.gradle
             react-native/package.json
-            flutter/ios/coinbase_wallet_sdk_flutter.podspec
+            flutter/ios/coinbase_wallet_sdk.podspec
             flutter/android/build.gradle
             flutter/pubspec.yaml
           title: "[Version update] v${{env.NEW_VERSION}}"
