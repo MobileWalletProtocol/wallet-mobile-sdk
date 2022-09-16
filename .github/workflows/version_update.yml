@@ -63,7 +63,7 @@ jobs:
         run: bundle exec pod install
         working-directory: ios/example
 
-      - name: Update ReactNative example
+      - name: Update React Native example
         run: bundle exec pod install
         working-directory: react-native/example/ios
         
