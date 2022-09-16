@@ -51,7 +51,7 @@ jobs:
         run: |
           sed -i '' -E "s/(CoinbaseWalletSDK\/CrossPlatform',) '${{env.V_REGEX}}/\1 '${{env.NEW_VERSION}}/" flutter/ios/coinbase_wallet_sdk.podspec
           sed -i '' -E 's/(com.coinbase:coinbase-wallet-sdk):${{env.V_REGEX}}/\1:${{env.NEW_VERSION}}/' flutter/android/build.gradle
-          sed -i '' -E 's/(version:) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' flutter/pubspec.yaml
+          sed -i '' -E 's/(version:) ${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' flutter/pubspec.yaml
 
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
