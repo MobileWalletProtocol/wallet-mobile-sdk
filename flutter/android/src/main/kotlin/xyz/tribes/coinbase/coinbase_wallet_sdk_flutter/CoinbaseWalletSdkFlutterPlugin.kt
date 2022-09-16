@@ -9,7 +9,7 @@ import com.coinbase.android.nativesdk.message.request.Account
 import com.coinbase.android.nativesdk.message.request.Action
 import com.coinbase.android.nativesdk.message.request.RequestContent
 import com.coinbase.android.nativesdk.message.response.ResponseResult
-import com.coinbase.android.nativesdk.message.response.ReturnValue
+import com.coinbase.android.nativesdk.message.response.ActionResult
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -49,6 +49,7 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
             domain = Uri.parse("https://www.coinbase.com"),
             openIntent = { intent -> act?.startActivityForResult(intent, 0) }
         )
+        coinbase.appendVersionTag("flutter")
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "coinbase_wallet_sdk_flutter")
         channel.setMethodCallHandler(this)
     }
@@ -152,8 +153,8 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
                 response["account"] = account.toMap()
             }
             when (it) {
-                is ReturnValue.Result -> response["result"]= it.value
-                is ReturnValue.Error -> response["error"] = mapOf("code" to it.code, "message" to it.message)
+                is ActionResult.Result -> response["result"]= it.value
+                is ActionResult.Error -> response["error"] = mapOf("code" to it.code, "message" to it.message)
             }
 
             toFlutter.add(response)
