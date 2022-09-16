@@ -73,10 +73,6 @@ jobs:
       
       - name: Open pull request
         uses: peter-evans/create-pull-request@v4
-        reviewers: |
-          bangtoven
-          vishnumad
-          AMITGOELNY
         with:
           add-paths: |
             CoinbaseWalletSDK.podspec
@@ -93,6 +89,10 @@ jobs:
           title: "[Version update] v${{env.NEW_VERSION}}"
           body: "Automated workflow: version update"
           branch: version-update-v${{env.NEW_VERSION}}
-          delete-branch: true
+          reviewers: |
+            bangtoven
+            vishnumad
+            AMITGOELNY
           commit-message: "[Version update] v${{env.NEW_VERSION}}"
           labels: version-update
+          delete-branch: true
