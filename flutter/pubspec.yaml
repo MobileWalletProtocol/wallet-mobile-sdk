@@ -25,7 +25,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: xyz.tribes.coinbase.coinbase_wallet_sdk
+        package: com.coinbase.flutter.wallet_sdk
         pluginClass: CoinbaseWalletSdkFlutterPlugin
       ios:
         pluginClass: CoinbaseWalletSdkFlutterPlugin
