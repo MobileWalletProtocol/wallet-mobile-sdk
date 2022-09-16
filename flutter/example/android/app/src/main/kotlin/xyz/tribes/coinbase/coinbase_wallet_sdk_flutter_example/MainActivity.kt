@@ -1,4 +1,4 @@
-package xyz.tribes.coinbase.coinbase_wallet_sdk_flutter_example
+package xyz.tribes.coinbase.coinbase_wallet_sdk_example
 
 import android.content.Intent
 import android.net.Uri

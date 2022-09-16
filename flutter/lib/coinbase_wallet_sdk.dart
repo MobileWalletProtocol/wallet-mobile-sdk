@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:coinbase_wallet_sdk_flutter/account.dart';
-import 'package:coinbase_wallet_sdk_flutter/action.dart';
-import 'package:coinbase_wallet_sdk_flutter/coinbase_wallet_sdk_flutter_platform_interface.dart';
-import 'package:coinbase_wallet_sdk_flutter/configuration.dart';
-import 'package:coinbase_wallet_sdk_flutter/request.dart';
-import 'package:coinbase_wallet_sdk_flutter/return_value.dart';
+import 'package:coinbase_wallet_sdk/account.dart';
+import 'package:coinbase_wallet_sdk/action.dart';
+import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk_platform_interface.dart';
+import 'package:coinbase_wallet_sdk/configuration.dart';
+import 'package:coinbase_wallet_sdk/request.dart';
+import 'package:coinbase_wallet_sdk/return_value.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 

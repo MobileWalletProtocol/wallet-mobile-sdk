@@ -8,7 +8,7 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
     public override init() {}
     
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "coinbase_wallet_sdk_flutter", binaryMessenger: registrar.messenger())
+        let channel = FlutterMethodChannel(name: "coinbase_wallet_sdk", binaryMessenger: registrar.messenger())
         let instance = SwiftCoinbaseWalletSdkFlutterPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
     }

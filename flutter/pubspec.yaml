@@ -1,6 +1,6 @@
-name: coinbase_wallet_sdk_flutter
+name: coinbase_wallet_sdk
 description: Fluter implementation of Coinbase Wallet SDK.
-version: 1.0.1
+version: 1.0.0
 homepage: https://wallet.coinbase.com
 
 environment:
@@ -25,7 +25,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: xyz.tribes.coinbase.coinbase_wallet_sdk_flutter
+        package: com.coinbase.flutter.wallet_sdk
         pluginClass: CoinbaseWalletSdkFlutterPlugin
       ios:
         pluginClass: CoinbaseWalletSdkFlutterPlugin

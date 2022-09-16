@@ -1,6 +1,6 @@
-# coinbase_wallet_sdk_flutter_example
+# coinbase_wallet_sdk_example
 
-Demonstrates how to use the coinbase_wallet_sdk_flutter plugin.
+Demonstrates how to use the coinbase_wallet_sdk plugin.
 
 ## Getting Started
 

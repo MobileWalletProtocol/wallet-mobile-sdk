@@ -1,6 +1,6 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'coinbase_wallet_sdk_flutter_method_channel.dart';
+import 'coinbase_wallet_sdk_method_channel.dart';
 
 abstract class CoinbaseWalletSdkFlutterPlatform extends PlatformInterface {
   /// Constructs a CoinbaseWalletSdkFlutterPlatform.
