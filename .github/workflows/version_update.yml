@@ -35,8 +35,6 @@ jobs:
         run: |
           sed -i '' -E "s/= '${{env.V_REGEX}}/= '${{env.NEW_VERSION}}/" CoinbaseWalletSDK.podspec
           sed -i '' -E 's/= "${{env.V_REGEX}}/= "${{env.NEW_VERSION}}/' ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
-          cat CoinbaseWalletSDK.podspec
-          cat ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
       
       - name: Update Android version
         run: |
@@ -48,6 +46,18 @@ jobs:
           sed -i '' -E "s/(CoinbaseWalletSDK\/CrossPlatform',) '${{env.V_REGEX}}/\1 '{{env.NEW_VERSION}}/" react-native/ios/CoinbaseWalletSDKExpo.podspec
           sed -i '' -E 's/(com.coinbase:coinbase-wallet-sdk):${{env.V_REGEX}}/\1:${{env.NEW_VERSION}}/' react-native/android/build.gradle
           sed -i '' -E 's/(version":) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' react-native/package.json
+
+      - name: result
+        run: |
+          cat CoinbaseWalletSDK.podspec
+          cat ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
+          cat ios/example/Podfile.lock
+          cat android/walletsdk/build.gradle
+          cat android/scripts/publish-root.gradle
+          cat react-native/ios/CoinbaseWalletSDKExpo.podspec
+          cat react-native/android/build.gradle
+          cat react-native/package.json
+
       
       # - name: Setup ruby
       #   uses: ruby/setup-ruby@v1
