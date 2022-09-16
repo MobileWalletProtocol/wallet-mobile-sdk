@@ -1,5 +1,5 @@
-import 'package:coinbase_wallet_sdk_flutter/account.dart';
-import 'package:coinbase_wallet_sdk_flutter/action.dart';
+import 'package:coinbase_wallet_sdk/account.dart';
+import 'package:coinbase_wallet_sdk/action.dart';
 
 class Request {
   final List<Action> actions;

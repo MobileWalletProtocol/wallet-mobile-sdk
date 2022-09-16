@@ -1,4 +1,4 @@
-# coinbase_wallet_sdk_flutter
+# coinbase_wallet_sdk
 
 A flutter wrapper for CoinbaseWallet mobile SDK
 
@@ -7,7 +7,7 @@ Note: This wrapper only supports iOS and Android.
 ## Getting Started
 
 ```dart
-  import 'package:coinbase_wallet_sdk_flutter/coinbase_wallet_sdk.dart';
+  import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk.dart';
 
   // Configure SDK for each platform
   await CoinbaseWalletSDK.shared.configure(

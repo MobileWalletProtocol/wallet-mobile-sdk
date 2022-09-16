@@ -1,5 +1,5 @@
-name: coinbase_wallet_sdk_flutter_example
-description: Demonstrates how to use the coinbase_wallet_sdk_flutter plugin.
+name: coinbase_wallet_sdk_example
+description: Demonstrates how to use the coinbase_wallet_sdk plugin.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -18,9 +18,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-  coinbase_wallet_sdk_flutter:
+  coinbase_wallet_sdk:
     # When depending on this package from a real application you should use:
-    #   coinbase_wallet_sdk_flutter: ^x.y.z
+    #   coinbase_wallet_sdk: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
