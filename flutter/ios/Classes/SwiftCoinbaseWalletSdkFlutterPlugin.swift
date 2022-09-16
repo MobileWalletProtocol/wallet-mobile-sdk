@@ -59,6 +59,7 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
         }
         
         CoinbaseWalletSDK.configure(host: hostURL,callback: callbackURL)
+        CoinbaseWalletSDK.appendVersionTag("flutter")
         
         result(SwiftCoinbaseWalletSdkFlutterPlugin.success)
     }

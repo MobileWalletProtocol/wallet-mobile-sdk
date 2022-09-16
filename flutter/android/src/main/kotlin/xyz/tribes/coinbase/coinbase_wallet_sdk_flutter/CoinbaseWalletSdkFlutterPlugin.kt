@@ -49,6 +49,7 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
             domain = Uri.parse("https://www.coinbase.com"),
             openIntent = { intent -> act?.startActivityForResult(intent, 0) }
         )
+        coinbase.appendVersionTag("flutter")
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "coinbase_wallet_sdk_flutter")
         channel.setMethodCallHandler(this)
     }
