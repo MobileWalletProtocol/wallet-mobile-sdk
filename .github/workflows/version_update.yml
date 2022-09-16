@@ -25,21 +25,34 @@ jobs:
     runs-on: macOS-latest
     needs: authorize
     env:
-      PACKAGE_VERSION: ${{ github.event.inputs.packageVersion }}
+      V_REGEX: '[0-9]+\.[0-9]+\.[0-9]+'
+      NEW_VERSION: ${{ github.event.inputs.packageVersion }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Update iOS version
         run: |
-          sed -i '' -E "s/= '[0-9]+\.[0-9]+\.[0-9]+/= '${{ env.PACKAGE_VERSION }}/" CoinbaseWalletSDK.podspec
-          sed -i '' -E 's/= "[0-9]+\.[0-9]+\.[0-9]+/= "${{ env.PACKAGE_VERSION }}/' ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
+          sed -i '' -E "s/= '${{env.V_REGEX}}/= '${{env.NEW_VERSION}}/" CoinbaseWalletSDK.podspec
+          sed -i '' -E 's/= "${{env.V_REGEX}}/= "${{env.NEW_VERSION}}/' ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
       
       - name: Update Android version
         run: |
-          sed -i '' -E 's/(versionName) "[0-9]+\.[0-9]+\.[0-9]+/\1 "${{ env.PACKAGE_VERSION }}/' android/walletsdk/build.gradle
-          sed -i '' -E 's/(versionName =) "[0-9]+\.[0-9]+\.[0-9]+/\1 "${{ env.PACKAGE_VERSION }}/' android/scripts/publish-root.gradle
+          sed -i '' -E 's/(versionName) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' android/walletsdk/build.gradle
+          sed -i '' -E 's/(versionName =) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' android/scripts/publish-root.gradle
           
+      - name: Update React Native version
+        run: |
+          sed -i '' -E "s/(CoinbaseWalletSDK\/CrossPlatform',) '${{env.V_REGEX}}/\1 '${{env.NEW_VERSION}}/" react-native/ios/CoinbaseWalletSDKExpo.podspec
+          sed -i '' -E 's/(com.coinbase:coinbase-wallet-sdk):${{env.V_REGEX}}/\1:${{env.NEW_VERSION}}/' react-native/android/build.gradle
+          sed -i '' -E 's/(version":) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' react-native/package.json
+
+      - name: Update Flutter version
+        run: |
+          sed -i '' -E "s/(CoinbaseWalletSDK\/CrossPlatform',) '${{env.V_REGEX}}/\1 '${{env.NEW_VERSION}}/" flutter/ios/coinbase_wallet_sdk.podspec
+          sed -i '' -E 's/(com.coinbase:coinbase-wallet-sdk):${{env.V_REGEX}}/\1:${{env.NEW_VERSION}}/' flutter/android/build.gradle
+          sed -i '' -E 's/(version:) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' flutter/pubspec.yaml
+
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -50,6 +63,14 @@ jobs:
         run: bundle exec pod install
         working-directory: ios/example
 
+      # - name: Update React Native example
+      #   run: bundle exec pod install
+      #   working-directory: react-native/example/ios
+        
+      # - name: Update Flutter example
+      #   run: bundle exec pod install
+      #   working-directory: flutter/example/ios
+      
       - name: Open pull request
         uses: peter-evans/create-pull-request@v4
         with:
@@ -59,9 +80,19 @@ jobs:
             ios/example/Podfile.lock
             android/walletsdk/build.gradle
             android/scripts/publish-root.gradle
-          title: "[Version update] v${{ env.PACKAGE_VERSION }}"
+            react-native/ios/CoinbaseWalletSDKExpo.podspec
+            react-native/android/build.gradle
+            react-native/package.json
+            flutter/ios/coinbase_wallet_sdk.podspec
+            flutter/android/build.gradle
+            flutter/pubspec.yaml
+          title: "[Version update] v${{env.NEW_VERSION}}"
           body: "Automated workflow: version update"
-          branch: version-update-v${{ env.PACKAGE_VERSION }}
-          delete-branch: true
-          commit-message: "[Version update] v${{ env.PACKAGE_VERSION }}"
+          branch: version-update-v${{env.NEW_VERSION}}
+          reviewers: |
+            bangtoven
+            vishnumad
+            AMITGOELNY
+          commit-message: "[Version update] v${{env.NEW_VERSION}}"
           labels: version-update
+          delete-branch: true
