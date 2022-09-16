@@ -21,7 +21,7 @@ EXTERNAL SOURCES:
     :path: Flutter
 
 SPEC CHECKSUMS:
-  coinbase_wallet_sdk: ff01fa65fe62862da75ce13600c76fe8d113fdee
+  coinbase_wallet_sdk: 4aaccb45bc33d0c3b4140084cabbbdb2ce7ec0ee
   CoinbaseWalletSDK: 3844b5cf9578b7bbdc6e55c158df779694a6d8a2
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
 
