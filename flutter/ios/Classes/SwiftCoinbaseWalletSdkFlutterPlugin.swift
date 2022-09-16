@@ -135,10 +135,10 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
                         ]
                     }
                     switch it {
-                    case .result(let value):
+                    case .success(let value):
                         response["result"] = value
-                    case .error(let code, let message):
-                        response["error"] = ["code": code, "message": message]
+                    case .failure(let error):
+                        response["error"] = ["code": error.code, "message": error.message]
                     }
                     
                     toFlutter.append(response)
