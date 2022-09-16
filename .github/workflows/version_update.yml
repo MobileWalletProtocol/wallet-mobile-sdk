@@ -40,6 +40,12 @@ jobs:
           sed -i '' -E 's/(versionName) "[0-9]+\.[0-9]+\.[0-9]+/\1 "${{ env.PACKAGE_VERSION }}/' android/walletsdk/build.gradle
           sed -i '' -E 's/(versionName =) "[0-9]+\.[0-9]+\.[0-9]+/\1 "${{ env.PACKAGE_VERSION }}/' android/scripts/publish-root.gradle
           
+      - name: Update ReactNative version
+        run: |
+          sed -i '' -E "s/(CoinbaseWalletSDK\/CrossPlatform',) '[0-9]+\.[0-9]+\.[0-9]+/\1 '{{ env.PACKAGE_VERSION }}/" react-native/ios/CoinbaseWalletSDKExpo.podspec
+          sed -i '' -E 's/(com.coinbase:coinbase-wallet-sdk):[0-9]+\.[0-9]+\.[0-9]+/\1:${{ env.PACKAGE_VERSION }}/' react-native/android/build.gradle
+          sed -i '' -E 's/(version":) "[0-9]+\.[0-9]+\.[0-9]+/\1 "${{ env.PACKAGE_VERSION }}/' react-native/package.json
+      
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
