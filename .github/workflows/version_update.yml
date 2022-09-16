@@ -49,45 +49,38 @@ jobs:
 
       - name: Update Flutter version
         run: |
-          sed -i '' -E "s/(version:) ${{env.V_REGEX}}/\1 ${{env.NEW_VERSION}}/" flutter/pubspec.yaml
-          sed -i '' -E 's/(com.coinbase:coinbase-wallet-sdk):${{env.V_REGEX}}/\1:${{env.NEW_VERSION}}/' react-native/android/build.gradle
-          sed -i '' -E 's/(version":) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' react-native/package.json
+          sed -i '' -E "s/(CoinbaseWalletSDK\/CrossPlatform',) '${{env.V_REGEX}}/\1 '${{env.NEW_VERSION}}/" flutter/ios/coinbase_wallet_sdk_flutter.podspec
+          sed -i '' -E 's/(com.coinbase:coinbase-wallet-sdk):${{env.V_REGEX}}/\1:${{env.NEW_VERSION}}/' flutter/android/build.gradle
+          sed -i '' -E 's/(version:) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' flutter/pubspec.yaml
 
-      - name: result
-        run: |
-          cat react-native/ios/CoinbaseWalletSDKExpo.podspec
-          cat flutter/pubspec.yaml
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7.5'
+          bundler-cache: true
 
-      # cat CoinbaseWalletSDK.podspec
-      #     cat ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
-      #     cat ios/example/Podfile.lock
-      #     cat android/walletsdk/build.gradle
-      #     cat android/scripts/publish-root.gradle
-      #     cat react-native/android/build.gradle
-      #     cat react-native/package.json
-          
-      # - name: Setup ruby
-      #   uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: '2.7.5'
-      #     bundler-cache: true
+      - name: Update iOS example
+        run: bundle exec pod install
+        working-directory: ios/example
 
-      # - name: Update iOS example
-      #   run: bundle exec pod install
-      #   working-directory: ios/example
-
-      # - name: Open pull request
-      #   uses: peter-evans/create-pull-request@v4
-      #   with:
-      #     add-paths: |
-      #       CoinbaseWalletSDK.podspec
-      #       ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
-      #       ios/example/Podfile.lock
-      #       android/walletsdk/build.gradle
-      #       android/scripts/publish-root.gradle
-      #     title: "[Version update] v${{env.NEW_VERSION}}"
-      #     body: "Automated workflow: version update"
-      #     branch: version-update-v${{env.NEW_VERSION}}
-      #     delete-branch: true
-      #     commit-message: "[Version update] v${{env.NEW_VERSION}}"
-      #     labels: version-update
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          add-paths: |
+            CoinbaseWalletSDK.podspec
+            ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
+            ios/example/Podfile.lock
+            android/walletsdk/build.gradle
+            android/scripts/publish-root.gradle
+            react-native/ios/CoinbaseWalletSDKExpo.podspec
+            react-native/android/build.gradle
+            react-native/package.json
+            flutter/ios/coinbase_wallet_sdk_flutter.podspec
+            flutter/android/build.gradle
+            flutter/pubspec.yaml
+          title: "[Version update] v${{env.NEW_VERSION}}"
+          body: "Automated workflow: version update"
+          branch: version-update-v${{env.NEW_VERSION}}
+          delete-branch: true
+          commit-message: "[Version update] v${{env.NEW_VERSION}}"
+          labels: version-update
