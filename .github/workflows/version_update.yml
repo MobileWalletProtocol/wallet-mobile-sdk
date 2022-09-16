@@ -63,13 +63,13 @@ jobs:
         run: bundle exec pod install
         working-directory: ios/example
 
-      - name: Update React Native example
-        run: bundle exec pod install
-        working-directory: react-native/example/ios
+      # - name: Update React Native example
+      #   run: bundle exec pod install
+      #   working-directory: react-native/example/ios
         
-      - name: Update Flutter example
-        run: bundle exec pod install
-        working-directory: flutter/example/ios
+      # - name: Update Flutter example
+      #   run: bundle exec pod install
+      #   working-directory: flutter/example/ios
       
       - name: Open pull request
         uses: peter-evans/create-pull-request@v4
