@@ -65,7 +65,7 @@ const App = function () {
 
       logMessage(`<-- ${accounts}`);
     } catch (e) {
-      console.error(e);
+      console.error(e.message);
       logMessage('<-- error connecting');
     }
   }, [logMessage]);
@@ -105,7 +105,7 @@ const App = function () {
 
       logMessage(`<-- ${result}`);
     } catch (e) {
-      console.error(e);
+      console.error(e.message);
       logMessage('<-- error');
     }
   }, [logMessage]);
@@ -121,7 +121,7 @@ const App = function () {
 
       logMessage(`<-- ${result}`);
     } catch (e) {
-      console.error(e);
+      console.error(e.message);
       logMessage('<-- error');
     }
   }, [logMessage]);
@@ -149,7 +149,7 @@ const App = function () {
 
       logMessage(`<-- ${result}`);
     } catch (e) {
-      console.error(e);
+      console.error(e.message);
       logMessage('<-- error');
     }
   }, [logMessage]);
