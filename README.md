@@ -1,13 +1,9 @@
 # Coinbase Wallet Mobile SDK
 
-> :warning: **Wallet Mobile SDK** is a WIP. Full integration with the Coinbase Wallet app is scheduled for mid September 2022
-
-## Packages
-
-- [Android](android/)
-- [iOS](ios/)
-- [React Native](react-native/)
-- [Flutter](flutter/)
+[![Cocoapods](https://img.shields.io/cocoapods/v/CoinbaseWalletSDK)](https://cocoapods.org/pods/CoinbaseWalletSDK)
+[![Maven](https://img.shields.io/maven-central/v/com.coinbase/coinbase-wallet-sdk?label=maven)](https://mavenlibs.com/maven/dependency/com.coinbase/coinbase-wallet-sdk)
+[![npm](https://img.shields.io/npm/v/@coinbase/wallet-mobile-sdk)](https://www.npmjs.com/package/@coinbase/wallet-mobile-sdk)
+[![pub.dev](https://img.shields.io/pub/v/coinbase_wallet_sdk)](https://pub.dev/packages/coinbase_wallet_sdk)
 
 ## License
 
