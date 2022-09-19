@@ -5,13 +5,6 @@
 [![npm](https://img.shields.io/npm/v/@coinbase/wallet-mobile-sdk)](https://www.npmjs.com/package/@coinbase/wallet-mobile-sdk)
 [![pub.dev](https://img.shields.io/pub/v/coinbase_wallet_sdk)](https://pub.dev/packages/coinbase_wallet_sdk)
 
-## Packages
-
-- [Android](android/)
-- [iOS](ios/)
-- [React Native](react-native/)
-- [Flutter](flutter/)
-
 ## License
 
 ```
