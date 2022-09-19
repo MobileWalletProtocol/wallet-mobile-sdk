@@ -1,1 +1,3 @@
 * @coinbase/wallet-mobile-sdk
+android/walletsdk/build.gradle @bangtoven @vishnumad @AMITGOELNY
+ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift @bangtoven @vishnumad @AMITGOELNY
