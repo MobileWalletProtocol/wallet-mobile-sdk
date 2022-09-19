@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - test-rn-and-flutter
 
 jobs:
   authorize:
