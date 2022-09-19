@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
       final results = await CoinbaseWalletSDK.shared.initiateHandshake([
         const RequestAccounts(),
       ]);
-      addy = results[0].value ?? "<no address>";
+      addy = results[0].account?.address ?? "<no address>";
     } catch (e) {
       addy = 'Failed to get address. => $e';
     }
