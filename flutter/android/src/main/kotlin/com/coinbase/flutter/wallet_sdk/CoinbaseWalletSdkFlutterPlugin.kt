@@ -8,11 +8,8 @@ import com.coinbase.android.nativesdk.CoinbaseWalletSDK
 import com.coinbase.android.nativesdk.message.request.Account
 import com.coinbase.android.nativesdk.message.request.Action
 import com.coinbase.android.nativesdk.message.request.RequestContent
-import com.coinbase.android.nativesdk.message.response.ResponseResult
 import com.coinbase.android.nativesdk.message.response.ActionResult
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-
+import com.coinbase.android.nativesdk.message.response.ResponseResult
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -21,6 +18,12 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.encodeToJsonElement
 
 /** CoinbaseWalletSdkFlutterPlugin */
 class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
@@ -36,8 +39,6 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
     private lateinit var flutterApplicationContext: Context
 
     private var act: android.app.Activity? = null
-
-    private val gson = Gson()
 
     private val successJson = "{ \"success\": true}"
 
@@ -108,9 +109,7 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
             return result.error("initiateHandshake", "Missing args", null)
         }
 
-        val arrayTutorialType = object : TypeToken<List<Action>>() {}.type
-        val actions: List<Action> = gson.fromJson(jsonString, arrayTutorialType)
-
+        val actions = Json.decodeFromString<List<Action>>(jsonString)
         coinbase.initiateHandshake(initialActions = actions) { responseResult, account ->
             handleResponse("initiateHandshake", responseResult, account, result)
         }
@@ -122,7 +121,7 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
             return result.error("makeRequest", "Missing args", null)
         }
 
-        val request: RequestContent.Request = gson.fromJson(jsonString, RequestContent.Request::class.java)
+        val request = Json.decodeFromString<RequestContent.Request>(jsonString)
         coinbase.makeRequest(request) { responseResult ->
             handleResponse("makeRequest", responseResult, null, result)
         }
@@ -144,25 +143,27 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
         }
 
         val returnValues = responseResult.getOrNull() ?: emptyList()
-        val toFlutter = mutableListOf<Map<String, Any>>()
+        val toFlutter = returnValues.map { actionResult ->
+            buildJsonObject {
+                if (account != null) {
+                    val accountJson = Json.encodeToJsonElement(account)
+                    put("account", accountJson)
+                }
 
-        returnValues.forEach {
-            val response = mutableMapOf<String, Any>()
-
-            if (account != null) {
-                response["account"] = account.toMap()
+                when (actionResult) {
+                    is ActionResult.Result -> {
+                        put("result", JsonPrimitive(actionResult.value))
+                    }
+                    is ActionResult.Error -> {
+                        val errorJson = Json.encodeToJsonElement(actionResult)
+                        put("error", errorJson)
+                    }
+                }
             }
-            when (it) {
-                is ActionResult.Result -> response["result"]= it.value
-                is ActionResult.Error -> response["error"] = mapOf("code" to it.code, "message" to it.message)
-            }
-
-            toFlutter.add(response)
         }
 
-        val jsonString = gson.toJson(toFlutter)
+        val jsonString = Json.encodeToString(toFlutter)
         result.success(jsonString)
-
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -190,12 +191,4 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
         val uri = data?.data ?: return false
         return coinbase.handleResponse(uri)
     }
-}
-
-private fun Account.toMap(): Map<String, Any> {
-    return mapOf<String, Any>(
-        "chain" to chain,
-        "networkId" to networkId,
-        "address" to address
-    )
 }
