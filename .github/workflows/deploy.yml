@@ -121,8 +121,6 @@ jobs:
     defaults:
       run:
         working-directory: flutter
-    env:
-      DART_PATH: ~/Library/Application\ Support/dart
     steps: 
       - name: Checkout
         uses: actions/checkout@v3
@@ -140,7 +138,7 @@ jobs:
 
       - name: Publish to pub.dev
         run: dart pub publish --force
-        continue-on-error: true
-
+        
       - name: Clean up
+        if: ${{ always() }} 
         run: rm -r $PUB_CACHE
