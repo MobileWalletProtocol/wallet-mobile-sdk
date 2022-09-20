@@ -1,10 +1,9 @@
-name: Tag & Deploy [auto]
+name: Tag & Publish [auto]
 
 on:
   push:
     branches:
       - master
-      - test-rn-and-flutter
 
 jobs:
   authorize:
@@ -37,8 +36,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy_ios:
-    name: Deploy iOS SDK
+  publish_ios:
+    name: Publish iOS SDK
     needs: autotag
     if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
     runs-on: macOS-latest
@@ -52,15 +51,15 @@ jobs:
           ruby-version: '2.7.5'
           bundler-cache: true
       
-      - name: Deploy to Cocoapods
+      - name: Publish to Cocoapods
         run: |
           set -eo pipefail
           pod trunk push CoinbaseWalletSDK.podspec --allow-warnings
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
 
-  deploy_android:
-    name: Deploy Android SDK
+  publish_android:
+    name: Publish Android SDK
     needs: autotag
     if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
     runs-on: macOS-latest
@@ -89,3 +88,57 @@ jobs:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+
+  publish_rn:
+    name: Publish React Native SDK
+    needs: [publish_ios, publish_android]
+    runs-on: macOS-latest
+    defaults:
+      run:
+        working-directory: react-native
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish to npm
+        run: |
+          npm install
+          npm run prepare
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
+
+  publish_flutter:
+    name: Publish Flutter SDK
+    needs: [publish_ios, publish_android]
+    runs-on: macOS-latest
+    defaults:
+      run:
+        working-directory: flutter
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1.3
+
+      - name: Authenticate
+        run: |
+          mkdir -p $PUB_CACHE
+          cd $PUB_CACHE
+          echo "$PUBDEV_CREDENTIALSJSON" > credentials.json
+        env:
+          PUBDEV_CREDENTIALSJSON: ${{ secrets.PUBDEV_CREDENTIALSJSON }}
+
+      - name: Publish to pub.dev
+        run: dart pub publish --force # TODO: automatically update CHANGELOG to run this without --force
+        
+      - name: Clean up
+        if: ${{ always() }} 
+        run: rm -r $PUB_CACHE
