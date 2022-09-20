@@ -92,16 +92,29 @@ jobs:
       #     OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
       #     SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
 
-  # deploy_rn:
-  #   name: Deploy React Native SDK
-  #   needs: [deploy_ios, deploy_android]
-  #   runs-on: macOS-latest
-  #   defaults:
-  #     run:
-  #       working-directory: react-native
-  #   steps: 
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+  deploy_rn:
+    name: Deploy React Native SDK
+    needs: [deploy_ios, deploy_android]
+    runs-on: macOS-latest
+    defaults:
+      run:
+        working-directory: react-native
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish to npm
+        run: |
+          npm install
+          npm publish --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
 
   deploy_flutter:
     name: Deploy Flutter SDK
