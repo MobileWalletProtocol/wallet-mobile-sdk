@@ -1,4 +1,4 @@
-name: Tag & Deploy [auto]
+name: Tag & Publish [auto]
 
 on:
   push:
@@ -36,8 +36,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy_ios:
-    name: Deploy iOS SDK
+  publish_ios:
+    name: Publish iOS SDK
     needs: autotag
     if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
     runs-on: macOS-latest
@@ -51,15 +51,15 @@ jobs:
           ruby-version: '2.7.5'
           bundler-cache: true
       
-      - name: Deploy to Cocoapods
+      - name: Publish to Cocoapods
         run: |
           set -eo pipefail
           pod trunk push CoinbaseWalletSDK.podspec --allow-warnings
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
 
-  deploy_android:
-    name: Deploy Android SDK
+  publish_android:
+    name: Publish Android SDK
     needs: autotag
     if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
     runs-on: macOS-latest
@@ -89,9 +89,9 @@ jobs:
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
 
-  deploy_rn:
-    name: Deploy React Native SDK
-    needs: [deploy_ios, deploy_android]
+  publish_rn:
+    name: Publish React Native SDK
+    needs: [publish_ios, publish_android]
     runs-on: macOS-latest
     defaults:
       run:
@@ -113,9 +113,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
 
-  deploy_flutter:
-    name: Deploy Flutter SDK
-    needs: [deploy_ios, deploy_android]
+  publish_flutter:
+    name: Publish Flutter SDK
+    needs: [publish_ios, publish_android]
     runs-on: macOS-latest
     defaults:
       run:
