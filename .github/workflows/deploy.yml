@@ -133,8 +133,7 @@ jobs:
       - name: Authenticate
         run: |
           mkdir -p $DART_PATH
-          cd $DART_PATH
-          cat $PUBDEV_CREDENTIALSJSON > pub-credentials.json
+          echo "$PUBDEV_CREDENTIALSJSON" > $DART_PATH/pub-credentials.json
         env:
           PUBDEV_CREDENTIALSJSON: ${{ secrets.PUBDEV_CREDENTIALSJSON }}
 
