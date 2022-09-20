@@ -43,7 +43,6 @@ jobs:
     if: ${{ needs.autotag.outputs.tagcreated == 'yes' }}
     runs-on: macOS-latest
     steps: 
-      - run: echo iOS
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -69,7 +68,6 @@ jobs:
       run:
         working-directory: android
     steps: 
-      - run: echo Android
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -112,7 +110,7 @@ jobs:
       - name: Publish to npm
         run: |
           npm install
-          npm publish --dry-run
+          npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
 
@@ -130,5 +128,4 @@ jobs:
           relativePath: flutter
           accessToken: ${{ secrets.PUBDEV_ACCESS_TOKEN }}
           refreshToken: ${{ secrets.PUBDEV_REFRESH_TOKEN }}
-          dryRunOnly: true
           force: true
