@@ -121,6 +121,8 @@ jobs:
     defaults:
       run:
         working-directory: flutter
+    env:
+      DART_PATH: ~/Library/Application\ Support/dart
     steps: 
       - name: Checkout
         uses: actions/checkout@v3
@@ -130,8 +132,9 @@ jobs:
 
       - name: Authenticate
         run: |
-          mkdir -p ~/Library/Application\ Support/dart
-          cat $PUBDEV_CREDENTIALSJSON > ~/Library/Application\ Support/dart/pub-credentials.json
+          mkdir -p $DART_PATH
+          cd $DART_PATH
+          cat $PUBDEV_CREDENTIALSJSON > pub-credentials.json
         env:
           PUBDEV_CREDENTIALSJSON: ${{ secrets.PUBDEV_CREDENTIALSJSON }}
 
@@ -139,7 +142,7 @@ jobs:
         run: dart pub publish --force
 
       - name: Clean up
-        run: rm ~/Library/Application\ Support/dart/pub-credentials.json
+        run: rm -r $DART_PATH
         # uses: sakebook/actions-flutter-pub-publisher@v1.4.1
         # with:
         #   package_directory: flutter
