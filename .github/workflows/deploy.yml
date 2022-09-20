@@ -128,11 +128,8 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1.3
 
-      # - name: Install dependencies
-      #   run: flutter pub get
-
       - name: Publish to pub.dev
-        run: dart pub publish --dry-run
+        run: dart pub publish --force
         # uses: sakebook/actions-flutter-pub-publisher@v1.4.1
         # with:
         #   package_directory: flutter
