@@ -128,8 +128,18 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1.3
 
+      - name: Authenticate
+        run: |
+          mkdir -p ~/Library/Application\ Support/dart
+          cat $PUBDEV_CREDENTIALSJSON > ~/Library/Application\ Support/dart/pub-credentials.json
+        env:
+          PUBDEV_CREDENTIALSJSON: ${{ secrets.PUBDEV_CREDENTIALSJSON }}
+
       - name: Publish to pub.dev
         run: dart pub publish --force
+
+      - name: Clean up
+        run: rm ~/Library/Application\ Support/dart/pub-credentials.json
         # uses: sakebook/actions-flutter-pub-publisher@v1.4.1
         # with:
         #   package_directory: flutter
