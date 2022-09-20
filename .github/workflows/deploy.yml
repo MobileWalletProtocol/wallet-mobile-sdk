@@ -92,22 +92,30 @@ jobs:
       #     OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
       #     SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
 
-  deploy_rn:
-    name: Deploy React Native SDK
-    needs: [deploy_ios, deploy_android]
-    runs-on: macOS-latest
-    defaults:
-      run:
-        working-directory: react-native
-    steps: 
-      - run: echo "$PWD"
+  # deploy_rn:
+  #   name: Deploy React Native SDK
+  #   needs: [deploy_ios, deploy_android]
+  #   runs-on: macOS-latest
+  #   defaults:
+  #     run:
+  #       working-directory: react-native
+  #   steps: 
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
   deploy_flutter:
     name: Deploy Flutter SDK
     needs: [deploy_ios, deploy_android]
     runs-on: macOS-latest
-    defaults:
-      run:
-        working-directory: flutter
     steps: 
-      - run: echo "$PWD"
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Dart Package Publisher
+        uses: k-paxian/dart-package-publisher@1.5
+        with:
+          relativePath: flutter
+          accessToken: ${{ secrets.PUBDEV_ACCESS_TOKEN }}
+          refreshToken: ${{ secrets.PUBDEV_REFRESH_TOKEN }}
+          dryRunOnly: true
+          force: true
