@@ -106,7 +106,7 @@ jobs:
   deploy_flutter:
     name: Deploy Flutter SDK
     needs: [deploy_ios, deploy_android]
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
     steps: 
       - name: Checkout
         uses: actions/checkout@v3
