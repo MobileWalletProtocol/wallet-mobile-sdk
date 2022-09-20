@@ -15,7 +15,7 @@ A new Flutter plugin project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'CoinbaseWalletSDK/CrossPlatform', '1.0.2'
+  s.dependency 'CoinbaseWalletSDK/CrossPlatform', '1.0.3'
   s.ios.deployment_target = '13.0'
   s.swift_version = '5.0'
 
