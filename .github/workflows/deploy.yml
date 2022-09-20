@@ -132,6 +132,7 @@ jobs:
 
       - name: Authenticate
         run: |
+          mkdir -p $PUB_CACHE
           cd $PUB_CACHE
           echo "$PUBDEV_CREDENTIALSJSON" > credentials.json
         env:
