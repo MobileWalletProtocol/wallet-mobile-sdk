@@ -140,13 +140,7 @@ jobs:
 
       - name: Publish to pub.dev
         run: dart pub publish --force
+        continue-on-error: true
 
       - name: Clean up
-        run: rm -r $DART_PATH
-        # uses: sakebook/actions-flutter-pub-publisher@v1.4.1
-        # with:
-        #   package_directory: flutter
-        #   flutter_package: true
-        #   credential: ${{ secrets.PUBDEV_CREDENTIALSJSON }}
-        #   dry_run: true
-
+        run: rm -r $PUB_CACHE
