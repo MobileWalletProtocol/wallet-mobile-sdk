@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "name": "wallet-mobile-sdk",
+  "workspaces": [
+    "sdk",
+    "example"
+  ]
+}
