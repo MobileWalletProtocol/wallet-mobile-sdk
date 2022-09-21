@@ -1,11 +1,11 @@
 PODS:
   - boost (1.76.0)
   - CocoaAsyncSocket (7.6.5)
-  - CoinbaseWalletSDK/Client (1.0.1)
-  - CoinbaseWalletSDK/CrossPlatform (1.0.1):
+  - CoinbaseWalletSDK/Client (1.0.3)
+  - CoinbaseWalletSDK/CrossPlatform (1.0.3):
     - CoinbaseWalletSDK/Client
-  - CoinbaseWalletSDKExpo (1.0.1):
-    - CoinbaseWalletSDK/CrossPlatform (= 1.0.1)
+  - CoinbaseWalletSDKExpo (1.0.3):
+    - CoinbaseWalletSDK/CrossPlatform (= 1.0.3)
     - ExpoModulesCore
   - DoubleConversion (1.1.6)
   - EXApplication (4.2.2):
@@ -584,8 +584,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  CoinbaseWalletSDK: d63f1dac677f17e0bc94a6587088dc8502f47de1
-  CoinbaseWalletSDKExpo: bcb9b82b8b8f747cc1230f3e416fdfbc16ec3ccd
+  CoinbaseWalletSDK: 304652e641f9fb265082ff3f3e8c4f45e695e947
+  CoinbaseWalletSDKExpo: 5986d13c0101d3f307d8096fc3e577ea3a717c22
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   EXApplication: e418d737a036e788510f2c4ad6c10a7d54d18586
   EXConstants: 7c44785d41d8e959d527d23d29444277a4d1ee73
@@ -644,6 +644,6 @@ SPEC CHECKSUMS:
   Yoga: 82c9e8f652789f67d98bed5aef9d6653f71b04a9
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 407ae3a63c9add0432a6be625d756507351c3961
+PODFILE CHECKSUM: d8bed48b61a64110d0cab8843c0893b25b1b479e
 
 COCOAPODS: 1.11.3
