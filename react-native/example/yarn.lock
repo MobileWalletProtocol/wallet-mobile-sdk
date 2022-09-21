@@ -1088,8 +1088,8 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@coinbase/wallet-mobile-sdk@file:..":
-  version "0.3.1"
+"@coinbase/wallet-mobile-sdk@file:../sdk":
+  version "1.0.3"
   dependencies:
     "@coinbase/wallet-sdk" "^3.5.1"
     "@metamask/safe-event-emitter" "2.0.0"
