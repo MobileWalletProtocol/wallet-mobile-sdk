@@ -43,9 +43,9 @@ jobs:
           
       - name: Update React Native version
         run: |
-          sed -i '' -E "s/(CoinbaseWalletSDK\/CrossPlatform',) '${{env.V_REGEX}}/\1 '${{env.NEW_VERSION}}/" react-native/ios/CoinbaseWalletSDKExpo.podspec
-          sed -i '' -E 's/(com.coinbase:coinbase-wallet-sdk):${{env.V_REGEX}}/\1:${{env.NEW_VERSION}}/' react-native/android/build.gradle
-          sed -i '' -E 's/(version":) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' react-native/package.json
+          sed -i '' -E "s/(CoinbaseWalletSDK\/CrossPlatform',) '${{env.V_REGEX}}/\1 '${{env.NEW_VERSION}}/" react-native/sdk/ios/CoinbaseWalletSDKExpo.podspec
+          sed -i '' -E 's/(com.coinbase:coinbase-wallet-sdk):${{env.V_REGEX}}/\1:${{env.NEW_VERSION}}/' react-native/sdk/android/build.gradle
+          sed -i '' -E 's/(version":) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' react-native/sdk/package.json
 
       - name: Update Flutter version
         run: |
@@ -80,9 +80,9 @@ jobs:
             ios/example/Podfile.lock
             android/walletsdk/build.gradle
             android/scripts/publish-root.gradle
-            react-native/ios/CoinbaseWalletSDKExpo.podspec
-            react-native/android/build.gradle
-            react-native/package.json
+            react-native/sdk/ios/CoinbaseWalletSDKExpo.podspec
+            react-native/sdk/android/build.gradle
+            react-native/sdk/package.json
             flutter/ios/coinbase_wallet_sdk.podspec
             flutter/android/build.gradle
             flutter/pubspec.yaml

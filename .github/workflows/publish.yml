@@ -95,7 +95,7 @@ jobs:
     runs-on: macOS-latest
     defaults:
       run:
-        working-directory: react-native
+        working-directory: react-native/sdk
     steps: 
       - name: Checkout
         uses: actions/checkout@v3
