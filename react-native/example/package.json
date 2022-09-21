@@ -10,7 +10,6 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@coinbase/wallet-mobile-sdk": "file:..",
     "expo": "^46.0.0",
     "react": "18.1.0",
     "react-native": "0.70.0",
