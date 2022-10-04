@@ -38,6 +38,14 @@ Add Coinbase Wallet SDK to your `pom.xml` file.
 
 ### Setup
 
+In order for your app to interact with Coinbase Wallet, you must add a [queries element](https://developer.android.com/guide/topics/manifest/queries-element) to your `AndroidManifest.xml` file, specifying the package name for Coinbase Wallet, `org.toshi`.
+
+```xml
+    <queries>
+        <package android:name="org.toshi" />
+    </queries>
+```
+
 Before the SDK can be used, it needs to be configured with an App Link to your application. This callback URL will be used by the Coinbase Wallet application to navigate back to your application.
 
 ```kotlin
@@ -67,13 +75,15 @@ A connection to Coinbase Wallet can be initiated by calling the `initiateHandsha
 val requestAccount = Web3JsonRPC.RequestAccounts().action()
 val handShakeActions = listOf(requestAccount)
 
-client.initiateHandshake(initialActions = handShakeActions) { result: Result<List<ReturnValue>> ->
-   result.onSuccess { returnValues: List<ReturnValue> ->
-       returnValues.handleSuccess("Handshake", handShakeActions)
-   }
-   result.onFailure { err ->
-       err.handleError("HandShake")
-   }
+client.initiateHandshake(
+   initialActions = handShakeActions
+) { result: Result<List<ActionResult>>, account: Account? ->
+    result.onSuccess { actionResults: List<ActionResult> ->
+        actionResults.handleSuccess("Handshake", handShakeActions, account)
+    }
+    result.onFailure { err ->
+        err.handleError("HandShake")
+    }
 }
 ```
 
