@@ -20,6 +20,9 @@ jobs:
           distribution: temurin
           java-version: 11
 
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
       # Run Android unit tests
       - name: Run unit testing
         run: |
