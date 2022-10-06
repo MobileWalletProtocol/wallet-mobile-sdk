@@ -38,9 +38,8 @@ jobs:
       
       - name: Update Android version
         run: |
-          sed -i '' -E 's/(versionName) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' android/walletsdk/build.gradle
-          sed -i '' -E 's/(versionName =) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' android/scripts/publish-root.gradle
-          
+          sed -i '' -E 's/(sdk-version =) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' android/gradle/libs.versions.toml
+
       - name: Update React Native version
         run: |
           sed -i '' -E "s/(CoinbaseWalletSDK\/CrossPlatform',) '${{env.V_REGEX}}/\1 '${{env.NEW_VERSION}}/" react-native/ios/CoinbaseWalletSDKExpo.podspec
@@ -78,8 +77,7 @@ jobs:
             CoinbaseWalletSDK.podspec
             ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
             ios/example/Podfile.lock
-            android/walletsdk/build.gradle
-            android/scripts/publish-root.gradle
+            android/gradle/libs.version.toml
             react-native/ios/CoinbaseWalletSDKExpo.podspec
             react-native/android/build.gradle
             react-native/package.json
