@@ -23,5 +23,4 @@ jobs:
       # Run Android unit tests
       - name: Run unit testing
         run: |
-          cd shoppingList/
           ./gradlew :walletsdk:testDebugUnitTest
