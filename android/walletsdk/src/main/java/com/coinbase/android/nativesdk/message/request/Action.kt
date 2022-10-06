@@ -20,4 +20,21 @@ class Action {
         this.paramsJson = paramsJson
         this.optional = optional
     }
+
+    override fun equals(other: Any?): Boolean {
+        return if (other !is Action) {
+            false
+        } else {
+            // Compare the data members and return accordingly
+            this.method == other.method && this.paramsJson == other.paramsJson &&
+                    this.optional == other.optional
+        }
+    }
+
+    override fun hashCode(): Int {
+        var result = method.hashCode()
+        result = 31 * result + paramsJson.hashCode()
+        result = 31 * result + optional.hashCode()
+        return result
+    }
 }
