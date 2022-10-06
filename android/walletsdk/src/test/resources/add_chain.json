@@ -1,0 +1,9 @@
+{
+  "#wsegue_type": "wallet_addEthereumChain",
+  "chainId": "137",
+  "blockExplorerUrls": null,
+  "chainName": null,
+  "iconUrls": null,
+  "nativeCurrency": null,
+  "rpcUrls": []
+}

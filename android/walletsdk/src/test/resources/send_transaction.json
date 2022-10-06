@@ -1,0 +1,13 @@
+{
+  "#wsegue_type": "eth_sendTransaction",
+  "fromAddress": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+  "toAddress": "0x571a6a108adb08f9ca54fe8605280f9ee0ed4af6",
+  "weiValue": "10000000000000",
+  "data": "0x",
+  "nonce": null,
+  "gasPriceInWei": null,
+  "maxFeePerGas": null,
+  "maxPriorityFeePerGas": null,
+  "gasLimit": "1000",
+  "chainId": "1"
+}

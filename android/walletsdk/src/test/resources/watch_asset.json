@@ -1,0 +1,10 @@
+{
+  "#wsegue_type": "wallet_watchAsset",
+  "type": "type",
+  "options": {
+    "address": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+    "symbol": "APE",
+    "decimals": 3,
+    "image": "image_site"
+  }
+}
