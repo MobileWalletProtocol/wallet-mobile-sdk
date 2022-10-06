@@ -1,6 +1,6 @@
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.21'
     id 'maven-publish'
     id 'signing'
@@ -14,7 +14,7 @@ android {
         targetSdk 32
 
         versionCode 3
-        versionName "1.0.3"
+        versionName libs.versions.sdk.version.get()
 
         buildConfigField "int", "LIBRARY_VERSION_CODE", "${versionCode}"
         buildConfigField "String", "LIBRARY_VERSION_NAME", "\"${versionName}\""
@@ -43,17 +43,23 @@ android {
             withJavadocJar()
         }
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'io.kotest:kotest-assertions-core:5.5.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation libs.kotlin.serialization
+    implementation libs.security.crypto
+    implementation libs.security.tink
 
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3"
-    implementation 'androidx.security:security-crypto:1.0.0'
-    implementation 'com.google.crypto.tink:tink-android:1.6.1'
+    testImplementation libs.junit4
+    testImplementation libs.kotest
+    androidTestImplementation libs.androidx.junit4
+    androidTestImplementation libs.espresso
 }
 
 afterEvaluate {
