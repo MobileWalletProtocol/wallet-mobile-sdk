@@ -4,7 +4,7 @@ use_frameworks!
 
 target 'SampleClient' do
   project 'SampleClient'
-  pod 'CoinbaseWalletSDK', path: '../../'
+  pod 'CoinbaseWalletSDK', path: '../../', :testspecs => ['Test']
 end
 
 target 'SampleWallet' do
