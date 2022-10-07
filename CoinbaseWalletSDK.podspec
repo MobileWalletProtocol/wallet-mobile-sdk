@@ -33,6 +33,7 @@ Pod::Spec.new do |s|
   end
   
   s.test_spec 'Test' do |ts|
+    ts.ios.deployment_target = '13.0'
     ts.source_files = "#{SDK_PATH}/Test/**/*.swift"
   end
   
