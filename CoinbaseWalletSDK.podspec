@@ -1,3 +1,5 @@
+SDK_PATH = 'ios/CoinbaseWalletSDK'
+  
 Pod::Spec.new do |s|
   s.name                  = 'CoinbaseWalletSDK'
   s.version               = '1.0.3'
@@ -11,13 +13,16 @@ Pod::Spec.new do |s|
   s.swift_version         = '5.0'
   
   s.subspec 'Client' do |ss|
-    ss.source_files = 'ios/CoinbaseWalletSDK/**/*.swift'
-    ss.exclude_files = 'ios/CoinbaseWalletSDK/Host/**/*.swift'
+    ss.source_files = "#{SDK_PATH}/**/*.swift"
+    ss.exclude_files = [
+      "#{SDK_PATH}/Host/**/*.swift",
+      "#{SDK_PATH}/Test/**/*.swift"
+    ]
   end
   
   s.subspec 'Host' do |ss|
     ss.dependency 'CoinbaseWalletSDK/Client'
-    ss.source_files = 'ios/CoinbaseWalletSDK/Host/**/*.swift'
+    ss.source_files = "#{SDK_PATH}/Host/**/*.swift"
   end
   
   s.subspec 'CrossPlatform' do |ss|
@@ -25,6 +30,11 @@ Pod::Spec.new do |s|
     ss.pod_target_xcconfig = {
       'OTHER_SWIFT_FLAGS' => '-DCROSS_PLATFORM'
     }
+  end
+  
+  s.test_spec 'Test' do |ts|
+    ts.ios.deployment_target = '13.0'
+    ts.source_files = "#{SDK_PATH}/Test/**/*.swift"
   end
   
   s.default_subspec = 'Client'
