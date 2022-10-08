@@ -7,7 +7,7 @@ on:
 
 jobs:
   android:
-    name: Android test
+    name: Android
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,7 +30,7 @@ jobs:
           ./gradlew :walletsdk:testDebugUnitTest
 
   ios:
-    name: iOS test
+    name: iOS
     runs-on: macOS-latest
     steps:
       - name: Checkout
