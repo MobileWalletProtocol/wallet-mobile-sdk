@@ -42,5 +42,5 @@ jobs:
           ruby-version: '2.7.5'
           bundler-cache: true
 
-      - name: Run test
-        run: bundle exec pod lib lint
+      - name: Run unit test
+        run: bundle exec pod lib lint --verbose
