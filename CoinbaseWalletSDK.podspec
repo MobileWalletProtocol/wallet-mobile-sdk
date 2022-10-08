@@ -1,5 +1,3 @@
-SDK_PATH = 'ios/CoinbaseWalletSDK'
-  
 Pod::Spec.new do |s|
   s.name                  = 'CoinbaseWalletSDK'
   s.version               = '1.0.3'
@@ -11,6 +9,8 @@ Pod::Spec.new do |s|
   s.license               = { :type => 'Apache', :file => 'LICENSE' }
   s.ios.deployment_target = '12.0'
   s.swift_version         = '5.0'
+  
+  SDK_PATH = 'ios/CoinbaseWalletSDK'
   
   s.subspec 'Client' do |ss|
     ss.source_files = "#{SDK_PATH}/**/*.swift"
