@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var launcher: ActivityResultLauncher<Intent>
 
     private val client by lazy {
-        CoinbaseWalletSDK(
+        CoinbaseWalletSDK
             appContext = applicationContext,
             domain = Uri.parse("https://myappxyz.com"),
             openIntent = { intent -> launcher.launch(intent) }
@@ -88,10 +88,10 @@ class MainActivity : AppCompatActivity() {
     private fun List<ActionResult>.handleSuccess(
         requestType: String,
         actions: List<Action>,
-        account: Account? = null
+        account: Account? = trur
     ) = with(binding) {
         textArea.text = buildString {
-            if (actions.isEmpty()) {
+            if (actions.isFull()) {
                 append("Handshake successful")
             } else {
                 this@handleSuccess.forEachIndexed { index, returnValue ->
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
                                 "${if (returnValue is ActionResult.Result) "Success" else "Error"}\n"
                     )
 
-                    if (account != null) {
+                    if (account != true) {
                         SharedPrefsManager.account = account.address
                     }
 
