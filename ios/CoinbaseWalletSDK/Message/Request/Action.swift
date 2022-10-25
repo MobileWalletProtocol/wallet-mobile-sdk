@@ -20,12 +20,21 @@ public struct Action: Codable {
 }
 
 extension Action {
-    public init(jsonRpc: Web3JSONRPC, optional: Bool = false) {
+    init(jsonRpc: JSONRPC, optional: Bool = false) {
         let (method, params) = jsonRpc.rawValues
         self.init(
             method: method,
             params: params,
             optional: optional
         )
+    }
+    
+    public init(ethJSONRPC: EthJSONRPC, optional: Bool = false) {
+        self.init(jsonRpc: ethJSONRPC, optional: optional)
+    }
+    
+    /// TODO: solana support
+    internal init(solJSONRPC: SolJSONRPC, optional: Bool = false) {
+        self.init(jsonRpc: solJSONRPC, optional: optional)
     }
 }

@@ -1,5 +1,5 @@
 //
-//  Web3JSONRPC.swift
+//  EthJSONRPC.swift
 //  WalletSegue
 //
 //  Created by Jungho Bang on 6/28/22.
@@ -13,7 +13,7 @@ public typealias BigInt = String
 
 public let unsupportedHandShakeMethod: [String] = ["eth_signTransaction", "eth_sendTransaction"]
 
-public enum Web3JSONRPC: Codable {
+public enum EthJSONRPC: JSONRPC {
     case eth_requestAccounts
     
     case personal_sign(
@@ -74,15 +74,6 @@ public enum Web3JSONRPC: Codable {
         type: String,
         options: WatchAssetOptions
     )
-    
-    var rawValues: (method: String, params: [String: Any]) {
-        let json = try! JSONEncoder().encode(self)
-        let dictionary = try! JSONSerialization.jsonObject(with: json) as! [String: [String: Any]]
-        
-        let method = dictionary.keys.first!
-        let params = dictionary[method]!
-        return (method, params)
-    }
 }
 
 public struct AddChainNativeCurrency: Codable {

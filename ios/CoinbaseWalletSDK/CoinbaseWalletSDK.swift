@@ -80,7 +80,7 @@ public final class CoinbaseWalletSDK {
     ///   - initialActions: Batch of actions that you'd want to execute after successful handshake. `eth_requestAccounts` by default.
     ///   - onResponse: Response callback with regular response result and optional parsed `Account` object.
     public func initiateHandshake(
-        initialActions: [Action]? = [Action(jsonRpc: .eth_requestAccounts)],
+        initialActions: [Action]? = [Action(ethJSONRPC: .eth_requestAccounts)],
         onResponse: @escaping (ResponseResult, Account?) -> Void
     ) {
         let hasUnsupportedAction = initialActions?.contains(where: {

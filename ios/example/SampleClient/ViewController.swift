@@ -63,7 +63,7 @@ class ViewController: UITableViewController {
     @IBAction func initiateHandshake() {
         cbwallet.initiateHandshake(
             initialActions: [
-                Action(jsonRpc: .eth_requestAccounts)
+                Action(ethJSONRPC: .eth_requestAccounts)
             ]
         ) { result, account in
             switch result {
@@ -98,8 +98,8 @@ class ViewController: UITableViewController {
         
         cbwallet.makeRequest(
             Request(actions: [
-                Action(jsonRpc: .personal_sign(address: address, message: "message")),
-                Action(jsonRpc: .eth_signTypedData_v3(
+                Action(ethJSONRPC: .personal_sign(address: address, message: "message")),
+                Action(ethJSONRPC: .eth_signTypedData_v3(
                     address: address,
                     typedDataJson: JSONString(encode: typedData)!
                 ))
