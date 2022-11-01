@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Mobile Wallet Protocol (MWP)
+# Protocol Specification
 
 MWP is a protocol to allow mobile web3 apps to interact with wallet apps and access users' web3 accounts. 
 - Secure: It provides an encrypted P2P communication channel between client and server (wallet host) to exchange discrete stateless messages.

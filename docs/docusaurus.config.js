@@ -58,9 +58,15 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'intro',
+            docId: 'spec/overview',
             position: 'left',
-            label: 'Tutorial',
+            label: 'Spec',
+          },
+          {
+            type: 'doc',
+            docId: 'client-sdk/mobile-sdk-overview',
+            position: 'left',
+            label: 'Client SDK',
           },
           {
             href: 'https://github.com/coinbase/wallet-mobile-sdk',
