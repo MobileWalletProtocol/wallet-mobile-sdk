@@ -8,9 +8,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'Mobile Wallet Protocol',
   tagline: 'Mobile Wallet Protocol',
-  url: 'https://coinbase.github.io/wallet-mobile-sdk',
+  url: 'https://coinbase.github.io',
   baseUrl: '/wallet-mobile-sdk/',
-  deploymentBranch: 'doc',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
