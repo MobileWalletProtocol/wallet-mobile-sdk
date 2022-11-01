@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 # Mobile Wallet Protocol (MWP)
 
 MWP is a protocol to allow mobile web3 apps to interact with wallet apps and access users' web3 accounts. 
@@ -75,7 +79,7 @@ Deep linking through universal links on iOS and app links on Android.
   "uuid": "3E445386-8CB3-4995-99EC-DCF06A60081C"
 }
 ```
-- decrypted JSON (to pass via RN <> native bridge)
+- decrypted JSON (to pass via RN - native bridge)
 ```json
 {
   "version": "1.2.3",
@@ -106,7 +110,7 @@ Deep linking through universal links on iOS and app links on Android.
 ```
 
 #### response
-- plain response JSON (to pass via RN <> native bridge)
+- plain response JSON (to pass via RN - native bridge)
 ```json
 {
   "version": "7.13.1",
@@ -188,8 +192,8 @@ Deep linking through universal links on iOS and app links on Android.
 ## Authentication
 
 - Decentralized verification of participating apps’ authenticity using [.well-known](https://en.wikipedia.org/wiki/Well-known_URI) data without centralized registry
-<!-- - apple-app-site-association 
-- [assetlinks.json](https://developer.android.com/training/app-links/verify-site-associations ) -->
+- apple-app-site-association 
+- [assetlinks.json](https://developer.android.com/training/app-links/verify-site-associations )
 - 3rd party client apps make requests to the wallet through universal links, whose authenticity is verified by the OS.
 - Wallet sends responses through universal links as well.
 - Application ID passed by caller should match the information on their domain.
