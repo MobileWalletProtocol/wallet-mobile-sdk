@@ -1,30 +1,30 @@
-# Coinbase Wallet Mobile SDK
+# Mobile Wallet Protocol
 
-[![Cocoapods](https://img.shields.io/cocoapods/v/CoinbaseWalletSDK)](https://cocoapods.org/pods/CoinbaseWalletSDK)
-[![Maven](https://img.shields.io/maven-central/v/com.coinbase/coinbase-wallet-sdk?label=maven)](https://mavenlibs.com/maven/dependency/com.coinbase/coinbase-wallet-sdk)
-[![npm](https://img.shields.io/npm/v/@coinbase/wallet-mobile-sdk)](https://www.npmjs.com/package/@coinbase/wallet-mobile-sdk)
-[![pub.dev](https://img.shields.io/pub/v/coinbase_wallet_sdk)](https://pub.dev/packages/coinbase_wallet_sdk)
+An open protocol for mobile web3 apps to interact with wallets.
+- Inter-app messaging contained within user’s device without requiring a bridge server
+- Secure communication channel between wallet and client app
+- Decentralized verification of participating apps’ authenticity without centralized registry
 
-Coinbase Wallet Mobile SDK is an open source SDK which allows you to connect your native mobile applications to millions of Coinbase Wallet users.
+## Background
 
-## Getting Started
+![](https://images.ctfassets.net/c5bd0wqjc7v0/2L8Padm8D0FqNrgkE7lUDh/7460be599006828b8f803e8d4d4ee424/image4.png)
 
-The SDK is available for the following platforms:
+- To use mobile wallets with dapps, communication solutions like WalletLink or WalletConnect have been used, which require bridge servers to pass on dapp’s requests and user’s responses. 
+- These protocols were originally designed to deliver messages between entities located on different devices (desktop browser and user’s mobile).
+- For mobile use cases, where both app and wallet are within a single device, repurposing the existing solutions would be inefficient and moreover introduce reliability issues as they rely on a connection to an external server via web sockets.
 
-- [iOS](https://github.com/coinbase/wallet-mobile-sdk/tree/master/ios)
-- [Android](https://github.com/coinbase/wallet-mobile-sdk/tree/master/android)
+## Network layer
 
-Wrapper libraries and modules are also available for the following platforms:
+Deep linking through universal links on iOS and app links on Android.
+(Intent on android.)
 
-- [React Native](https://github.com/coinbase/wallet-mobile-sdk/tree/master/react-native)
-- [Flutter](https://github.com/coinbase/wallet-mobile-sdk/tree/master/flutter)
+## Request-Response model
 
-For **Install** and **Usage** instructions of each platform, visit the links above or our [developer documentation](https://docs.cloud.coinbase.com/wallet-sdk/docs/mobile-sdk-overview).
+## Message format
 
-## References
-- Coinbase Wallet [Developer Documentation](https://docs.cloud.coinbase.com/wallet-sdk/docs)
-- Questions? Visit our [Developer Forums](https://forums.coinbasecloud.dev/).
-- For bugs, please report an issue on Github.
+## Encryption
+
+## Authentication
 
 ## License
 
