@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkmobile_wallet_protocol=self.webpackChunkmobile_wallet_protocol||[]).push([[5991],{7381:l=>{l.exports=JSON.parse('{"permalink":"/wallet-mobile-sdk/blog/tags/hello","page":1,"postsPerPage":10,"totalPages":1,"totalCount":2,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
