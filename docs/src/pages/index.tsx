@@ -17,8 +17,8 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/client-sdk/mobile-sdk-overview">
-            Client SDK
+            to="/docs/spec/overview">
+            Protocol Specification
           </Link>
         </div>
       </div>
