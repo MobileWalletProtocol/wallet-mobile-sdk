@@ -36,11 +36,14 @@
   },
   "devDependencies": {
     "expo-module-scripts": "^2.1.1",
-    "expo-modules-core": "^0.11.4"
+    "expo-modules-core": "^0.11.8"
   },
   "peerDependencies": {
     "expo": "*",
     "react": "*",
     "react-native": "*"
+  },
+  "resolutions": {
+    "@xmldom/xmldom": "^0.7.7"
   }
 }
