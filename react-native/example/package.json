@@ -11,10 +11,10 @@
   },
   "dependencies": {
     "@coinbase/wallet-mobile-sdk": "file:..",
-    "expo": "^46.0.0",
-    "react": "18.1.0",
-    "react-native": "0.70.0",
-    "react-native-mmkv": "2.4.3"
+    "expo": "^46.0.16",
+    "react": "^18.2.0",
+    "react-native": "^0.70.4",
+    "react-native-mmkv": "^2.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -28,5 +28,8 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "resolutions": {
+    "@xmldom/xmldom": "^0.7.7"
   }
 }
