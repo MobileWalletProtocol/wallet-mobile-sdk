@@ -26,7 +26,13 @@ const sidebars = {
         'spec/messages-example'
       ]
     },
-    "spec/batch",
+    'spec/batch',
+    'spec/authentication',
+    'spec/background',
+    'spec/chain-agnostic',
+    'spec/encryption',
+    'spec/handshake',
+    'spec/network',
   ],
   clientSdk: [
     "client-sdk/mobile-sdk-overview",
