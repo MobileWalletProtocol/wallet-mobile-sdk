@@ -38,7 +38,7 @@ Unique id of the message
 Public key of the sender in base64 encoded string
 
 ### `content`
-Message's content which might be encrypted by the sender using the derived shared secret
+[Message's content](#contents) which might be encrypted by the sender using the derived shared secret
 
 ### `timestamp`
 UNIX millisecond timestamp
@@ -50,5 +50,7 @@ Version of the protocol used by the sender
 (Optional) sender's callback URL
 
 
-## Content
+## Contents
 
+Each `Message` contains its content under `content` property. 
+The content data are encrypted using the shared secret between the sender and receiver so that it can be read only by the peers, except handshake calls to exchange keys and some failure responses happening during the handshake processes.
