@@ -27,11 +27,10 @@ const sidebars = {
       ]
     },
     'spec/batch',
-    'spec/authentication',
-    'spec/background',
-    'spec/chain-agnostic',
-    'spec/encryption',
     'spec/handshake',
+    'spec/encryption',
+    'spec/authentication',
+    'spec/chain-agnostic',
     'spec/network',
   ],
   clientSdk: [
