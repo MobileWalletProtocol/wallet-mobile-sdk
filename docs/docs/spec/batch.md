@@ -1,12 +1,17 @@
-# Batched request
+# Batch requests
 
-- allow client apps to make multiple requests at once 
-- to improve UX by minimizing app switching
-- Currently, CB wallet opens pop-ups sequentially to get user’s approval until the user signs all the actions requests or denies to sign any required action
+To improve UX by minimizing app switches, 
+MWP allows client apps to make requests with multiple actions at once. 
+Wallets should return results in a single response message as well.
+Client can specify whether each action is required or optional to customize the flow.
 
 ## Action
-- Request can have multiple actions
-- Each action defines a single json rpc call with parameters
+- A `Request` message has an array of `Action`s
+- Each `Action` defines a single JSON RPC call with corresponding parameters in JSON format
+- `optional` boolean property to tell the host wallet to cancel the request if it fails to process non-optional action.
 
 ## ActionResult
-- Response has multiple ActionResult 
+- A `Response` message has array of `ActionResult`s
+- `ActionResult` can be either
+    - success: JSON string
+    - failure: error code and message
