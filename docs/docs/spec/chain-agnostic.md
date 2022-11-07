@@ -1,4 +1,8 @@
 # Multi-chain support
+
+MWP is chain-agnostic. 
+As long as the wallet supports the chain and is able to process the requested actions, apps can communicate using MWP.
+
 - Follow [CAIP-10](https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-10.md) standard, to identify an account in any blockchain specified by CAIP-2 blockchain id
 - The account id specification will be prefixed with the CAIP-2 blockchain ID and delimited with a colon sign (:)
 - Syntax
