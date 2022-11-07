@@ -10,11 +10,10 @@ import XCTest
 
 class ExampleTest: XCTestCase {
 
-    func testCoinbaseWalletSDKConfigure() {
-        XCTAssertFalse(CoinbaseWalletSDK.isConfigured)
-        
-        CoinbaseWalletSDK.configure(callback: URL(string: "myappxyz://mycallback")!)
-        XCTAssertTrue(CoinbaseWalletSDK.isConfigured)
+    func testCoinbaseWalletSDKConfigureNotCalled() {
+        CoinbaseWalletSDK.configure(callback: URL(string: "https://test.com")!)
+        let client = CoinbaseWalletSDK.getInstance(hostWallet: Wallet.coinbaseWallet)
+        XCTAssertFalse(client?.isConnected() ?? false)
     }
 
 }
