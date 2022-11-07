@@ -1,11 +1,4 @@
-# Message format
-
-- JSON -> JSON with encrypted ‘content’ -> Base64 encoded -> deep link URL
-- Base64 encoded string of JSON object
-- Content of message prop is encrypted using the access token so that only the wallet can read
-- Allow client to make batched requests
-
-## Example
+# Example
 
 ### handshake
 - URL
