@@ -23,7 +23,7 @@ Array of `value`s. More details on [batch requests](batch).
 
 ### Example
 
-TODO
+coming soon
 
 
 ## `failure`
