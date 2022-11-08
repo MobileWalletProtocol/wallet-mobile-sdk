@@ -2,7 +2,7 @@
 
 Communications between client and server (wallet host) in MWP are through exchanging discrete stateless messages.
 
-The messages sent by the client app are called `request`s and the ones returned by the wallet host are called `response`s.
+The messages sent by the client app are called requests and the ones returned by the wallet host are called responses.
 
 ## Forms
 
