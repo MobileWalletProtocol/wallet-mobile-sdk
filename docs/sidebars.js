@@ -27,9 +27,9 @@ const sidebars = {
       ]
     },
     'spec/batch',
-    'spec/handshake',
     'spec/encryption',
-    'spec/authentication',
+    'spec/handshake',
+    'spec/verification',
     'spec/chain-agnostic',
     'spec/network',
   ],
