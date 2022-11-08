@@ -1,8 +1,8 @@
 # Handshake
 
-Client apps make `handshake` calls to ask wallets to generate and share a key to encrypt subsequent messages on the session.
+For key exchange, client apps make `handshake` calls to ask wallets to generate and share a key to encrypt subsequent messages on the session.
 
-## Handshake initiation message from client
+## Handshake request message from client
 
 `content` of a handshake message contains following:
 
@@ -44,7 +44,7 @@ e.g. `eth_requestAccounts` to get user's eth account info along with the handsha
 
 ## Response from wallet
 
-Once the host wallet [verifies the client app](/docs/spec/verification) and gets approval from the user,
+Once the host wallet [verifies the client app](verification) and gets approval from the user,
 it generates a key pair for the session and shares it with the caller.
 
 ### Example response message (success)
@@ -58,7 +58,7 @@ it generates a key pair for the session and shares it with the caller.
       "values": [
         {
           "result": {
-            "value": "{\"chain\":\"eth\",\"networkId\":0,\"address\":\"0x571a6a108adb08f9ca54fe8605280F9EE0eD4AF6\"}"
+            "value": "{\"chain\":\"eth\",\"networkId\":1,\"address\":\"0x571a6a108adb08f9ca54fe8605280F9EE0eD4AF6\"}"
           }
         }
       ]

@@ -15,17 +15,18 @@
 const sidebars = {
   spec: [
     'spec-overview',
-    {
-      type: 'category',
-      label: 'Messages',
-      link: {
-        type: 'doc',
-        id: 'spec/messages',
-      },
-      items: [
-        'spec/messages-example'
-      ]
-    },
+    'spec/messages',
+    // {
+    //   type: 'category',
+    //   label: 'Messages',
+    //   link: {
+    //     type: 'doc',
+    //     id: 'spec/messages',
+    //   },
+    //   items: [
+    //     'spec/messages-example'
+    //   ]
+    // },
     'spec/batch',
     'spec/encryption',
     'spec/handshake',
