@@ -1,6 +1,6 @@
 # Encryption
 
-MWP uses deep links, which isn't inherently secure channel, for direct communication between peers.
+MWP uses deep links for direct communication between peers.
 
 To ensure security, all messages in MWP after secure key exchange process are end-to-end encrypted.
 
