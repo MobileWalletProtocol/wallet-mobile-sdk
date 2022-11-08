@@ -15,23 +15,23 @@
 const sidebars = {
   spec: [
     'spec-overview',
-    'spec/messages',
-    // {
-    //   type: 'category',
-    //   label: 'Messages',
-    //   link: {
-    //     type: 'doc',
-    //     id: 'spec/messages',
-    //   },
-    //   items: [
-    //     'spec/messages-example'
-    //   ]
-    // },
+    {
+      type: 'category',
+      label: 'Messages',
+      link: {
+        type: 'doc',
+        id: 'spec/messages',
+      },
+      items: [
+        'spec/messages-request',
+        'spec/messages-response'
+      ]
+    },
     'spec/batch',
     'spec/encryption',
     'spec/handshake',
     'spec/verification',
-    'spec/chain-agnostic',
+    'spec/multi-chain',
     'spec/network',
   ],
   clientSdk: [

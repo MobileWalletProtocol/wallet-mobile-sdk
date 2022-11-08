@@ -42,8 +42,13 @@ Client can specify whether each action is required or optional to customize the 
 }
 ```
 
-## `Response` has `actionResult`s
-- A `response` message contains array of `actionResult`s
-- `actionResult` can be either
-    - success: JSON string
-    - failure: error code and message
+## `Response` has `value`s
+
+- A `response` message contains array of `value`s
+- `value` can be either
+    - `result`: JSON string
+    - `error`: error code and message
+
+### Example
+
+TODO
