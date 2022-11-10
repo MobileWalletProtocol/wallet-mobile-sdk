@@ -1,4 +1,4 @@
-package com.coinbase.android.beta;
+package com.coinbase.android.beta.ui;
 
 import static com.coinbase.android.nativesdk.CoinbaseWalletSDKKt.CBW_PACKAGE_NAME;
 
@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.coinbase.android.beta.R;
 import com.coinbase.android.nativesdk.CoinbaseWalletSDK;
 import com.coinbase.android.nativesdk.message.request.Action;
 import com.coinbase.android.nativesdk.message.request.Web3JsonRPC;
@@ -28,9 +29,8 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         client = new CoinbaseWalletSDK(
-                Uri.parse("https://myappxyz.com"),
-                getApplicationContext(),
                 CBW_PACKAGE_NAME,
+                "",
                 intent -> {
                     startActivityForResult(intent, CBW_ACTIVITY_RESULT_CODE);
                 }

@@ -6,12 +6,11 @@ import com.coinbase.android.nativesdk.message.response.ResponseContent
 import com.coinbase.android.nativesdk.message.response.ResponseHandler
 import com.coinbase.android.nativesdk.message.response.ResponseMessage
 import com.coinbase.android.nativesdk.message.response.ResponseResult
-import java.util.Date
 
-internal class TaskManager {
+internal class TaskManager : ITaskManager {
     private val tasks = HashMap<String, Task>()
 
-    fun registerResponseHandler(message: RequestMessage, handler: ResponseHandler) {
+    override fun registerResponseHandler(message: RequestMessage, handler: ResponseHandler) {
         tasks[message.uuid] = Task(
             request = message,
             handler = handler,
@@ -19,7 +18,7 @@ internal class TaskManager {
         )
     }
 
-    fun handleResponse(message: ResponseMessage): Boolean {
+    override fun handleResponse(message: ResponseMessage): Boolean {
         val requestId: String
         val result: ResponseResult = when (val response = message.content) {
             is ResponseContent.Response -> {
@@ -39,7 +38,13 @@ internal class TaskManager {
         return true
     }
 
-    fun reset(){
+    override fun reset() {
         tasks.clear()
     }
+}
+
+interface ITaskManager {
+    fun registerResponseHandler(message: RequestMessage, handler: ResponseHandler)
+    fun handleResponse(message: ResponseMessage): Boolean
+    fun reset()
 }

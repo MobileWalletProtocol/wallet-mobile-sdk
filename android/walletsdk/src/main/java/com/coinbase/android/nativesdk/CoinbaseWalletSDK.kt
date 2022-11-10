@@ -1,8 +1,9 @@
 package com.coinbase.android.nativesdk
 
-import android.content.Context
+import android.app.Application
 import android.content.Intent
 import android.net.Uri
+import com.coinbase.android.nativesdk.key.IKeyManager
 import com.coinbase.android.nativesdk.key.KeyManager
 import com.coinbase.android.nativesdk.message.JSON
 import com.coinbase.android.nativesdk.message.MessageConverter
@@ -12,12 +13,13 @@ import com.coinbase.android.nativesdk.message.request.ETH_REQUEST_ACCOUNTS
 import com.coinbase.android.nativesdk.message.request.RequestContent
 import com.coinbase.android.nativesdk.message.request.RequestMessage
 import com.coinbase.android.nativesdk.message.request.nonHandshakeActions
+import com.coinbase.android.nativesdk.message.response.ActionResult
 import com.coinbase.android.nativesdk.message.response.FailureResponseCallback
 import com.coinbase.android.nativesdk.message.response.ResponseHandler
 import com.coinbase.android.nativesdk.message.response.ResponseResult
-import com.coinbase.android.nativesdk.message.response.ActionResult
 import com.coinbase.android.nativesdk.message.response.SuccessHandshakeResponseCallback
 import com.coinbase.android.nativesdk.message.response.SuccessRequestResponseCallback
+import com.coinbase.android.nativesdk.task.ITaskManager
 import com.coinbase.android.nativesdk.task.TaskManager
 import kotlinx.serialization.decodeFromString
 import java.security.interfaces.ECPublicKey
@@ -25,45 +27,36 @@ import java.util.Date
 import java.util.UUID
 
 const val CBW_PACKAGE_NAME = "org.toshi"
-private const val CBW_SCHEME = "cbwallet://wsegue"
 
-class CoinbaseWalletSDK(
-    domain: Uri,
-    private val appContext: Context,
-    private val hostPackageName: String = CBW_PACKAGE_NAME,
+class CoinbaseWalletSDK internal constructor(
+    private val hostPackageName: String,
+    private val scheme: String,
+    private val keyManager: IKeyManager,
+    private val taskManager: ITaskManager,
     private val openIntent: (Intent) -> Unit
 ) {
-    private val domain: Uri
+
     private var sdkVersion = BuildConfig.LIBRARY_VERSION_NAME
-    private val keyManager by lazy { KeyManager(appContext, hostPackageName) }
-    private val taskManager by lazy { TaskManager() }
 
     private val launchWalletIntent: Intent?
-        get() = appContext.packageManager.getLaunchIntentForPackage(hostPackageName)
+        get() = context.packageManager.getLaunchIntentForPackage(hostPackageName)
 
-    val isCoinbaseWalletInstalled get() = launchWalletIntent != null
     val isConnected: Boolean get() = keyManager.peerPublicKey != null
 
     init {
-        this.domain = if (domain.pathSegments.size < 2) {
-            domain.buildUpon()
-                .appendPath("wsegue")
-                .build()
-        } else {
-            domain
-        }
+        instances[scheme] = this
     }
 
     constructor(
-        domain: Uri,
-        appContext: Context,
         hostPackageName: String,
+        scheme: String,
         openIntent: OpenIntentCallback
     ) : this(
-        domain,
-        appContext,
         hostPackageName,
-        { intent -> openIntent.call(intent) }
+        scheme,
+        KeyManager(context, hostPackageName),
+        TaskManager(),
+        { intent -> openIntent.call(intent) },
     )
 
     fun appendVersionTag(tag: String) {
@@ -93,7 +86,7 @@ class CoinbaseWalletSDK(
             timestamp = Date(),
             sender = keyManager.ownPublicKey,
             content = RequestContent.Handshake(
-                appId = appContext.packageName,
+                appId = context.packageName,
                 callback = domain.toString(),
                 initialActions = initialActions
             ),
@@ -115,11 +108,9 @@ class CoinbaseWalletSDK(
                 return@send
             }
 
-            val account = try {
+            val account = runCatching {
                 JSON.decodeFromString<Account>(requestAccountsResult.value)
-            } catch (e: Exception) {
-                null
-            }
+            }.getOrNull()
 
             onResponse(result, account)
         }
@@ -205,7 +196,7 @@ class CoinbaseWalletSDK(
         try {
             uri = MessageConverter.encodeRequest(
                 message = message,
-                recipient = Uri.parse(CBW_SCHEME),
+                recipient = Uri.parse(scheme),
                 ownPrivateKey = keyManager.ownPrivateKey,
                 peerPublicKey = keyManager.peerPublicKey
             )
@@ -237,5 +228,39 @@ class CoinbaseWalletSDK(
 
     private fun isWalletSegueResponseURL(uri: Uri): Boolean {
         return uri.host == domain.host && uri.path == domain.path && uri.getQueryParameter("p") != null
+    }
+
+    companion object {
+        private val instances: MutableMap<String, CoinbaseWalletSDK> = mutableMapOf()
+
+        private lateinit var domain: Uri
+
+        private lateinit var context: Application
+
+        fun configure(domain: Uri, context: Application) {
+            this.domain = if (domain.pathSegments.size < 2) {
+                domain.buildUpon()
+                    .appendPath("wsegue")
+                    .build()
+            } else {
+                domain
+            }
+            this.context = context
+        }
+
+        fun getClient(wallet: Wallet, openIntent: (Intent) -> Unit): CoinbaseWalletSDK {
+            return instances[wallet.url] ?: CoinbaseWalletSDK(
+                openIntent = openIntent,
+                hostPackageName = wallet.packageName,
+                scheme = wallet.url,
+                keyManager = KeyManager(context, wallet.packageName),
+                taskManager = TaskManager()
+            )
+        }
+
+        fun handleResponse(uri: Uri): Boolean {
+            val callback = checkNotNull(MessageConverter.getCallbackFromResponse(uri)) { "Callback not found" }
+            return instances[callback]?.handleResponse(uri) == true
+        }
     }
 }
