@@ -6,11 +6,11 @@ The messages sent by the client app are called requests and the ones returned by
 
 ## Forms
 
-MWP messages can be transformed between two types according to their use cases.
+MWP messages can be transformed between two forms according to their use cases.
 
-### Data form
+### Data form 
 
-JSON object or corresponding data type in the language in use (e.g. Swift `struct`, Kotlin `data class`, or JavaScript object)
+JSON object or corresponding data type in the language in use (e.g. Swift `struct`, Kotlin `data class`, or JavaScript object) for internal usage within the app
 
 ```json
 {
@@ -24,7 +24,7 @@ JSON object or corresponding data type in the language in use (e.g. Swift `struc
 
 ### URL form
 
-Deep link URL specifying recipient's address and base64 encoded [JSON object](#data-form) as query parameter
+Deep link URL specifying recipient's address and base64 encoded [JSON object](#data-form) as query parameter to send the data to other party
 
 `https://wallet.coinbase.com/wsegue?p=eyJ2ZXJzaW...U2RTMyQiJ9`
 
@@ -38,7 +38,7 @@ Unique id of the message
 Public key of the sender in base64 encoded string
 
 ### `content`
-[Message's content](#contents) which might be encrypted by the sender using the derived shared secret
+[Message's content](encryption#message-encryption) which might be encrypted by the sender using the derived shared secret
 
 ### `timestamp`
 UNIX millisecond timestamp
@@ -48,14 +48,3 @@ Version of the protocol used by the sender
 
 ### `callback`
 (Optional) sender's callback URL
-
-
-## Contents
-
-Each `Message` contains its `content`. 
-
-By default, the content data are encrypted using the shared secret exchanged between the sender and receiver, so that it can be read only by the peers.
-
-However, there are two exceptions where the content data are not encrypted:
-1. Handshake calls from the client in order to exchange keys with the wallet
-2. Failure responses from wallet to return errors happening during the handshake processes

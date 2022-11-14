@@ -1,5 +1,4 @@
-# Network layer
+# Transport layer
 
-Deep linking through universal links on iOS and app links on Android.
-(Intent on android.)
-
+Deep linking through universal links on iOS.
+Intent + app links on android.

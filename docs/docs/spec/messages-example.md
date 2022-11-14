@@ -2,31 +2,28 @@
 
 ### handshake
 - URL
-`https://go.cb-w.com/wsegue?p=eyJ2ZXJzaW9uIjoiMS4yLjMiLCJzZW5kZXIiOiI0UG9QTEFDUjNCb0VxWTJBdSthamRISGRSZStvU0ZaUVwvSkpDU091bHpTYz0iLCJjb250ZW50Ijp7ImhhbmRzaGFrZSI6eyJhcHBJZCI6ImNvbS5teWFwcC5wYWNrYWdlLmlkIiwiY2FsbGJhY2siOiJodHRwczpcL1wvbXlhcHAueHl6XC9uYXRpdmUtc2RrIiwiaW5pdGlhbEFjdGlvbnMiOlt7Im1ldGhvZCI6ImV0aF9zb21lTWV0aG9kIiwicGFyYW1zIjpbInBhcmFtMSIsInBhcmFtMiJdfV19fSwidXVpZCI6IjExMUYzRTI2LTE2N0YtNEJGNS1BQzM4LTZEOTNBNjU2RTMyQiJ9`
+`https://go.cb-w.com/wsegue?p=eyJ2ZXJzaW9uIjoiMS4wLjMiLCJzZW5kZXIiOiJsRUNcL1gzSzY4cmxnT29sZE1kazBENzc3MzhZN1cwbURiTU1WNVI2VnlDRT0iLCJjb250ZW50Ijp7ImhhbmRzaGFrZSI6eyJhcHBJZCI6ImNvbS5jb2luYmFzZS5TYW1wbGVDbGllbnQiLCJjYWxsYmFjayI6Im15YXBweHl6OlwvXC9teWNhbGxiYWNrXC93c2VndWUiLCJpbml0aWFsQWN0aW9ucyI6W3sicGFyYW1zSnNvbiI6Int9IiwibWV0aG9kIjoiZXRoX3JlcXVlc3RBY2NvdW50cyIsIm9wdGlvbmFsIjpmYWxzZX1dfX0sInRpbWVzdGFtcCI6MTY2Nzg5NTE2OTI4OS4xMDYsImNhbGxiYWNrVXJsIjoibXlhcHB4eXo6XC9cL215Y2FsbGJhY2tcL3dzZWd1ZSIsInV1aWQiOiI0NTE3MTFGQS05NkI2LTQ5NTUtQjZFQS1FRkE3OENFQjg5RjUifQ%3D%3D`
 - JSON (decoded the URL above. handshake messages are not encrypted)
 ```json
 {
-  "version" : "0.1.0",
-  "sender" : "bwf9U+VbjmvfBr3p3aoJyOEKS6mq7sSrg56V6FDYMBs=",
-  "content" : {
-    "handshake" : {
-      "appId" : "com.coinbase.NativeWeb3App",
-      "callback" : "https:\/\/myapp.xyz\/mycallback",
-      "initialActions" : [
+  "version": "1.0.3",
+  "sender": "lEC/X3K68rlgOoldMdk0D77738Y7W0mDbMMV5R6VyCE=",
+  "content": {
+    "handshake": {
+      "appId": "com.coinbase.SampleClient",
+      "callback": "myappxyz://mycallback/wsegue",
+      "initialActions": [
         {
-          "paramsJson" : "{}",
-          "method" : "eth_requestAccounts",
-          "optional" : false
-        },
-        {
-          "paramsJson" : "{\"fromAddress\":\"\",\"data\":\"bWVzc2FnZQ==\"}",
-          "method" : "personal_sign",
-          "optional" : false
+          "paramsJson": "{}",
+          "method": "eth_requestAccounts",
+          "optional": false
         }
       ]
     }
   },
-  "uuid" : "634A5C15-0316-4FD1-86FB-4818DBD6C12D"
+  "timestamp": 689587969.289106,
+  "callbackUrl": "myappxyz://mycallback/wsegue",
+  "uuid": "451711FA-96B6-4955-B6EA-EFA78CEB89F5"
 }
 ```
 
