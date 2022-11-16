@@ -152,8 +152,8 @@ public final class CoinbaseWalletSDK {
     
     // MARK: - Receive message
     
-    static private func isWalletSegueMessage(_ url: URL) -> Bool {
-        return url.host == CoinbaseWalletSDK.callback!.host && url.path == CoinbaseWalletSDK.callback!.path
+    static private func isWalletSegueMessage(_ url: URL, _ instance: CoinbaseWalletSDK) -> Bool {
+        return url.host == instance.callbackURL.host && url.path == instance.callbackURL.path
     }
     
     /// Handle incoming deep links
@@ -161,14 +161,14 @@ public final class CoinbaseWalletSDK {
     /// - Returns: `false` if the input was not response message type, `true` if SDK handled the input, or throws error if it failed to decode response.
     @discardableResult
     static public func handleResponse(_ url: URL) throws -> Bool {
-        guard isWalletSegueMessage(url) else {
-            return false
-        }
-        
         let encryptedResponse: EncryptedResponseMessage = try MessageConverter.decodeWithoutDecryption(url)
         guard let request = TaskManager.getHost(for: encryptedResponse),
               let instance = instances[request] else {
             throw Error.walletInstanceNotFound
+        }
+        
+        guard isWalletSegueMessage(url, instance) else {
+            return false
         }
         
         let response = try instance.decodeResponse(url, encryptedResponse)
