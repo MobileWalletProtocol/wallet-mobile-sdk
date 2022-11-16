@@ -16,9 +16,11 @@ class ViewController: UITableViewController {
     @IBOutlet weak var peerPubKeyLabel: UILabel!
     
     @IBOutlet weak var logTextView: UITextView!
-    let walletProvider: MobileWalletProviderProtocol = MobileWalletProvider()
-    private var wallets: [Wallet] = []
-    private var addressMap: [String: String] = [:]
+    
+    private lazy var cbwallet: CoinbaseWalletSDK = {
+        CoinbaseWalletSDK.getInstance(hostWallet: Wallet.coinbaseWallet)!
+    }()
+    private var address: String?
     private let typedData = [
         "types": [
             "EIP712Domain": [
@@ -58,26 +60,10 @@ class ViewController: UITableViewController {
         super.viewDidLoad()
         isCBWalletInstalledLabel.text = "\(CoinbaseWalletSDK.isCoinbaseWalletInstalled())"
         updateSessionStatus()
-        
-        self.wallets = walletProvider.getWallets()
     }
     
     @IBAction func initiateHandshake() {
-        let actions = wallets.map { wallet in
-            UIAlertAction(title: wallet.name, style: .default) { (action) in
-                self.handhsake(wallet: wallet)
-            }
-        }
-        
-        showAlert(actions: actions, title: "Connect Wallet - Handshake")
-    }
-    
-    func handhsake(wallet: Wallet) {
-        guard let sdkClient = CoinbaseWalletSDK.getInstance(hostWallet: wallet) else {
-            assertionFailure("`CoinbaseWalletSDK.instance`could not be found.")
-            return
-        }
-        sdkClient.initiateHandshake(
+        cbwallet.initiateHandshake(
             initialActions: [
                 Action(jsonRpc: .eth_requestAccounts)
             ]
@@ -88,7 +74,7 @@ class ViewController: UITableViewController {
                 
                 guard let account = account else { return }
                 self.logObject(label: "Account:\n", account)
-                self.addressMap[wallet.url] = account.address
+                self.address = account.address
                 
             case .failure(let error):
                 self.log("\(error)")
@@ -98,45 +84,21 @@ class ViewController: UITableViewController {
     }
     
     @IBAction func resetConnection() {
-        let actions = wallets.map { wallet in
-            UIAlertAction(title: wallet.name, style: .default) { (action) in
-                self.resetConnection(wallet: wallet)
-            }
-        }
-        showAlert(actions: actions, title: "Reset Wallet Connection")
-    }
-    
-    func resetConnection(wallet: Wallet) {
-        self.addressMap[wallet.url] = nil
-        guard let sdkClient = CoinbaseWalletSDK.getInstance(hostWallet: wallet) else {
-            assertionFailure("`CoinbaseWalletSDK.instance`could not be found.")
-            return
-        }
-        let result = sdkClient.resetSession()
+        self.address = nil
+        
+        let result = cbwallet.resetSession()
         self.log("\(result)")
         
         updateSessionStatus()
     }
     
     @IBAction func makeRequest() {
-        let actions = wallets.map { wallet in
-            UIAlertAction(title: wallet.name, style: .default) { (action) in
-                self.request(wallet: wallet)
-            }
-        }
-        showAlert(actions: actions, title: "Connect Wallet - Request")
-    }
-    
-    func request(wallet: Wallet) {
-        let address = self.addressMap[wallet.url] ?? ""
+        let address = self.address ?? ""
         if address.isEmpty {
             self.log("address hasn't been set.")
         }
-        guard let sdkClient = CoinbaseWalletSDK.getInstance(hostWallet: wallet) else {
-            assertionFailure("`CoinbaseWalletSDK.instance`could not be found.")
-            return
-        }
-        sdkClient.makeRequest(
+        
+        cbwallet.makeRequest(
             Request(actions: [
                 Action(jsonRpc: .personal_sign(address: address, message: "message")),
                 Action(jsonRpc: .eth_signTypedData_v3(
@@ -164,37 +126,17 @@ class ViewController: UITableViewController {
         }
     }
     
-    private func updateSessionStatus() {
-        var isConnected = false
-        self.isConnectedLabel.textColor = .red
-        self.isConnectedLabel.text = "\(isConnected)"
-        self.ownPubKeyLabel.text = ""
-        self.peerPubKeyLabel.text = ""
-        
-        guard let (client, name) = wallets.compactMap({
-            let sdkClient = CoinbaseWalletSDK.getInstance(hostWallet: $0)
-            return sdkClient?.isConnected() == true ? (sdkClient, $0.name) : nil
-        }).first else {
-            return
-        }
-        
-        isConnected = client?.isConnected() ?? false
-        self.isConnectedLabel.textColor = isConnected ? .green : .red
-        self.isConnectedLabel.text = "\(isConnected) \(name)"
-        
-        self.ownPubKeyLabel.text = client?.ownPublicKey.rawRepresentation.base64EncodedString()
-        self.peerPubKeyLabel.text = client?.peerPublicKey?.rawRepresentation.base64EncodedString() ?? "(nil)"
-    }
+    // i should have chosen SwiftUI template...
     
-    func showAlert(actions: [UIAlertAction], title: String) {
-        let alert = UIAlertController(title: title,
-                                      message: "Select a wallet",
-                                      preferredStyle: .actionSheet)
-        actions.forEach { action in
-            alert.addAction(action)
+    private func updateSessionStatus() {
+        DispatchQueue.main.async {
+            let isConnected = self.cbwallet.isConnected()
+            self.isConnectedLabel.textColor = isConnected ? .green : .red
+            self.isConnectedLabel.text = "\(isConnected)"
+            
+            self.ownPubKeyLabel.text = self.cbwallet.ownPublicKey.rawRepresentation.base64EncodedString()
+            self.peerPubKeyLabel.text = self.cbwallet.peerPublicKey?.rawRepresentation.base64EncodedString() ?? "(nil)"
         }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        self.present(alert, animated: true)
     }
     
     private func logObject<T: Encodable>(label: String = "", _ object: T, function: String = #function) {

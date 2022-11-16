@@ -37,8 +37,8 @@ class TaskManager {
         return true
     }
     
-    static func findRequest(for response: EncryptedResponseMessage) -> RequestMessage? {
-        guard let task = tasks[response.content.requestId] else {
+    static func findRequest(for requestId: UUID) -> RequestMessage? {
+        guard let task = tasks[requestId] else {
             return nil
         }
     
