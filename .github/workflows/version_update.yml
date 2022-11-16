@@ -77,7 +77,7 @@ jobs:
             CoinbaseWalletSDK.podspec
             ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
             ios/example/Podfile.lock
-            android/gradle/libs.version.toml
+            android/gradle/libs.versions.toml
             react-native/ios/CoinbaseWalletSDKExpo.podspec
             react-native/android/build.gradle
             react-native/package.json
