@@ -5,19 +5,6 @@
 //  Created by Amit Goel on 11/4/22.
 //
 
-public protocol MobileWalletProviderProtocol {
-    func getWallets() -> [Wallet]
-}
-
-public class MobileWalletProvider : MobileWalletProviderProtocol {
-    
-    public init() {}
-    
-    public func getWallets() -> [Wallet] {
-        return [.coinbaseWallet, .coinbaseRetail]
-    }
-}
-
 extension Wallet {
 
     public static let coinbaseWallet = Wallet(
@@ -37,12 +24,12 @@ extension Wallet {
 }
 
 public struct Wallet {
-    public var name: String
-    public var iconUrl: String
-    public var url: String
-    public var appStoreUrl: String
+    public let name: String
+    public let iconUrl: String
+    public let url: String
+    public let appStoreUrl: String
     
-    static public func defaultValues() -> [Wallet] {
+    static public func defaultWallets() -> [Wallet] {
         return [.coinbaseWallet, .coinbaseRetail]
     }
 }

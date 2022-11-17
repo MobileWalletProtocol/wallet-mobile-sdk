@@ -48,22 +48,22 @@ public final class CoinbaseWalletSDK {
     // MARK: - Properties
     
     private let appId: String
-    private let host: URL
+    private let hostURL: URL
     private let callbackURL: URL
     
     private lazy var keyManager: KeyManager = {
-        KeyManager(host: self.host)
+        KeyManager(host: self.hostURL)
     }()
     
     private init(_ host: URL,_ callback: URL) {
-        self.host = host
+        self.hostURL = host
         self.callbackURL = callback
         
         self.appId = Bundle.main.bundleIdentifier!
     }
     
     deinit {
-        CoinbaseWalletSDK.instances.removeValue(forKey: self.host)
+        CoinbaseWalletSDK.instances.removeValue(forKey: self.hostURL)
     }
     
     // MARK: - Send message
@@ -131,7 +131,7 @@ public final class CoinbaseWalletSDK {
     private func send(_ request: RequestMessage, _ onResponse: @escaping ResponseHandler) {
         let url: URL
         do {
-            url = try MessageConverter.encode(request, to: host, with: keyManager.symmetricKey)
+            url = try MessageConverter.encode(request, to: hostURL, with: keyManager.symmetricKey)
         } catch {
             onResponse(.failure(error))
             return
@@ -146,7 +146,7 @@ public final class CoinbaseWalletSDK {
                 return
             }
             
-            TaskManager.registerResponseHandler(for: request, host: self.host, onResponse)
+            TaskManager.registerResponseHandler(for: request, host: self.hostURL, onResponse)
         }
     }
     
@@ -162,8 +162,8 @@ public final class CoinbaseWalletSDK {
     @discardableResult
     static public func handleResponse(_ url: URL) throws -> Bool {
         let encryptedResponse: EncryptedResponseMessage = try MessageConverter.decodeWithoutDecryption(url)
-        guard let request = TaskManager.getHost(for: encryptedResponse),
-              let instance = instances[request] else {
+        guard let task = TaskManager.findTask(for: encryptedResponse.uuid),
+              let instance = instances[task.host] else {
             throw Error.walletInstanceNotFound
         }
         
@@ -182,8 +182,8 @@ public final class CoinbaseWalletSDK {
         }
         
         // no symmetric key yet
-        let request = TaskManager.findRequest(for: encryptedResponse.uuid)
-        guard case .handshake = request?.content else {
+        let task = TaskManager.findTask(for: encryptedResponse.uuid)
+        guard case .handshake = task?.request.content else {
             throw Error.missingSymmetricKey
         }
         
@@ -209,7 +209,7 @@ public final class CoinbaseWalletSDK {
     @discardableResult
     public func resetSession() -> Result<Void, Swift.Error> {
         do {
-            TaskManager.reset(host: host)
+            TaskManager.reset(host: hostURL)
             try keyManager.resetOwnPrivateKey()
             return .success(())
         } catch {

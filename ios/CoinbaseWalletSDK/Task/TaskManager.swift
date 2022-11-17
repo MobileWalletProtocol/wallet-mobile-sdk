@@ -37,20 +37,8 @@ class TaskManager {
         return true
     }
     
-    static func findRequest(for requestId: UUID) -> RequestMessage? {
-        guard let task = tasks[requestId] else {
-            return nil
-        }
-    
-        return task.request
-    }
-    
-    static func getHost(for response: EncryptedResponseMessage) -> URL? {
-        guard let task = tasks[response.content.requestId] else {
-            return nil
-        }
-    
-        return task.host
+    static func findTask(for requestId: UUID) -> Task? {
+        return tasks[requestId]
     }
     
     static func reset(host: URL) {
