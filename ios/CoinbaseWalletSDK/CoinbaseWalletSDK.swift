@@ -16,24 +16,12 @@ public final class CoinbaseWalletSDK {
         return UIApplication.shared.canOpenURL(URL(string: "cbwallet://")!)
     }
     
-    // MARK: - Constructor
-    
-    static private var host: URL?
     static private var callback: URL?
     static public var isConfigured: Bool {
-        return host != nil && callback != nil
+        return callback != nil
     }
     
-    static public func configure(
-        host: URL = URL(string: "https://wallet.coinbase.com/wsegue")!,
-        callback: URL
-    ) {
-        guard isConfigured == false else {
-            assertionFailure("`CoinbaseWalletSDK.configure` should be called only once.")
-            return
-        }
-        
-        self.host = host
+    static public func configure(callback: URL) {
         if callback.pathComponents.count < 2 { // [] or ["/"]
             self.callback = callback.appendingPathComponent("wsegue")
         } else {
@@ -41,15 +29,22 @@ public final class CoinbaseWalletSDK {
         }
     }
     
-    static public var shared: CoinbaseWalletSDK = {
-        guard let host = CoinbaseWalletSDK.host,
-              let callback = CoinbaseWalletSDK.callback else {
-            preconditionFailure("Missing configuration: call `CoinbaseWalletSDK.configure` before accessing the `shared` instance.")
+    static public func getInstance(hostWallet: Wallet) -> CoinbaseWalletSDK? {
+        guard let callback = callback else {
+            assertionFailure("`CoinbaseWalletSDK.configure` should be called prior to retrieving an instance.")
+            return nil
         }
         
-        return CoinbaseWalletSDK(host: host, callback: callback)
-    }()
+        let host = URL(string: hostWallet.url)!
+        if (instances[host] == nil) {
+            let newInstance = CoinbaseWalletSDK(host: host, callback: callback)
+            instances[host] = newInstance
+        }
+        
+        return instances[host]!
+    }
     
+    private static var instances: [URL: CoinbaseWalletSDK] = [:]
     // MARK: - Properties
     
     private let appId: String
@@ -59,18 +54,16 @@ public final class CoinbaseWalletSDK {
     private lazy var keyManager: KeyManager = {
         KeyManager(host: self.host)
     }()
-    private lazy var taskManager: TaskManager = {
-        TaskManager()
-    }()
     
-    private init(
-        host: URL,
-        callback: URL
-    ) {
+    private init(host: URL, callback: URL) {
         self.host = host
         self.callback = callback
         
         self.appId = Bundle.main.bundleIdentifier!
+    }
+    
+    deinit {
+        CoinbaseWalletSDK.instances.removeValue(forKey: self.host)
     }
     
     // MARK: - Send message
@@ -153,39 +146,44 @@ public final class CoinbaseWalletSDK {
                 return
             }
             
-            self.taskManager.registerResponseHandler(for: request, onResponse)
+            TaskManager.registerResponseHandler(for: request, host: self.host, onResponse)
         }
     }
     
     // MARK: - Receive message
     
-    private func isWalletSegueMessage(_ url: URL) -> Bool {
-        return url.host == callback.host && url.path == callback.path
+    static private func isWalletSegueMessage(_ url: URL, _ instance: CoinbaseWalletSDK) -> Bool {
+        return url.host == instance.callback.host && url.path == instance.callback.path
     }
-
+    
     /// Handle incoming deep links
     /// - Parameter url: deep link url
     /// - Returns: `false` if the input was not response message type, `true` if SDK handled the input, or throws error if it failed to decode response.
     @discardableResult
-    public func handleResponse(_ url: URL) throws -> Bool {
-        guard isWalletSegueMessage(url) else {
+    static public func handleResponse(_ url: URL) throws -> Bool {
+        let encryptedResponse: EncryptedResponseMessage = try MessageConverter.decodeWithoutDecryption(url)
+        guard let task = TaskManager.findTask(for: encryptedResponse.uuid),
+              let instance = instances[task.host] else {
+            throw Error.walletInstanceNotFound
+        }
+        
+        guard isWalletSegueMessage(url, instance) else {
             return false
         }
         
-        let response = try decodeResponse(url)
-        taskManager.runResponseHandler(with: response)
+        let response = try instance.decodeResponse(url, encryptedResponse)
+        TaskManager.runResponseHandler(with: response)
         return true
     }
     
-    private func decodeResponse(_ url: URL) throws -> ResponseMessage {
+    private func decodeResponse(_ url: URL,_ encryptedResponse: EncryptedResponseMessage) throws -> ResponseMessage {
         if let symmetricKey = keyManager.symmetricKey {
             return try MessageConverter.decode(url, with: symmetricKey)
         }
         
         // no symmetric key yet
-        let encryptedResponse: EncryptedResponseMessage = try MessageConverter.decodeWithoutDecryption(url)
-        let request = taskManager.findRequest(for: encryptedResponse)
-        guard case .handshake = request?.content else {
+        let task = TaskManager.findTask(for: encryptedResponse.uuid)
+        guard case .handshake = task?.request.content else {
             throw Error.missingSymmetricKey
         }
         
@@ -211,7 +209,7 @@ public final class CoinbaseWalletSDK {
     @discardableResult
     public func resetSession() -> Result<Void, Swift.Error> {
         do {
-            taskManager.reset()
+            TaskManager.reset(host: host)
             try keyManager.resetOwnPrivateKey()
             return .success(())
         } catch {

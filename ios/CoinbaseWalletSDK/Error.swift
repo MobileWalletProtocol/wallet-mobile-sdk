@@ -16,5 +16,6 @@ extension CoinbaseWalletSDK {
         case invalidHandshakeRequest
         case openUrlFailed
         case walletReturnedError(String)
+        case walletInstanceNotFound
     }
 }
