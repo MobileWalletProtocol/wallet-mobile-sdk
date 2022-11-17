@@ -37,7 +37,7 @@ public final class CoinbaseWalletSDK {
         
         let host = URL(string: hostWallet.url)!
         if (instances[host] == nil) {
-            let newInstance = CoinbaseWalletSDK(host, callback)
+            let newInstance = CoinbaseWalletSDK(host: host, callback: callback)
             instances[host] = newInstance
         }
         
@@ -48,22 +48,22 @@ public final class CoinbaseWalletSDK {
     // MARK: - Properties
     
     private let appId: String
-    private let hostURL: URL
-    private let callbackURL: URL
+    private let host: URL
+    private let callback: URL
     
     private lazy var keyManager: KeyManager = {
-        KeyManager(host: self.hostURL)
+        KeyManager(host: self.host)
     }()
     
-    private init(_ host: URL,_ callback: URL) {
-        self.hostURL = host
-        self.callbackURL = callback
+    private init(host: URL, callback: URL) {
+        self.host = host
+        self.callback = callback
         
         self.appId = Bundle.main.bundleIdentifier!
     }
     
     deinit {
-        CoinbaseWalletSDK.instances.removeValue(forKey: self.hostURL)
+        CoinbaseWalletSDK.instances.removeValue(forKey: self.host)
     }
     
     // MARK: - Send message
@@ -92,12 +92,12 @@ public final class CoinbaseWalletSDK {
             sender: keyManager.ownPublicKey,
             content: .handshake(
                 appId: appId,
-                callback: callbackURL,
+                callback: callback,
                 initialActions: initialActions
             ),
             version: CoinbaseWalletSDK.version,
             timestamp: Date(),
-            callbackUrl: callbackURL.absoluteString
+            callbackUrl: callback.absoluteString
         )
         self.send(message) { result in
             guard
@@ -123,7 +123,7 @@ public final class CoinbaseWalletSDK {
             content: .request(actions: request.actions, account: request.account),
             version: CoinbaseWalletSDK.version,
             timestamp: Date(),
-            callbackUrl: callbackURL.absoluteString
+            callbackUrl: callback.absoluteString
         )
         return self.send(message, onResponse)
     }
@@ -131,7 +131,7 @@ public final class CoinbaseWalletSDK {
     private func send(_ request: RequestMessage, _ onResponse: @escaping ResponseHandler) {
         let url: URL
         do {
-            url = try MessageConverter.encode(request, to: hostURL, with: keyManager.symmetricKey)
+            url = try MessageConverter.encode(request, to: host, with: keyManager.symmetricKey)
         } catch {
             onResponse(.failure(error))
             return
@@ -146,14 +146,14 @@ public final class CoinbaseWalletSDK {
                 return
             }
             
-            TaskManager.registerResponseHandler(for: request, host: self.hostURL, onResponse)
+            TaskManager.registerResponseHandler(for: request, host: self.host, onResponse)
         }
     }
     
     // MARK: - Receive message
     
     static private func isWalletSegueMessage(_ url: URL, _ instance: CoinbaseWalletSDK) -> Bool {
-        return url.host == instance.callbackURL.host && url.path == instance.callbackURL.path
+        return url.host == instance.callback.host && url.path == instance.callback.path
     }
     
     /// Handle incoming deep links
@@ -209,7 +209,7 @@ public final class CoinbaseWalletSDK {
     @discardableResult
     public func resetSession() -> Result<Void, Swift.Error> {
         do {
-            TaskManager.reset(host: hostURL)
+            TaskManager.reset(host: host)
             try keyManager.resetOwnPrivateKey()
             return .success(())
         } catch {
