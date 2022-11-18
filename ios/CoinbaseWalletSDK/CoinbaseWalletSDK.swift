@@ -11,6 +11,28 @@ import UIKit
 
 @available(iOS 13.0, *)
 public final class CoinbaseWalletSDK {
+
+    // MARK: - Instantiate
+    
+    static private var instances: [URL: CoinbaseWalletSDK] = [:]
+    
+    static public func getInstance(hostWallet: Wallet) -> CoinbaseWalletSDK? {
+        guard let configuration = ClientConfiguration.config else {
+            assertionFailure("`CoinbaseWalletSDK.configure` should be called prior to retrieving an instance.")
+            return nil
+        }
+        
+        let host = hostWallet.url
+        if (instances[host] == nil) {
+            let newInstance = CoinbaseWalletSDK(
+                host: host,
+                configuration: configuration
+            )
+            instances[host] = newInstance
+        }
+        
+        return instances[host]!
+    }
     
     // MARK: - Properties
     
@@ -213,27 +235,5 @@ extension CoinbaseWalletSDK {
         iconUrl: URL? = nil
     ) {
         ClientConfiguration.configure(callback: callback, appId: appId, name: name, iconUrl: iconUrl)
-    }
-    
-    // MARK: - Instantiate
-    
-    static private var instances: [URL: CoinbaseWalletSDK] = [:]
-    
-    static public func getInstance(hostWallet: Wallet) -> CoinbaseWalletSDK? {
-        guard let configuration = ClientConfiguration.config else {
-            assertionFailure("`CoinbaseWalletSDK.configure` should be called prior to retrieving an instance.")
-            return nil
-        }
-        
-        let host = hostWallet.url
-        if (instances[host] == nil) {
-            let newInstance = CoinbaseWalletSDK(
-                host: host,
-                configuration: configuration
-            )
-            instances[host] = newInstance
-        }
-        
-        return instances[host]!
     }
 }

@@ -6,7 +6,7 @@
 //
 
 extension Wallet {
-    
+
     public static let coinbaseWallet = Wallet(
         name: "Coinbase Wallet",
         iconUrl: URL(string: "https://is1-ssl.mzstatic.com/image/thumb/Purple122/v4/bd/2b/dc/bd2bdcac-44ff-0707-3ec1-fde5014a91a1/AppIcon-0-0-1x_U007emarketing-0-0-0-10-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/100x100bb.jpg")!,
