@@ -1,3 +1,5 @@
+install! 'cocoapods', :deterministic_uuids => false
+
 workspace 'Example.xcworkspace'
 platform :ios, '13.0'
 use_frameworks!

@@ -11,55 +11,44 @@ import UIKit
 
 @available(iOS 13.0, *)
 public final class CoinbaseWalletSDK {
+
+    // MARK: - Instantiate
     
-    static public func isCoinbaseWalletInstalled() -> Bool {
-        return UIApplication.shared.canOpenURL(URL(string: "cbwallet://")!)
-    }
-    
-    static private var callback: URL?
-    static public var isConfigured: Bool {
-        return callback != nil
-    }
-    
-    static public func configure(callback: URL) {
-        if callback.pathComponents.count < 2 { // [] or ["/"]
-            self.callback = callback.appendingPathComponent("wsegue")
-        } else {
-            self.callback = callback
-        }
-    }
+    static private var instances: [URL: CoinbaseWalletSDK] = [:]
     
     static public func getInstance(hostWallet: Wallet) -> CoinbaseWalletSDK? {
-        guard let callback = callback else {
+        guard let configuration = ClientConfiguration.config else {
             assertionFailure("`CoinbaseWalletSDK.configure` should be called prior to retrieving an instance.")
             return nil
         }
         
-        let host = URL(string: hostWallet.url)!
+        let host = hostWallet.url
         if (instances[host] == nil) {
-            let newInstance = CoinbaseWalletSDK(host: host, callback: callback)
+            let newInstance = CoinbaseWalletSDK(
+                host: host,
+                configuration: configuration
+            )
             instances[host] = newInstance
         }
         
         return instances[host]!
     }
     
-    private static var instances: [URL: CoinbaseWalletSDK] = [:]
     // MARK: - Properties
     
-    private let appId: String
     private let host: URL
-    private let callback: URL
+    private let configuration: ClientConfiguration
     
     private lazy var keyManager: KeyManager = {
         KeyManager(host: self.host)
     }()
     
-    private init(host: URL, callback: URL) {
+    private init(
+        host: URL,
+        configuration: ClientConfiguration
+    ) {
         self.host = host
-        self.callback = callback
-        
-        self.appId = Bundle.main.bundleIdentifier!
+        self.configuration = configuration
     }
     
     deinit {
@@ -91,13 +80,15 @@ public final class CoinbaseWalletSDK {
             uuid: UUID(),
             sender: keyManager.ownPublicKey,
             content: .handshake(
-                appId: appId,
-                callback: callback,
+                appId: configuration.appId,
+                callback: configuration.url,
+                name: configuration.name,
+                iconUrl: configuration.iconUrl,
                 initialActions: initialActions
             ),
             version: CoinbaseWalletSDK.version,
             timestamp: Date(),
-            callbackUrl: callback.absoluteString
+            callbackUrl: configuration.url.absoluteString
         )
         self.send(message) { result in
             guard
@@ -123,7 +114,7 @@ public final class CoinbaseWalletSDK {
             content: .request(actions: request.actions, account: request.account),
             version: CoinbaseWalletSDK.version,
             timestamp: Date(),
-            callbackUrl: callback.absoluteString
+            callbackUrl: configuration.url.absoluteString
         )
         return self.send(message, onResponse)
     }
@@ -153,7 +144,8 @@ public final class CoinbaseWalletSDK {
     // MARK: - Receive message
     
     static private func isWalletSegueMessage(_ url: URL, _ instance: CoinbaseWalletSDK) -> Bool {
-        return url.host == instance.callback.host && url.path == instance.callback.path
+        let callback = instance.configuration.url
+        return url.host == callback.host && url.path == callback.path
     }
     
     /// Handle incoming deep links
@@ -223,5 +215,25 @@ public final class CoinbaseWalletSDK {
         }
         
         try keyManager.storePeerPublicKey(response.sender)
+    }
+}
+
+@available(iOS 13.0, *)
+extension CoinbaseWalletSDK {
+    
+    @available(*, deprecated, message: "Use {Wallet}.isInstalled instead")
+    static public func isCoinbaseWalletInstalled() -> Bool {
+        return UIApplication.shared.canOpenURL(URL(string: "cbwallet://")!)
+    }
+    
+    // MARK: - Configure
+    
+    static public func configure(
+        callback: URL,
+        appId: String? = nil,
+        name: String? = nil,
+        iconUrl: URL? = nil
+    ) {
+        ClientConfiguration.configure(callback: callback, appId: appId, name: name, iconUrl: iconUrl)
     }
 }

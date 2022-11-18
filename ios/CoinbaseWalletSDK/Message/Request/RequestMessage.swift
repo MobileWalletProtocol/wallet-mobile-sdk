@@ -9,7 +9,7 @@ import Foundation
 
 @available(iOS 13.0, *)
 public enum RequestContent: UnencryptedContent {
-    case handshake(appId: String, callback: URL, initialActions: [Action]?)
+    case handshake(appId: String, callback: URL, name: String?, iconUrl: URL?, initialActions: [Action]?)
     case request(actions: [Action], account: Account? = nil)
 }
 
