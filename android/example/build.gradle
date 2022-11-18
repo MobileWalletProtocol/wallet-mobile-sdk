@@ -51,9 +51,13 @@ android {
 
 dependencies {
     implementation libs.android.ktx
+    implementation libs.android.activity.ktx
     implementation libs.android.appcompat
     implementation libs.android.constraintlayout
+    implementation libs.android.fragment.ktx
+    implementation libs.android.lifecycle.viewmodel
     implementation libs.android.material
+    implementation libs.coil
 
     testImplementation libs.junit4
     androidTestImplementation libs.androidx.junit4

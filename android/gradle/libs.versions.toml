@@ -9,9 +9,13 @@ sdk-version = "1.0.4"
 [libraries]
 
 android-ktx = { module = "androidx.core:core-ktx", version = "1.9.0" }
+android-activity-ktx = { module = "androidx.activity:activity-ktx", version = "1.6.0" }
 android-appcompat = { module = "androidx.appcompat:appcompat", version = "1.5.1" }
 android-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version = "2.1.4" }
+android-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version = "1.5.3" }
+android-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version = "2.4.0" }
 android-material = { module = "com.google.android.material:material", version = "1.6.1" }
+coil = { module = "io.coil-kt:coil", version = "2.2.2" }
 kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 security-crypto = { module = "androidx.security:security-crypto", version = "1.0.0" }
 security-tink = { module = "com.google.crypto.tink:tink-android", version = "1.6.1" }

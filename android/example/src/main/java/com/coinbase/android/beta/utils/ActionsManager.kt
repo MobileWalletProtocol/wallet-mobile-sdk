@@ -1,7 +1,5 @@
-package com.coinbase.android.beta
+package com.coinbase.android.beta.utils
 
-import android.content.Context
-import android.content.SharedPreferences
 import com.coinbase.android.nativesdk.message.request.Web3JsonRPC
 
 object ActionsManager {
@@ -45,7 +43,7 @@ object ActionsManager {
     val handShakeActions = listOf(requestAccount, personalSign)
 
     fun getRequestActions(
-        fromAddress: String = SharedPrefsManager.account,
+        fromAddress: String,
         toAddress: String
     ) = listOf(
         requestAccount,
@@ -53,28 +51,4 @@ object ActionsManager {
         switchEthereumChain,
         getSendTransaction(fromAddress, toAddress)
     )
-}
-
-object SharedPrefsManager {
-    lateinit var sharedPrefs: SharedPreferences
-
-    var account: String
-        get() = sharedPrefs.getString("eth_account", "") ?: ""
-        set(value) {
-            with(sharedPrefs.edit()) {
-                putString("eth_account", value)
-                apply()
-            }
-        }
-
-    fun init(context: Context) {
-        sharedPrefs = context.getSharedPreferences("DEMO_APP", Context.MODE_PRIVATE)
-    }
-
-    fun removeAccount() {
-        with(sharedPrefs.edit()) {
-            remove("eth_account")
-            apply()
-        }
-    }
 }

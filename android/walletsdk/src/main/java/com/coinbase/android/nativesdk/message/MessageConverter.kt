@@ -2,17 +2,17 @@ package com.coinbase.android.nativesdk.message
 
 import android.net.Uri
 import com.coinbase.android.nativesdk.key.PublicKeySerializer
-import com.coinbase.android.nativesdk.message.request.RequestSerializer
 import com.coinbase.android.nativesdk.message.request.RequestContent
 import com.coinbase.android.nativesdk.message.request.RequestMessage
-import com.coinbase.android.nativesdk.message.response.ResponseSerializer
+import com.coinbase.android.nativesdk.message.request.RequestSerializer
 import com.coinbase.android.nativesdk.message.response.ResponseContent
 import com.coinbase.android.nativesdk.message.response.ResponseMessage
+import com.coinbase.android.nativesdk.message.response.ResponseSerializer
 import com.google.crypto.tink.subtle.Base64
 import com.google.crypto.tink.subtle.EllipticCurves
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import java.security.interfaces.ECPrivateKey
 import java.security.interfaces.ECPublicKey
 
@@ -76,6 +76,13 @@ object MessageConverter {
 
         val encryptedSerializer = encryptedResponseSerializer(sharedSecret)
         return JSON.decodeFromJsonElement(encryptedSerializer, messageJson)
+    }
+
+    fun getRequestIdFromResponse(uri: Uri): String? {
+        val encodedMessage = requireNotNull(uri.getQueryParameter("p"))
+        val messageJsonString = String(Base64.decode(encodedMessage))
+        val messageJson = JSON.parseToJsonElement(messageJsonString)
+        return messageJson.jsonObject["uuid"]?.jsonPrimitive?.content
     }
 
     private fun getSharedSecret(
