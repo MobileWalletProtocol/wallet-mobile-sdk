@@ -1,6 +1,6 @@
 //
 //  ExampleTest.swift
-//  CoinbaseWalletSDK-Unit-Test
+//  MobileWalletProtocol-Unit-Test
 //
 //  Created by Jungho Bang on 10/7/22.
 //
@@ -12,7 +12,7 @@ class ExampleTest: XCTestCase {
 
     func testCoinbaseWalletSDKConfigureNotCalled() {
         XCTAssertFalse(ClientConfiguration.isConfigured)
-        CoinbaseWalletSDK.configure(callback: URL(string: "myappxyz://mycallback")!)
+        MWPClient.configure(callback: URL(string: "myappxyz://mycallback")!)
         XCTAssertTrue(ClientConfiguration.isConfigured)
     }
 

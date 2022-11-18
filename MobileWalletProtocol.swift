@@ -1,14 +1,13 @@
 //
-//  CoinbaseWalletSDK+version.swift
-//  WalletSegue
+//  MobileWalletProtocol.swift
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 9/12/22.
 //
 
 import Foundation
 
-@available(iOS 13.0, *)
-extension CoinbaseWalletSDK {
+enum MobileWalletProtocol {
     // CFBundleShortVersionString doesn't exist if the SDK is built as a static library.
     static private(set) var version = "1.0.4"
     

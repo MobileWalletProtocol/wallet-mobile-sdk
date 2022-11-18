@@ -1,6 +1,6 @@
 //
 //  ClientConfiguration.swift
-//  CoinbaseWalletSDK
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 11/18/22.
 //

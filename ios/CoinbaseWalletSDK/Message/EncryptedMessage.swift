@@ -1,6 +1,6 @@
 //
 //  EncryptedMessage.swift
-//  WalletSegue
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 6/23/22.
 //

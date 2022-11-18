@@ -18,8 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    private var ownPrivateKey: CoinbaseWalletSDK.PrivateKey?
-    private var peerPublicKey: CoinbaseWalletSDK.PublicKey?
+    private var ownPrivateKey: PrivateKey?
+    private var peerPublicKey: PublicKey?
     private var requestMessage: RequestMessage?
     private var peerCallback: URL?
 }
@@ -57,7 +57,7 @@ extension AppDelegate: UIAlertViewDelegate {
         guard let requestMessage = requestMessage else { preconditionFailure() }
         
         let content: ResponseContent
-        let sender: CoinbaseWalletSDK.PublicKey
+        let sender: PublicKey
         if buttonIndex == 0 { // cancel
             content = .failure(
                 requestId: requestMessage.uuid,
@@ -69,7 +69,7 @@ extension AppDelegate: UIAlertViewDelegate {
             switch requestMessage.content {
             case .handshake:
                 self.peerPublicKey = requestMessage.sender
-                self.ownPrivateKey = CoinbaseWalletSDK.PrivateKey()
+                self.ownPrivateKey = PrivateKey()
                 let account = Account(chain: "eth", networkId: 0, address: "0x571a6a108adb08f9ca54fe8605280F9EE0eD4AF6")
                 returnValues = [
                     .result(value: JSONString(encode: account)!)

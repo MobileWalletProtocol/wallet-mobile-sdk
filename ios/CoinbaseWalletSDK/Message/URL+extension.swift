@@ -1,6 +1,6 @@
 //
 //  URL+extension.swift
-//  WalletSegue
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 6/29/22.
 //

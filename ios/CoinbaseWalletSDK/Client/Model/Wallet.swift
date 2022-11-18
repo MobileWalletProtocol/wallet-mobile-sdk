@@ -1,6 +1,6 @@
 //
 //  Wallet.swift
-//  CoinbaseWalletSDK
+//  MobileWalletProtocol
 //
 //  Created by Amit Goel on 11/4/22.
 //

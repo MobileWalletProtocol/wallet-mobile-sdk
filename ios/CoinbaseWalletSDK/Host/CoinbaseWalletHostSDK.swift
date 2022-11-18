@@ -1,6 +1,6 @@
 //
 //  CoinbaseWalletHostSDK.swift
-//  CoinbaseWalletSDK
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 9/2/22.
 //
@@ -11,8 +11,8 @@ import CryptoKit
 @available(iOS 13.0, *)
 public final class CoinbaseWalletHostSDK {
     public static func deriveSymmetricKey(
-        with ownPrivateKey: CoinbaseWalletSDK.PrivateKey,
-        _ peerPublicKey: CoinbaseWalletSDK.PublicKey
+        with ownPrivateKey: PrivateKey,
+        _ peerPublicKey: PublicKey
     ) throws -> SymmetricKey {
         return try Cipher.deriveSymmetricKey(with: ownPrivateKey, peerPublicKey)
     }

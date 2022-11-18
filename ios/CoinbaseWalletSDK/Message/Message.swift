@@ -1,6 +1,6 @@
 //
 //  Message.swift
-//  WalletSegue
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 6/13/22.
 //
@@ -26,7 +26,7 @@ extension Array: BaseContent where Element: BaseContent {}
 @available(iOS 13.0, *)
 public struct BaseMessage<C: BaseContent> {
     public let uuid: UUID
-    public let sender: CoinbaseWalletSDK.PublicKey
+    public let sender: PublicKey
     public let content: C
     public let version: String
     public let timestamp: Date

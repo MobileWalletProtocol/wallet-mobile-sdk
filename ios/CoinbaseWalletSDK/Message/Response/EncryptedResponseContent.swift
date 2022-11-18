@@ -1,6 +1,6 @@
 //
 //  EncryptedResponseContent.swift
-//  WalletSegue
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 6/23/22.
 //
@@ -17,7 +17,7 @@ public enum EncryptedResponseContent: EncryptedContent {
         switch self {
         case let .response(requestId, encryptedResults):
             guard let symmetricKey = symmetricKey else {
-                throw CoinbaseWalletSDK.Error.missingSymmetricKey
+                throw MWPError.missingSymmetricKey
             }
             let values: [ResponseContent.Value] = try Cipher.decrypt(encryptedResults, with: symmetricKey)
             return .response(requestId: requestId, values: values)
@@ -41,7 +41,7 @@ extension ResponseContent {
         switch self {
         case let .response(requestId, results):
             guard let symmetricKey = symmetricKey else {
-                throw CoinbaseWalletSDK.Error.missingSymmetricKey
+                throw MWPError.missingSymmetricKey
             }
             let encrypted = try Cipher.encrypt(results, with: symmetricKey)
             return .response(requestId: requestId, data: encrypted)
