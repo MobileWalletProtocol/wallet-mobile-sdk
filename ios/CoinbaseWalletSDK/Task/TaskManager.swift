@@ -42,11 +42,7 @@ class TaskManager {
     }
     
     static func reset(host: URL) {
-        tasks.forEach { task in
-            if task.value.host == host {
-                tasks.removeValue(forKey: task.key)
-            }
-        }
+        tasks = tasks.filter { $0.value.host != host }
     }
     
 }

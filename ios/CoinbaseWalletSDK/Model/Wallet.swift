@@ -1,5 +1,5 @@
 //
-//  WalletProvider.swift
+//  Wallet.swift
 //  CoinbaseWalletSDK
 //
 //  Created by Amit Goel on 11/4/22.
