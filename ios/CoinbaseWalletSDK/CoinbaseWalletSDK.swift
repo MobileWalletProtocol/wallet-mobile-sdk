@@ -225,7 +225,7 @@ extension CoinbaseWalletSDK {
             return nil
         }
         
-        let host = URL(string: hostWallet.url)!
+        let host = hostWallet.url
         if (instances[host] == nil) {
             let newInstance = CoinbaseWalletSDK(
                 host: host,
