@@ -34,7 +34,7 @@ jobs:
       - name: Update iOS version
         run: |
           sed -i '' -E "s/= '${{env.V_REGEX}}/= '${{env.NEW_VERSION}}/" CoinbaseWalletSDK.podspec
-          sed -i '' -E 's/= "${{env.V_REGEX}}/= "${{env.NEW_VERSION}}/' ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
+          sed -i '' -E 's/= "${{env.V_REGEX}}/= "${{env.NEW_VERSION}}/' ios/CoinbaseWalletSDK/MobileWalletProtocol.swift
       
       - name: Update Android version
         run: |
@@ -75,7 +75,7 @@ jobs:
         with:
           add-paths: |
             CoinbaseWalletSDK.podspec
-            ios/CoinbaseWalletSDK/Resources/CoinbaseWalletSDK+version.swift
+            ios/CoinbaseWalletSDK/MobileWalletProtocol.swift
             ios/example/Podfile.lock
             android/gradle/libs.versions.toml
             react-native/ios/CoinbaseWalletSDKExpo.podspec
