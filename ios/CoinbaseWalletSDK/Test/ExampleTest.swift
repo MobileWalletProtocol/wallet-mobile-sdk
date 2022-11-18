@@ -11,9 +11,9 @@ import XCTest
 class ExampleTest: XCTestCase {
 
     func testCoinbaseWalletSDKConfigureNotCalled() {
-        XCTAssertFalse(CoinbaseWalletSDK.isConfigured)
+        XCTAssertFalse(ClientConfiguration.isConfigured)
         CoinbaseWalletSDK.configure(callback: URL(string: "myappxyz://mycallback")!)
-        XCTAssertTrue(CoinbaseWalletSDK.isConfigured)
+        XCTAssertTrue(ClientConfiguration.isConfigured)
     }
 
 }
