@@ -16,7 +16,7 @@ import com.coinbase.android.nativesdk.Wallet
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
 
-class WalletProviderBottomSheetFragment : BottomSheetDialogFragment() {
+class WalletPickerBottomSheetFragment : BottomSheetDialogFragment() {
 
     private val viewModel: MainActivityViewModel by activityViewModels()
     private lateinit var binding: BottomSheetBinding
@@ -25,7 +25,7 @@ class WalletProviderBottomSheetFragment : BottomSheetDialogFragment() {
 
     private val adapter: WalletAdapter by lazy {
         WalletAdapter { wallet ->
-            this@WalletProviderBottomSheetFragment.dismiss()
+            this@WalletPickerBottomSheetFragment.dismiss()
             listener.onWalletSelected(wallet, type)
         }
     }
@@ -43,7 +43,7 @@ class WalletProviderBottomSheetFragment : BottomSheetDialogFragment() {
         val marginSpacingInPixels = resources.getDimensionPixelSize(R.dimen.margin_spacing)
         with(binding.walletItems) {
             addItemDecoration(SpacesItemDecoration(spacingInPixels, marginSpacingInPixels))
-            adapter = this@WalletProviderBottomSheetFragment.adapter
+            adapter = this@WalletPickerBottomSheetFragment.adapter
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -65,8 +65,8 @@ class WalletProviderBottomSheetFragment : BottomSheetDialogFragment() {
     companion object {
         private const val MODE_REQUEST_TYPE = "MODE_REQUEST_TYPE"
 
-        fun newInstance(requestType: ModeRequestType): WalletProviderBottomSheetFragment {
-            return WalletProviderBottomSheetFragment().apply {
+        fun newInstance(requestType: ModeRequestType): WalletPickerBottomSheetFragment {
+            return WalletPickerBottomSheetFragment().apply {
                 arguments = bundleOf(MODE_REQUEST_TYPE to requestType.name)
             }
         }

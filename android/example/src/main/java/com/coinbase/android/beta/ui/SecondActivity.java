@@ -17,6 +17,8 @@ import com.coinbase.android.nativesdk.message.response.ActionResult;
 
 import java.util.ArrayList;
 
+import kotlin.Unit;
+
 public class SecondActivity extends AppCompatActivity {
 
     final int CBW_ACTIVITY_RESULT_CODE = 9182736;
@@ -30,10 +32,7 @@ public class SecondActivity extends AppCompatActivity {
 
         client = new CoinbaseWalletSDK(
                 CBW_PACKAGE_NAME,
-                "",
-                intent -> {
-                    startActivityForResult(intent, CBW_ACTIVITY_RESULT_CODE);
-                }
+                ""
         );
     }
 
@@ -45,6 +44,11 @@ public class SecondActivity extends AppCompatActivity {
         actions.add(
                 new Web3JsonRPC.RequestAccounts().action(false)
         );
+
+        CoinbaseWalletSDK.openIntent = intent -> {
+            startActivityForResult(intent, CBW_ACTIVITY_RESULT_CODE);
+            return Unit.INSTANCE;
+        };
 
         client.initiateHandshake(
                 actions,

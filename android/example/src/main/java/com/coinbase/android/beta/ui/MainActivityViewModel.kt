@@ -3,7 +3,7 @@ package com.coinbase.android.beta.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coinbase.android.beta.utils.SharedPrefsManager
-import com.coinbase.android.nativesdk.MobileWalletProvider
+import com.coinbase.android.nativesdk.DefaultWallets
 import com.coinbase.android.nativesdk.Wallet
 import com.coinbase.android.nativesdk.message.request.Account
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +22,7 @@ class MainActivityViewModel : ViewModel() {
 
     private fun refreshWallets() {
         viewModelScope.launch {
-            _state.update { MobileWalletProvider.getWallets() }
+            _state.update { DefaultWallets.getWallets() }
         }
     }
 

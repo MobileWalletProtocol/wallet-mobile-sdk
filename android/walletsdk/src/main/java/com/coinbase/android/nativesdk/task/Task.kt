@@ -7,5 +7,6 @@ import java.util.Date
 internal class Task(
     val request: RequestMessage,
     val handler: ResponseHandler,
+    val host: String,
     val timestamp: Date
 )

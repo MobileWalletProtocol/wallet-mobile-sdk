@@ -78,11 +78,11 @@ object MessageConverter {
         return JSON.decodeFromJsonElement(encryptedSerializer, messageJson)
     }
 
-    fun getCallbackFromResponse(uri: Uri): String? {
+    fun getRequestIdFromResponse(uri: Uri): String? {
         val encodedMessage = requireNotNull(uri.getQueryParameter("p"))
         val messageJsonString = String(Base64.decode(encodedMessage))
         val messageJson = JSON.parseToJsonElement(messageJsonString)
-        return messageJson.jsonObject["callbackUrl"]?.jsonPrimitive?.content
+        return messageJson.jsonObject["uuid"]?.jsonPrimitive?.content
     }
 
     private fun getSharedSecret(

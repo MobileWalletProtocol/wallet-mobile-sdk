@@ -19,7 +19,6 @@ import com.coinbase.android.nativesdk.message.response.ResponseHandler
 import com.coinbase.android.nativesdk.message.response.ResponseResult
 import com.coinbase.android.nativesdk.message.response.SuccessHandshakeResponseCallback
 import com.coinbase.android.nativesdk.message.response.SuccessRequestResponseCallback
-import com.coinbase.android.nativesdk.task.ITaskManager
 import com.coinbase.android.nativesdk.task.TaskManager
 import kotlinx.serialization.decodeFromString
 import java.security.interfaces.ECPublicKey
@@ -31,9 +30,7 @@ const val CBW_PACKAGE_NAME = "org.toshi"
 class CoinbaseWalletSDK internal constructor(
     private val hostPackageName: String,
     private val scheme: String,
-    private val keyManager: IKeyManager,
-    private val taskManager: ITaskManager,
-    private val openIntent: (Intent) -> Unit
+    private val keyManager: IKeyManager
 ) {
 
     private var sdkVersion = BuildConfig.LIBRARY_VERSION_NAME
@@ -50,13 +47,10 @@ class CoinbaseWalletSDK internal constructor(
     constructor(
         hostPackageName: String,
         scheme: String,
-        openIntent: OpenIntentCallback
     ) : this(
         hostPackageName,
         scheme,
         KeyManager(context, hostPackageName),
-        TaskManager(),
-        { intent -> openIntent.call(intent) },
     )
 
     fun appendVersionTag(tag: String) {
@@ -183,11 +177,11 @@ class CoinbaseWalletSDK internal constructor(
             keyManager.storePeerPublicKey(message.sender as ECPublicKey)
         }
 
-        return taskManager.handleResponse(message)
+        return TaskManager.handleResponse(message)
     }
 
     fun resetSession() {
-        taskManager.reset()
+        TaskManager.reset(scheme)
         keyManager.resetKeys()
     }
 
@@ -222,7 +216,7 @@ class CoinbaseWalletSDK internal constructor(
 
         intent.data = uri
 
-        taskManager.registerResponseHandler(message, onResponse)
+        TaskManager.registerResponseHandler(message, onResponse, scheme)
         openIntent(intent)
     }
 
@@ -237,6 +231,8 @@ class CoinbaseWalletSDK internal constructor(
 
         private lateinit var context: Application
 
+        lateinit var openIntent: (Intent) -> Unit
+
         fun configure(domain: Uri, context: Application) {
             this.domain = if (domain.pathSegments.size < 2) {
                 domain.buildUpon()
@@ -248,19 +244,23 @@ class CoinbaseWalletSDK internal constructor(
             this.context = context
         }
 
-        fun getClient(wallet: Wallet, openIntent: (Intent) -> Unit): CoinbaseWalletSDK {
+        fun getClient(wallet: Wallet): CoinbaseWalletSDK {
+            if (!this::openIntent.isInitialized) {
+                throw CoinbaseWalletSDKError.WalletReturnedError(
+                    "Must initialize open intent callback before getting CoinbaseWalletSDK instance"
+                )
+            }
             return instances[wallet.url] ?: CoinbaseWalletSDK(
-                openIntent = openIntent,
                 hostPackageName = wallet.packageName,
                 scheme = wallet.url,
-                keyManager = KeyManager(context, wallet.packageName),
-                taskManager = TaskManager()
+                keyManager = KeyManager(context, wallet.packageName)
             )
         }
 
         fun handleResponse(uri: Uri): Boolean {
-            val callback = checkNotNull(MessageConverter.getCallbackFromResponse(uri)) { "Callback not found" }
-            return instances[callback]?.handleResponse(uri) == true
+            val requestId = checkNotNull(MessageConverter.getRequestIdFromResponse(uri)) { "Callback not found" }
+            val host = TaskManager.findRequestId(requestId) ?: return false
+            return instances[host]?.handleResponse(uri) == true
         }
     }
 }

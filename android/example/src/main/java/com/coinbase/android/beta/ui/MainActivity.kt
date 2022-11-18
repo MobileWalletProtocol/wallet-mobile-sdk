@@ -22,12 +22,16 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 
-class MainActivity : AppCompatActivity(), WalletProviderBottomSheetFragment.WalletSelectListener {
+class MainActivity : AppCompatActivity(), WalletPickerBottomSheetFragment.WalletSelectListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var launcher: ActivityResultLauncher<Intent>
 
     private val viewModel: MainActivityViewModel by viewModels()
+
+    private fun processIntent(): (Intent) -> Unit = { intent: Intent ->
+        launcher.launch(intent)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,26 +50,25 @@ class MainActivity : AppCompatActivity(), WalletProviderBottomSheetFragment.Wall
 
         setVisibility()
         connectWalletButton.setOnClickListener {
-            val walletPicker = WalletProviderBottomSheetFragment.newInstance(ModeRequestType.HANDSHAKE)
-            walletPicker.show(supportFragmentManager, WalletProviderBottomSheetFragment::class.simpleName.toString())
+            val walletPicker = WalletPickerBottomSheetFragment.newInstance(ModeRequestType.HANDSHAKE)
+            walletPicker.show(supportFragmentManager, WalletPickerBottomSheetFragment::class.simpleName.toString())
         }
 
         personalSign.setOnClickListener {
-            val walletPicker = WalletProviderBottomSheetFragment.newInstance(ModeRequestType.REQUEST)
-            walletPicker.show(supportFragmentManager, WalletProviderBottomSheetFragment::class.simpleName.toString())
+            val walletPicker = WalletPickerBottomSheetFragment.newInstance(ModeRequestType.REQUEST)
+            walletPicker.show(supportFragmentManager, WalletPickerBottomSheetFragment::class.simpleName.toString())
         }
 
         removeAccount.setOnClickListener {
-            val walletPicker = WalletProviderBottomSheetFragment.newInstance(ModeRequestType.REMOVE_ACCOUNT)
-            walletPicker.show(supportFragmentManager, WalletProviderBottomSheetFragment::class.simpleName.toString())
+            val walletPicker = WalletPickerBottomSheetFragment.newInstance(ModeRequestType.REMOVE_ACCOUNT)
+            walletPicker.show(supportFragmentManager, WalletPickerBottomSheetFragment::class.simpleName.toString())
         }
+
+        CoinbaseWalletSDK.openIntent = processIntent()
     }
 
     override fun onWalletSelected(wallet: Wallet, type: ModeRequestType) {
-        val client = CoinbaseWalletSDK.getClient(wallet) { intent ->
-            launcher.launch(intent)
-        }
-
+        val client = CoinbaseWalletSDK.getClient(wallet)
         when (type) {
             ModeRequestType.HANDSHAKE -> handleHandShake(wallet, client)
             ModeRequestType.REQUEST -> handleRequest(wallet, client)
