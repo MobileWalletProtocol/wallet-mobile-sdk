@@ -17,9 +17,7 @@ class ViewController: UITableViewController {
     
     @IBOutlet weak var logTextView: UITextView!
     
-    private lazy var cbwallet: MWPClient = {
-        MWPClient.getInstance(hostWallet: Wallet.coinbaseWallet)!
-    }()
+    private lazy var cbwallet = { CoinbaseWalletSDK.shared }()
     private var address: String?
     private let typedData = [
         "types": [
@@ -58,7 +56,7 @@ class ViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        isCBWalletInstalledLabel.text = "\(MWPClient.isCoinbaseWalletInstalled())"
+        isCBWalletInstalledLabel.text = "\(CoinbaseWalletSDK.isCoinbaseWalletInstalled())"
         updateSessionStatus()
     }
     
