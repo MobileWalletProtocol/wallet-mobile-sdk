@@ -1,6 +1,6 @@
 //
 //  Action.swift
-//  MobileWalletProtocolHost
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 6/21/22.
 //
