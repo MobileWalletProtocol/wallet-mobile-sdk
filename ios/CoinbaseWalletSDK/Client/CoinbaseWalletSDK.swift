@@ -24,4 +24,11 @@ public final class CoinbaseWalletSDK: MWPClient {
     public func handleResponse(_ url: URL) throws -> Bool {
         return try MWPClient.handleResponse(url)
     }
+    
+    #if CROSS_PLATFORM
+    @available(*, deprecated, message: "Use MobileWalletProtocol.appendVersionTag(:) instead")
+    static public func appendVersionTag(_ tag: String) {
+        MobileWalletProtocol.appendVersionTag(tag)
+    }
+    #endif
 }
