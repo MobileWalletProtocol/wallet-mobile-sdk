@@ -1,10 +1,6 @@
 import type { Action, HandshakeAction, RequestAction } from '../action/action';
 
-import type {
-  BaseRequest,
-  DecryptedRequestContent,
-  HandshakeContent,
-} from './decoding';
+import type { BaseRequest, DecryptedRequestContent, HandshakeContent } from './decoding';
 
 export type Account = {
   chain: string;
@@ -23,7 +19,7 @@ export type RequestMessage = {
 
 export function mapHandshakeToRequest(
   handshake: HandshakeContent,
-  request: BaseRequest
+  request: BaseRequest,
 ): RequestMessage {
   const handshakeAction: HandshakeAction = {
     kind: 'handshake',
@@ -32,15 +28,13 @@ export function mapHandshakeToRequest(
   };
 
   const additionalActions: RequestAction[] =
-    handshake.initialActions?.map(
-      ({ method, optional, paramsJson }, index) => ({
-        id: index,
-        kind: 'request',
-        method,
-        optional,
-        params: JSON.parse(paramsJson) as Record<string, unknown>,
-      })
-    ) ?? [];
+    handshake.initialActions?.map(({ method, optional, paramsJson }, index) => ({
+      id: index,
+      kind: 'request',
+      method,
+      optional,
+      params: JSON.parse(paramsJson) as Record<string, unknown>,
+    })) ?? [];
 
   return {
     uuid: request.uuid,
@@ -53,7 +47,7 @@ export function mapHandshakeToRequest(
 
 export function mapDecryptedContentToRequest(
   request: DecryptedRequestContent,
-  base: BaseRequest
+  base: BaseRequest,
 ): RequestMessage {
   const actions: RequestAction[] = request.actions.map(
     ({ method, optional, paramsJson }, index) => ({
@@ -62,7 +56,7 @@ export function mapDecryptedContentToRequest(
       method,
       optional,
       params: JSON.parse(paramsJson) as Record<string, unknown>,
-    })
+    }),
   );
 
   return {

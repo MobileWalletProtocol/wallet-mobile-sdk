@@ -1,13 +1,13 @@
 import { Linking, Platform } from 'react-native';
+import { emitEvent } from '../events/events';
+import type { DecodedRequest } from '../request/decoding';
 
 import { isHandshakeAction, RequestAction } from '../action/action';
 import { MWPHostModule } from '../native-module/MWPHostNativeModule';
 import type { RequestMessage } from '../request/request';
-import {
-  getSession,
-  SecureStorage,
-  updateSessions,
-} from '../sessions/sessions';
+import { getSession, SecureStorage, updateSessions } from '../sessions/sessions';
+import { URL } from 'react-native-url-polyfill';
+import { Buffer } from 'buffer';
 
 export type ResultValue = {
   value: string;
@@ -30,9 +30,7 @@ type FailureResponse = {
   description: string;
 };
 
-type ResponseContent =
-  | { response: SuccessResponse }
-  | { failure: FailureResponse };
+type ResponseContent = { response: SuccessResponse } | { failure: FailureResponse };
 
 type ResponseMessage = {
   version: string;
@@ -43,24 +41,38 @@ type ResponseMessage = {
   callbackUrl: string;
 };
 
+function getRequestType(request: RequestMessage | DecodedRequest): 'handshake' | 'request' {
+  if ('content' in request) {
+    // DecodedRequest
+    if ('handshake' in request.content) {
+      return 'handshake';
+    } else {
+      return 'request';
+    }
+  } else {
+    // RequestMessage
+    const first = request.actions[0];
+    return first?.kind ?? 'request';
+  }
+}
+
 // TODO: Move response encoding into native module and have separate function for encrypting
 async function respond(
   response: ResponseMessage,
   callbackUrl: string,
   sessionPrivateKey?: string,
-  clientPublicKey?: string
+  clientPublicKey?: string,
 ) {
   let encodedResponseUrl: string;
 
   if (sessionPrivateKey && clientPublicKey) {
     // Encrypted response
-    const platformResponse =
-      Platform.OS === 'android' ? JSON.stringify(response) : response;
+    const platformResponse = Platform.OS === 'android' ? JSON.stringify(response) : response;
     encodedResponseUrl = await MWPHostModule.encodeResponse(
       platformResponse,
       callbackUrl,
       sessionPrivateKey,
-      clientPublicKey
+      clientPublicKey,
     );
   } else {
     // Unencrypted response
@@ -80,11 +92,9 @@ async function respond(
 export async function sendResponse(
   responseMap: Map<number, ReturnValue>,
   message: RequestMessage,
-  storage: SecureStorage
+  storage: SecureStorage,
 ) {
-  const actions = message.actions.filter(
-    (value) => !isHandshakeAction(value)
-  ) as RequestAction[];
+  const actions = message.actions.filter((value) => !isHandshakeAction(value)) as RequestAction[];
 
   const responses: ReturnValue[] = actions.map((value) => {
     const returnValue = responseMap.get(value.id);
@@ -125,23 +135,45 @@ export async function sendResponse(
     },
   };
 
-  await respond(
-    response,
-    session.dappURL,
-    session.sessionPrivateKey,
-    session.clientPublicKey
-  );
+  const eventParams = {
+    requestType: getRequestType(message),
+    appId: session.dappId,
+    appName: session.dappName,
+    callbackUrl: session.dappURL,
+    sdkVersion: session.version ?? '0',
+  };
+
+  emitEvent({
+    name: 'send_success_response',
+    params: eventParams,
+  });
+
+  try {
+    emitEvent({
+      name: 'encode_response_start',
+      params: eventParams,
+    });
+
+    await respond(response, session.dappURL, session.sessionPrivateKey, session.clientPublicKey);
+
+    emitEvent({
+      name: 'encode_response_success',
+      params: eventParams,
+    });
+  } catch (e) {
+    emitEvent({
+      name: 'encode_response_failure',
+      params: {
+        ...eventParams,
+        error: (e as Error).message,
+      },
+    });
+
+    throw e;
+  }
 }
 
-export async function sendError(
-  description: string,
-  message: {
-    version: string;
-    sender: string;
-    uuid: string;
-    callbackUrl: string;
-  }
-) {
+export async function sendError(description: string, message: RequestMessage | DecodedRequest) {
   const response: ResponseMessage = {
     version: message.version,
     sender: message.sender,
@@ -156,12 +188,48 @@ export async function sendError(
     },
   };
 
-  await respond(response, message.callbackUrl);
+  const eventParams = {
+    appId: 'unknown',
+    appName: 'unknown',
+    requestType: getRequestType(message),
+    error: description,
+    callbackUrl: message.callbackUrl,
+    sdkVersion: message.version,
+  };
+
+  emitEvent({
+    name: 'send_failure_response',
+    params: eventParams,
+  });
+
+  try {
+    emitEvent({
+      name: 'encode_response_start',
+      params: eventParams,
+    });
+
+    await respond(response, message.callbackUrl);
+
+    emitEvent({
+      name: 'encode_response_success',
+      params: eventParams,
+    });
+  } catch (e) {
+    emitEvent({
+      name: 'encode_response_failure',
+      params: {
+        ...eventParams,
+        error: (e as Error).message,
+      },
+    });
+
+    throw e;
+  }
 }
 
 export function shouldRespondToClient(
   responseMap: Map<number, ReturnValue>,
-  message: RequestMessage
+  message: RequestMessage,
 ): boolean {
   const actions = message.actions.filter((value) => !isHandshakeAction(value));
   return responseMap.size === actions.length;

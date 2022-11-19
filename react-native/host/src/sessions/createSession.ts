@@ -7,7 +7,7 @@ import type { Session } from './sessions';
 export async function createSession(
   metadata: AppMetadata,
   action: HandshakeAction,
-  message: RequestMessage
+  message: RequestMessage,
 ): Promise<Session> {
   const kp = await MWPHostModule.generateKeyPair();
   const now = new Date().toISOString();

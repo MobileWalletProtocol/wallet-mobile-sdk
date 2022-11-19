@@ -1,3 +1,5 @@
+import { emitEvent } from '../events/events';
+
 const SESSIONS_KEY = 'nativeSessions';
 
 export type Session = {
@@ -22,15 +24,10 @@ export type SecureStorage = {
 };
 
 function findMatchingSession(sessions: Session[], sessionToFind: Session) {
-  return sessions.find(
-    (session) => session.sessionPublicKey === sessionToFind.sessionPublicKey
-  );
+  return sessions.find((session) => session.sessionPublicKey === sessionToFind.sessionPublicKey);
 }
 
-export function isSessionValid(
-  session: Session,
-  expiryDeltaDays: number
-): boolean {
+export function isSessionValid(session: Session, expiryDeltaDays: number): boolean {
   const lastAccessTime = new Date(session.lastAccessTime);
   const now = new Date();
 
@@ -49,23 +46,12 @@ export async function getSessions(storage: SecureStorage): Promise<Session[]> {
   return sessions ?? [];
 }
 
-export async function getSession(
-  storage: SecureStorage,
-  message: { sender: string }
-): Promise<Session | undefined> {
-  const sessions = await getSessions(storage);
-  return sessions.find((value) => value.clientPublicKey === message.sender);
-}
-
 export async function addSessions(storage: SecureStorage, sessions: Session[]) {
   const existingSessions = await getSessions(storage);
   await storage.set<Session[]>(SESSIONS_KEY, existingSessions.concat(sessions));
 }
 
-export async function updateSessions(
-  storage: SecureStorage,
-  sessions: Session[]
-) {
+export async function updateSessions(storage: SecureStorage, sessions: Session[]) {
   const existingSessions = await getSessions(storage);
   const updatedSessions = existingSessions.map((existingSession) => {
     const matchingSession = findMatchingSession(sessions, existingSession);
@@ -74,14 +60,33 @@ export async function updateSessions(
   await storage.set<Session[]>(SESSIONS_KEY, updatedSessions);
 }
 
-export async function deleteSessions(
-  storage: SecureStorage,
-  sessions: Session[]
-) {
+export async function deleteSessions(storage: SecureStorage, sessions: Session[]) {
   const existingSessions = await getSessions(storage);
   const updatedSessions = existingSessions.filter((session) => {
     const matchingSession = findMatchingSession(sessions, session);
     return matchingSession === undefined;
   });
   await storage.set<Session[]>(SESSIONS_KEY, updatedSessions);
+}
+
+export async function getSession(
+  storage: SecureStorage,
+  message: { sender: string },
+): Promise<Session | undefined> {
+  const sessions = await getSessions(storage);
+  return sessions.find((value) => value.clientPublicKey === message.sender);
+}
+
+export async function addSession(storage: SecureStorage, session: Session) {
+  await addSessions(storage, [session]);
+
+  emitEvent({
+    name: 'session_added',
+    params: {
+      callbackUrl: session.dappURL,
+      appId: session.dappId,
+      appName: session.dappName,
+      sdkVersion: session.version ?? '0',
+    },
+  });
 }

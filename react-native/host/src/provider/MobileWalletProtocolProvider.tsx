@@ -1,16 +1,6 @@
-import {
-  createContext,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, ReactNode, useCallback, useMemo, useState } from 'react';
 
-import {
-  HandshakeAction,
-  isHandshakeAction,
-  RequestAction,
-} from '../action/action';
+import { HandshakeAction, isHandshakeAction, RequestAction } from '../action/action';
 import { decodeRequest, decryptRequest } from '../request/decoding';
 import {
   mapDecryptedContentToRequest,
@@ -27,29 +17,24 @@ import {
 } from '../response/response';
 import { createSession } from '../sessions/createSession';
 import {
-  addSessions,
+  addSession,
   deleteSessions,
   getSession,
   getSessions,
   isSessionValid,
   SecureStorage,
 } from '../sessions/sessions';
-import {
-  AppMetadata,
-  fetchClientAppMetadata,
-} from '../utils/fetchClientAppMetadata';
+import { AppMetadata, fetchClientAppMetadata } from '../utils/fetchClientAppMetadata';
 import { isClientAppVerified } from '../utils/isClientAppVerified';
 import React from 'react';
+import { emitEvent } from '../events/events';
 
 type MWPHostContextType = {
   message: RequestMessage | null;
   handleRequestUrl: (url: string) => Promise<boolean>;
   fetchClientAppMetadata: () => Promise<AppMetadata | null>;
   isClientAppVerified: () => Promise<boolean>;
-  approveHandshake: (
-    action: HandshakeAction,
-    metadata: AppMetadata
-  ) => Promise<void>;
+  approveHandshake: (action: HandshakeAction, metadata: AppMetadata) => Promise<void>;
   rejectHandshake: (description: string) => Promise<void>;
   approveAction: (action: RequestAction, result: ResultValue) => Promise<void>;
   rejectAction: (action: RequestAction, error: ErrorValue) => Promise<void>;
@@ -61,19 +46,17 @@ type MWPHostProviderProps = {
   children?: ReactNode;
 };
 
+let prevRequestUUID: string | null = null;
 const actionToResponseMap = new Map<number, ReturnValue>();
 
-export const MobileWalletProtocolContext =
-  createContext<MWPHostContextType | null>(null);
+export const MobileWalletProtocolContext = createContext<MWPHostContextType | null>(null);
 
 export function MobileWalletProtocolProvider({
   children,
   secureStorage,
   sessionExpiryDays,
 }: MWPHostProviderProps) {
-  const [activeMessage, setActiveMessage] = useState<RequestMessage | null>(
-    null
-  );
+  const [activeMessage, setActiveMessage] = useState<RequestMessage | null>(null);
 
   const updateActiveMessage = useCallback((message: RequestMessage | null) => {
     actionToResponseMap.clear();
@@ -87,11 +70,13 @@ export function MobileWalletProtocolProvider({
         return false;
       }
 
+      if (prevRequestUUID === decoded.uuid) {
+        return false;
+      }
+      prevRequestUUID = decoded.uuid;
+
       if ('handshake' in decoded.content) {
-        const message = mapHandshakeToRequest(
-          decoded.content.handshake,
-          decoded
-        );
+        const message = mapHandshakeToRequest(decoded.content.handshake, decoded);
         updateActiveMessage(message);
         return true;
       }
@@ -99,33 +84,45 @@ export function MobileWalletProtocolProvider({
       if ('request' in decoded.content) {
         const session = await getSession(secureStorage, decoded);
         if (!session) {
+          emitEvent({
+            name: 'session_not_found',
+            params: { callbackUrl: decoded.callbackUrl },
+          });
+
           await sendError(
             'Session not found. Please initiate a handshake request prior to making a request',
-            decoded
+            decoded,
           );
           return false;
         }
 
         if (!isSessionValid(session, sessionExpiryDays)) {
+          emitEvent({
+            name: 'session_expired',
+            params: {
+              appName: session.dappName,
+              appId: session.dappId,
+              callbackUrl: session.dappURL,
+            },
+          });
+
           await deleteSessions(secureStorage, [session]);
           await sendError(
             'Session expired. Please initiate another handshake request to connect.',
-            decoded
+            decoded,
           );
+          return false;
         }
 
         const decrypted = await decryptRequest(url, session);
-        const message = mapDecryptedContentToRequest(
-          decrypted.content.request,
-          decoded
-        );
+        const message = mapDecryptedContentToRequest(decrypted.content.request, decoded);
         updateActiveMessage(message);
         return true;
       }
 
       return false;
     },
-    [secureStorage, sessionExpiryDays, updateActiveMessage]
+    [secureStorage, sessionExpiryDays, updateActiveMessage],
   );
 
   const fetchAppMetadata = useCallback(async () => {
@@ -162,21 +159,19 @@ export function MobileWalletProtocolProvider({
       const sessions = await getSessions(secureStorage);
 
       // Delete existing session if it matches the app id
-      const existingSession = sessions.find(
-        (value) => value.dappId === metadata.appId
-      );
+      const existingSession = sessions.find((value) => value.dappId === metadata.appId);
       if (existingSession) {
         await deleteSessions(secureStorage, [existingSession]);
       }
 
-      await addSessions(secureStorage, [session]);
+      await addSession(secureStorage, session);
 
       if (shouldRespondToClient(actionToResponseMap, activeMessage)) {
         await sendResponse(actionToResponseMap, activeMessage, secureStorage);
         updateActiveMessage(null);
       }
     },
-    [activeMessage, secureStorage, updateActiveMessage]
+    [activeMessage, secureStorage, updateActiveMessage],
   );
 
   const rejectHandshake = useCallback(
@@ -188,7 +183,7 @@ export function MobileWalletProtocolProvider({
       await sendError(description, activeMessage);
       updateActiveMessage(null);
     },
-    [activeMessage, updateActiveMessage]
+    [activeMessage, updateActiveMessage],
   );
 
   const approveAction = useCallback(
@@ -204,7 +199,7 @@ export function MobileWalletProtocolProvider({
         updateActiveMessage(null);
       }
     },
-    [activeMessage, secureStorage, updateActiveMessage]
+    [activeMessage, secureStorage, updateActiveMessage],
   );
 
   const rejectAction = useCallback(
@@ -224,7 +219,7 @@ export function MobileWalletProtocolProvider({
         await sendResponse(actionToResponseMap, activeMessage, secureStorage);
       }
     },
-    [activeMessage, secureStorage, updateActiveMessage]
+    [activeMessage, secureStorage, updateActiveMessage],
   );
 
   const value = useMemo(() => {

@@ -26,11 +26,6 @@ export function isHandshakeAction(action: Action): action is HandshakeAction {
   return action.kind === 'handshake';
 }
 
-export function isEthereumAction(
-  action: Action
-): action is EthereumRequestAction {
-  return (
-    action.kind === 'request' &&
-    supportedEthereumMethods.includes(action.method)
-  );
+export function isEthereumAction(action: Action): action is EthereumRequestAction {
+  return action.kind === 'request' && supportedEthereumMethods.includes(action.method);
 }

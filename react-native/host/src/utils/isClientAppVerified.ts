@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import { URL } from 'react-native-url-polyfill';
 
 import { MWPHostModule } from '../native-module/MWPHostNativeModule';
 
@@ -15,10 +16,7 @@ function stripIosDeveloperId(appId: string) {
   return appId.replace(/^[\dA-Z]+\./g, '');
 }
 
-async function isIosAppVerified(
-  hostname: string,
-  clientAppId: string
-): Promise<boolean> {
+async function isIosAppVerified(hostname: string, clientAppId: string): Promise<boolean> {
   const urls = [
     new URL('/.well-known/apple-app-site-association', `https://${hostname}`),
     new URL('/apple-app-site-association', `https://${hostname}`),
@@ -27,8 +25,7 @@ async function isIosAppVerified(
   for await (const url of urls) {
     try {
       const wellKnownDataJson = await fetch(url.toString());
-      const wellKnownData =
-        (await wellKnownDataJson.json()) as AppleAppSiteAssociationData;
+      const wellKnownData = (await wellKnownDataJson.json()) as AppleAppSiteAssociationData;
 
       for (const { appID, appIDs } of wellKnownData.applinks.details) {
         if (appID) {
@@ -38,9 +35,7 @@ async function isIosAppVerified(
         }
 
         if (appIDs) {
-          const verified = appIDs
-            .map((id) => stripIosDeveloperId(id))
-            .includes(clientAppId);
+          const verified = appIDs.map((id) => stripIosDeveloperId(id)).includes(clientAppId);
           if (verified) {
             return true;
           }
@@ -61,10 +56,7 @@ type AssetLinksData = {
   };
 };
 
-async function isAndroidAppVerified(
-  hostname: string,
-  clientAppId: string
-): Promise<boolean> {
+async function isAndroidAppVerified(hostname: string, clientAppId: string): Promise<boolean> {
   try {
     const url = new URL('/.well-known/assetlinks.json', `https://${hostname}`);
     const wellKnownDataJson = await fetch(url.toString());
