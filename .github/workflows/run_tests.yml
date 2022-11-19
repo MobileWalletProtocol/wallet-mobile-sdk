@@ -43,4 +43,4 @@ jobs:
           bundler-cache: true
 
       - name: Run unit test
-        run: bundle exec pod lib lint --verbose
+        run: bundle exec pod lib lint --allow-warnings --verbose
