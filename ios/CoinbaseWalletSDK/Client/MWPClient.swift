@@ -10,7 +10,7 @@ import CryptoKit
 import UIKit
 
 @available(iOS 13.0, *)
-public final class MWPClient {
+public class MWPClient {
 
     // MARK: - Instantiate
     
@@ -220,11 +220,6 @@ public final class MWPClient {
 
 @available(iOS 13.0, *)
 extension MWPClient {
-    
-    @available(*, deprecated, message: "Use {Wallet}.isInstalled instead")
-    static public func isCoinbaseWalletInstalled() -> Bool {
-        return UIApplication.shared.canOpenURL(URL(string: "cbwallet://")!)
-    }
     
     // MARK: - Configure
     

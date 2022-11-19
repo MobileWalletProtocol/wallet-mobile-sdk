@@ -18,8 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    private var ownPrivateKey: CoinbaseWalletSDK.PrivateKey?
-    private var peerPublicKey: CoinbaseWalletSDK.PublicKey?
+    private var ownPrivateKey: PrivateKey?
+    private var peerPublicKey: PublicKey?
     private var requestMessage: RequestMessage?
     private var peerCallback: URL?
 }
@@ -39,7 +39,7 @@ extension AppDelegate: UIAlertViewDelegate {
         guard let request: RequestMessage = try? CoinbaseWalletHostSDK.decode(url, with: symmetricKey) else { return }
         
         self.requestMessage = request
-        if case .handshake(_, let callback, _) = request.content {
+        if case .handshake(_, let callback, _, _, _) = request.content {
             self.peerCallback = callback
         }
         
