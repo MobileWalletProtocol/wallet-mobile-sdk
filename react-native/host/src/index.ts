@@ -7,7 +7,7 @@ export {
   isHandshakeAction,
 } from './action/action';
 export * from './action/ethereum';
-export { addEventListener } from './events/events';
+export { addDiagnosticLogListener } from './events/events';
 export {
   MWPHostModule as NativeSdkSupport,
   getAndroidIntentUrl,

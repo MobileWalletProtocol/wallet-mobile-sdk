@@ -37,7 +37,7 @@ const App = function () {
 
   useEffect(function setupDeeplinkHandling() {
     // Pass incoming deeplinks into Mobile SDK
-    const subscription = Linking.addEventListener('url', ({url}) => {
+    const subscription = Linking.addDiagnosticLogListener('url', ({url}) => {
       console.log('-- handleResponse --', url);
       handleResponse(url);
     });
