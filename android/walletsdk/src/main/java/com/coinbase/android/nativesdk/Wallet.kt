@@ -18,7 +18,7 @@ object DefaultWallets {
         name = "Coinbase Wallet",
         iconUrl = "https://play-lh.googleusercontent.com/wrgUujbq5kbn4Wd4tzyhQnxOXkjiGqq39N4zBvCHmxpIiKcZw_Pb065KTWWlnoejsg",
         packageName = "org.toshi",
-        url = "cbwallet://wsegue"
+        url = "https://wallet.coinbase.com/wsegue"
     )
 
     private val coinbaseRetail = Wallet(

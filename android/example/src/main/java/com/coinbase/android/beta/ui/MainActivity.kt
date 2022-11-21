@@ -3,7 +3,6 @@ package com.coinbase.android.beta.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -30,7 +29,7 @@ class MainActivity : AppCompatActivity(), WalletPickerBottomSheetFragment.Wallet
     private val viewModel: MainActivityViewModel by viewModels()
 
     private fun processIntent(): (Intent) -> Unit = { intent: Intent ->
-        launcher.launch(intent)
+        startActivity(intent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,10 +38,6 @@ class MainActivity : AppCompatActivity(), WalletPickerBottomSheetFragment.Wallet
         setContentView(binding.root)
 
         SharedPrefsManager.init(this)
-        launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val uri = result.data?.data ?: return@registerForActivityResult
-            CoinbaseWalletSDK.handleResponse(uri)
-        }
     }
 
     override fun onStart() = with(binding) {
@@ -63,7 +58,6 @@ class MainActivity : AppCompatActivity(), WalletPickerBottomSheetFragment.Wallet
             val walletPicker = WalletPickerBottomSheetFragment.newInstance(ModeRequestType.REMOVE_ACCOUNT)
             walletPicker.show(supportFragmentManager, WalletPickerBottomSheetFragment::class.simpleName.toString())
         }
-
         CoinbaseWalletSDK.openIntent = processIntent()
     }
 
@@ -73,6 +67,14 @@ class MainActivity : AppCompatActivity(), WalletPickerBottomSheetFragment.Wallet
             ModeRequestType.HANDSHAKE -> handleHandShake(wallet, client)
             ModeRequestType.REQUEST -> handleRequest(wallet, client)
             ModeRequestType.REMOVE_ACCOUNT -> handleRemoveAccount(wallet, client)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let { newIntent ->
+            val uri = newIntent.data ?: return
+            CoinbaseWalletSDK.handleResponse(uri)
         }
     }
 

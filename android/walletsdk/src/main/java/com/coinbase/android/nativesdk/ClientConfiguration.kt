@@ -1,0 +1,31 @@
+package com.coinbase.android.nativesdk
+
+import android.app.Application
+import android.net.Uri
+
+object ClientConfiguration {
+
+    lateinit var config: Configuration
+
+    fun configure(domain: Uri, context: Application, appName: String, appIconUrl: String?) {
+        config = Configuration(
+            domain = if (domain.pathSegments.size < 2) {
+                domain.buildUpon()
+                    .appendPath("wsegue")
+                    .build()
+            } else {
+                domain
+            },
+            context = context,
+            name = appName,
+            iconUrl = appIconUrl
+        )
+    }
+
+    data class Configuration(
+        val domain: Uri,
+        val context: Application,
+        val name: String,
+        val iconUrl: String? = null
+    )
+}

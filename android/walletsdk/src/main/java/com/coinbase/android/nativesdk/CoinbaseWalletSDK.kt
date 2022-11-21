@@ -32,13 +32,12 @@ class CoinbaseWalletSDK internal constructor(
     private val scheme: String,
     private val keyManager: IKeyManager
 ) {
-
     private var sdkVersion = BuildConfig.LIBRARY_VERSION_NAME
 
-    private val launchWalletIntent: Intent?
-        get() = context.packageManager.getLaunchIntentForPackage(hostPackageName)
-
     val isConnected: Boolean get() = keyManager.peerPublicKey != null
+
+    private val config: ClientConfiguration.Configuration
+        get() = ClientConfiguration.config
 
     init {
         instances[scheme] = this
@@ -50,7 +49,7 @@ class CoinbaseWalletSDK internal constructor(
     ) : this(
         hostPackageName,
         scheme,
-        KeyManager(context, hostPackageName),
+        KeyManager(ClientConfiguration.config.context, hostPackageName),
     )
 
     fun appendVersionTag(tag: String) {
@@ -80,11 +79,13 @@ class CoinbaseWalletSDK internal constructor(
             timestamp = Date(),
             sender = keyManager.ownPublicKey,
             content = RequestContent.Handshake(
-                appId = context.packageName,
-                callback = domain.toString(),
+                appId = config.context.packageName,
+                callback = config.domain.toString(),
+                appName = config.name,
+                appIconUrl = config.iconUrl,
                 initialActions = initialActions
             ),
-            callbackUrl = domain.toString()
+            callbackUrl = config.domain.toString()
         )
 
         send(message) { result ->
@@ -135,7 +136,7 @@ class CoinbaseWalletSDK internal constructor(
             timestamp = Date(),
             sender = keyManager.ownPublicKey,
             content = request,
-            callbackUrl = domain.toString()
+            callbackUrl = config.domain.toString()
         )
 
         send(message, onResponse)
@@ -202,46 +203,26 @@ class CoinbaseWalletSDK internal constructor(
             return
         }
 
-        val intent = launchWalletIntent
-        if (intent == null) {
-            onResponse(Result.failure(CoinbaseWalletSDKError.OpenWalletFailed))
-            return
-        }
-
-        // Prevent intent from launching app in new window
-        intent.type = Intent.ACTION_VIEW
-        if (intent.flags and Intent.FLAG_ACTIVITY_NEW_TASK > 0) {
-            intent.flags = intent.flags and Intent.FLAG_ACTIVITY_NEW_TASK.inv()
-        }
-
-        intent.data = uri
-
         TaskManager.registerResponseHandler(message, onResponse, scheme)
+
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = uri
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         openIntent(intent)
     }
 
     private fun isWalletSegueResponseURL(uri: Uri): Boolean {
-        return uri.host == domain.host && uri.path == domain.path && uri.getQueryParameter("p") != null
+        return uri.host == config.domain.host && uri.path == config.domain.path && uri.getQueryParameter("p") != null
     }
 
     companion object {
         private val instances: MutableMap<String, CoinbaseWalletSDK> = mutableMapOf()
 
-        private lateinit var domain: Uri
-
-        private lateinit var context: Application
-
         lateinit var openIntent: (Intent) -> Unit
 
-        fun configure(domain: Uri, context: Application) {
-            this.domain = if (domain.pathSegments.size < 2) {
-                domain.buildUpon()
-                    .appendPath("wsegue")
-                    .build()
-            } else {
-                domain
-            }
-            this.context = context
+        fun configure(domain: Uri, context: Application, appName: String, appIconUrl: String?) {
+            ClientConfiguration.configure(domain, context, appName, appIconUrl)
         }
 
         fun getClient(wallet: Wallet): CoinbaseWalletSDK {
@@ -253,7 +234,7 @@ class CoinbaseWalletSDK internal constructor(
             return instances[wallet.url] ?: CoinbaseWalletSDK(
                 hostPackageName = wallet.packageName,
                 scheme = wallet.url,
-                keyManager = KeyManager(context, wallet.packageName)
+                keyManager = KeyManager(ClientConfiguration.config.context, wallet.packageName)
             )
         }
 
