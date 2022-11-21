@@ -16,13 +16,13 @@ public class MWPClient {
     
     static private var instances: [URL: MWPClient] = [:]
     
-    static public func getInstance(hostWallet: Wallet) -> MWPClient? {
+    static public func getInstance(to wallet: Wallet) -> MWPClient? {
         guard let configuration = ClientConfiguration.config else {
             assertionFailure("`MWPClient.configure` should be called prior to retrieving an instance.")
             return nil
         }
         
-        let host = hostWallet.url
+        let host = wallet.url
         if (instances[host] == nil) {
             let newInstance = MWPClient(
                 host: host,

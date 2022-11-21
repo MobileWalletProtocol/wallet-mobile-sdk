@@ -17,7 +17,7 @@ public final class CoinbaseWalletSDK: MWPClient {
     
     @available(*, deprecated, message: "Use MWPClient.getInstance(:) instead")
     static public var shared: CoinbaseWalletSDK = {
-        MWPClient.getInstance(hostWallet: Wallet.coinbaseWallet) as! CoinbaseWalletSDK
+        MWPClient.getInstance(to: .coinbaseWallet) as! CoinbaseWalletSDK
     }()
     
     @available(*, deprecated, message: "Use MWPClient.handleResponse(:) instead")
