@@ -106,12 +106,12 @@ type MWPEvent =
   | SendSuccessResponseEvent
   | SendFailureResponseEvent;
 
-const events = new EventEmitter();
+const diagnosticLogger = new EventEmitter();
 
 export function addEventListener(listener: (event: MWPEvent) => void): EmitterSubscription {
-  return events.addListener('mwp_event', listener);
+  return diagnosticLogger.addListener('mwp_event', listener);
 }
 
 export function emitEvent(event: MWPEvent) {
-  events.emit('mwp_event', event);
+  diagnosticLogger.emit('mwp_event', event);
 }
