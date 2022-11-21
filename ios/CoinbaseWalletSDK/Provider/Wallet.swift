@@ -5,6 +5,8 @@
 //  Created by Amit Goel on 11/4/22.
 //
 
+import Foundation
+
 extension Wallet {
 
     public static let coinbaseWallet = Wallet(
