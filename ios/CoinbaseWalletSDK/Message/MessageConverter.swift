@@ -1,6 +1,6 @@
 //
 //  MessageRenderer.swift
-//  WalletSegue
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 6/14/22.
 //
@@ -26,7 +26,7 @@ final class MessageConverter {
         urlComponents?.queryItems = [URLQueryItem(name: "p", value: encodedString)]
         
         guard let url = urlComponents?.url else {
-            throw CoinbaseWalletSDK.Error.encodingFailed
+            throw MWPError.encodingFailed
         }
         
         return url
@@ -49,11 +49,11 @@ final class MessageConverter {
             let queryItem = urlComponents.queryItems?.first(where: { $0.name == "p" }),
             let encodedString = queryItem.value
         else {
-            throw CoinbaseWalletSDK.Error.decodingFailed
+            throw MWPError.decodingFailed
         }
         
         guard let data = Data(base64Encoded: encodedString) else {
-            throw CoinbaseWalletSDK.Error.decodingFailed
+            throw MWPError.decodingFailed
         }
         
         let decoder = JSONDecoder()

@@ -16,13 +16,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.swizzleOpenURL()
         
         #warning("Should use universal links in production")
-        CoinbaseWalletSDK.configure(callback: URL(string: "myappxyz://mycallback")!)
+        CoinbaseWalletSDK.configure(
+//            host: URL(string: "samplewallet://wsegue")!,
+            callback: URL(string: "myappxyz://mycallback")!
+        )
         
         return true
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        if (try? CoinbaseWalletSDK.handleResponse(url)) == true {
+        if (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true {
             return true
         }
         // handle other types of deep links
@@ -31,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         if let url = userActivity.webpageURL,
-           (try? CoinbaseWalletSDK.handleResponse(url)) == true {
+           (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true {
             return true
         }
         // handle other types of deep links

@@ -1,6 +1,6 @@
 //
 //  Request.swift
-//  WalletSegueHost
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 6/21/22.
 //

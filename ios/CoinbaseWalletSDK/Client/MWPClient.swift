@@ -1,6 +1,6 @@
 //
-//  CoinbaseWalletSDK.swift
-//  WalletSegue
+//  MWPClient.swift
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 5/20/22.
 //
@@ -10,21 +10,21 @@ import CryptoKit
 import UIKit
 
 @available(iOS 13.0, *)
-public final class CoinbaseWalletSDK {
+public class MWPClient {
 
     // MARK: - Instantiate
     
-    static private var instances: [URL: CoinbaseWalletSDK] = [:]
+    static private var instances: [URL: MWPClient] = [:]
     
-    static public func getInstance(hostWallet: Wallet) -> CoinbaseWalletSDK? {
+    static public func getInstance(to wallet: Wallet) -> MWPClient? {
         guard let configuration = ClientConfiguration.config else {
-            assertionFailure("`CoinbaseWalletSDK.configure` should be called prior to retrieving an instance.")
+            assertionFailure("`MWPClient.configure` should be called prior to retrieving an instance.")
             return nil
         }
         
-        let host = hostWallet.url
+        let host = wallet.url
         if (instances[host] == nil) {
-            let newInstance = CoinbaseWalletSDK(
+            let newInstance = MWPClient(
                 host: host,
                 configuration: configuration
             )
@@ -52,7 +52,7 @@ public final class CoinbaseWalletSDK {
     }
     
     deinit {
-        CoinbaseWalletSDK.instances.removeValue(forKey: self.host)
+        MWPClient.instances.removeValue(forKey: self.host)
     }
     
     // MARK: - Send message
@@ -71,7 +71,7 @@ public final class CoinbaseWalletSDK {
         })
         
         guard hasUnsupportedAction != true else {
-            onResponse(.failure(Error.invalidHandshakeRequest), nil)
+            onResponse(.failure(MWPError.invalidHandshakeRequest), nil)
             return
         }
         
@@ -86,7 +86,7 @@ public final class CoinbaseWalletSDK {
                 iconUrl: configuration.iconUrl,
                 initialActions: initialActions
             ),
-            version: CoinbaseWalletSDK.version,
+            version: MobileWalletProtocol.version,
             timestamp: Date(),
             callbackUrl: configuration.url.absoluteString
         )
@@ -112,7 +112,7 @@ public final class CoinbaseWalletSDK {
             uuid: UUID(),
             sender: keyManager.ownPublicKey,
             content: .request(actions: request.actions, account: request.account),
-            version: CoinbaseWalletSDK.version,
+            version: MobileWalletProtocol.version,
             timestamp: Date(),
             callbackUrl: configuration.url.absoluteString
         )
@@ -133,7 +133,7 @@ public final class CoinbaseWalletSDK {
             options: [.universalLinksOnly: url.isHttp]
         ) { result in
             guard result == true else {
-                onResponse(.failure(Error.openUrlFailed))
+                onResponse(.failure(MWPError.openUrlFailed))
                 return
             }
             
@@ -143,7 +143,7 @@ public final class CoinbaseWalletSDK {
     
     // MARK: - Receive message
     
-    static private func isWalletSegueMessage(_ url: URL, _ instance: CoinbaseWalletSDK) -> Bool {
+    static private func isWalletSegueMessage(_ url: URL, _ instance: MWPClient) -> Bool {
         let callback = instance.configuration.url
         return url.host == callback.host && url.path == callback.path
     }
@@ -156,7 +156,7 @@ public final class CoinbaseWalletSDK {
         let encryptedResponse: EncryptedResponseMessage = try MessageConverter.decodeWithoutDecryption(url)
         guard let task = TaskManager.findTask(for: encryptedResponse.uuid),
               let instance = instances[task.host] else {
-            throw Error.walletInstanceNotFound
+            throw MWPError.walletInstanceNotFound
         }
         
         guard isWalletSegueMessage(url, instance) else {
@@ -176,7 +176,7 @@ public final class CoinbaseWalletSDK {
         // no symmetric key yet
         let task = TaskManager.findTask(for: encryptedResponse.uuid)
         guard case .handshake = task?.request.content else {
-            throw Error.missingSymmetricKey
+            throw MWPError.missingSymmetricKey
         }
         
         try handleHandshakeResponse(encryptedResponse)
@@ -219,12 +219,7 @@ public final class CoinbaseWalletSDK {
 }
 
 @available(iOS 13.0, *)
-extension CoinbaseWalletSDK {
-    
-    @available(*, deprecated, message: "Use {Wallet}.isInstalled instead")
-    static public func isCoinbaseWalletInstalled() -> Bool {
-        return UIApplication.shared.canOpenURL(URL(string: "cbwallet://")!)
-    }
+extension MWPClient {
     
     // MARK: - Configure
     

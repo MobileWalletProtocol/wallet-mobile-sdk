@@ -1,6 +1,6 @@
 //
 //  JSONString.swift
-//  CoinbaseWalletSDK
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 8/19/22.
 //

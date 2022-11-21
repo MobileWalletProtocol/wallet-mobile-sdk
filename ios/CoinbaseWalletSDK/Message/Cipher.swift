@@ -1,6 +1,6 @@
 //
 //  Cryptography.swift
-//  WalletSegue
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 6/17/22.
 //
@@ -31,8 +31,8 @@ final class Cipher {
     }
     
     static func deriveSymmetricKey(
-        with ownPrivateKey: CoinbaseWalletSDK.PrivateKey,
-        _ peerPublicKey: CoinbaseWalletSDK.PublicKey
+        with ownPrivateKey: PrivateKey,
+        _ peerPublicKey: PublicKey
     ) throws -> SymmetricKey {
         let sharedSecret = try ownPrivateKey.sharedSecretFromKeyAgreement(with: peerPublicKey)
         return sharedSecret.hkdfDerivedSymmetricKey(

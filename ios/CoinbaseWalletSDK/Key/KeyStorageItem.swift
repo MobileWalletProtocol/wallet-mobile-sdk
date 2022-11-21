@@ -1,6 +1,6 @@
 //
 //  KeyStorageItem.swift
-//  WalletSegue
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 6/17/22.
 //
@@ -15,11 +15,11 @@ struct KeyStorageItem<K: RawRepresentableKey> {
         self.name = name
     }
 
-    static var ownPrivateKey: KeyStorageItem<CoinbaseWalletSDK.PrivateKey> {
-        return KeyStorageItem<CoinbaseWalletSDK.PrivateKey>("wsegue.ownPrivateKey")
+    static var ownPrivateKey: KeyStorageItem<PrivateKey> {
+        return KeyStorageItem<PrivateKey>("wsegue.ownPrivateKey")
     }
     
-    static var peerPublicKey: KeyStorageItem<CoinbaseWalletSDK.PublicKey> {
-        return KeyStorageItem<CoinbaseWalletSDK.PublicKey>("wsegue.peerPublicKey")
+    static var peerPublicKey: KeyStorageItem<PublicKey> {
+        return KeyStorageItem<PublicKey>("wsegue.peerPublicKey")
     }
 }

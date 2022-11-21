@@ -17,9 +17,7 @@ class ViewController: UITableViewController {
     
     @IBOutlet weak var logTextView: UITextView!
     
-    private lazy var cbwallet: CoinbaseWalletSDK = {
-        CoinbaseWalletSDK.getInstance(hostWallet: Wallet.coinbaseWallet)!
-    }()
+    private lazy var cbwallet = { CoinbaseWalletSDK.shared }()
     private var address: String?
     private let typedData = [
         "types": [
