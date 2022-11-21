@@ -27,7 +27,7 @@ import {
 import { AppMetadata, fetchClientAppMetadata } from '../utils/fetchClientAppMetadata';
 import { isClientAppVerified } from '../utils/isClientAppVerified';
 import React from 'react';
-import { emitEvent } from '../events/events';
+import { diagnosticLog } from '../events/events';
 
 type MWPHostContextType = {
   message: RequestMessage | null;
@@ -84,7 +84,7 @@ export function MobileWalletProtocolProvider({
       if ('request' in decoded.content) {
         const session = await getSession(secureStorage, decoded);
         if (!session) {
-          emitEvent({
+          diagnosticLog({
             name: 'session_not_found',
             params: { callbackUrl: decoded.callbackUrl },
           });
@@ -97,7 +97,7 @@ export function MobileWalletProtocolProvider({
         }
 
         if (!isSessionValid(session, sessionExpiryDays)) {
-          emitEvent({
+          diagnosticLog({
             name: 'session_expired',
             params: {
               appName: session.dappName,

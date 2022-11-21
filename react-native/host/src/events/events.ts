@@ -112,6 +112,6 @@ export function addEventListener(listener: (event: MWPEvent) => void): EmitterSu
   return diagnosticLogger.addListener('mwp_event', listener);
 }
 
-export function emitEvent(event: MWPEvent) {
+export function diagnosticLog(event: MWPEvent) {
   diagnosticLogger.emit('mwp_event', event);
 }
