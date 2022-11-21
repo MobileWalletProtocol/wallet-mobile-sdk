@@ -1,5 +1,8 @@
+import { emitEvent } from '../events/events';
 import { MWPHostModule } from '../native-module/MWPHostNativeModule';
 import type { Session } from '../sessions/sessions';
+import { URL } from 'react-native-url-polyfill';
+import { Buffer } from 'buffer';
 
 export type BaseRequest = {
   version: string;
@@ -28,10 +31,8 @@ export type DecryptedRequestContent = {
   actions: { method: string; optional: boolean; paramsJson: string }[];
 };
 
-type DecodedRequest = BaseRequest & {
-  content:
-    | { request: EncryptedRequestContent }
-    | { handshake: HandshakeContent };
+export type DecodedRequest = BaseRequest & {
+  content: { request: EncryptedRequestContent } | { handshake: HandshakeContent };
 };
 
 type DecryptedRequest = BaseRequest & {
@@ -39,18 +40,14 @@ type DecryptedRequest = BaseRequest & {
 };
 
 // TODO: Move decoding to native module
-export async function decodeRequest(
-  url: string
-): Promise<DecodedRequest | null> {
+export async function decodeRequest(url: string): Promise<DecodedRequest | null> {
   try {
     const base64EncodedRequest = new URL(url).searchParams.get('p');
     if (base64EncodedRequest === null) {
       return null;
     }
 
-    const jsonString = Buffer.from(base64EncodedRequest, 'base64').toString(
-      'ascii'
-    );
+    const jsonString = Buffer.from(base64EncodedRequest, 'base64').toString('ascii');
     return JSON.parse(jsonString) as DecodedRequest;
   } catch (e) {
     return null;
@@ -58,15 +55,37 @@ export async function decodeRequest(
 }
 
 // TODO: Implement `decryptRequest` in native module
-export async function decryptRequest(
-  url: string,
-  session: Session
-): Promise<DecryptedRequest> {
-  const decrypted = await MWPHostModule.decodeRequest(
-    url,
-    session.sessionPrivateKey,
-    session.clientPublicKey
-  );
+export async function decryptRequest(url: string, session: Session): Promise<DecryptedRequest> {
+  const { dappURL, version } = session;
 
-  return decrypted as DecryptedRequest;
+  emitEvent({
+    name: 'decrypt_request_start',
+    params: { callbackUrl: dappURL, sdkVersion: version ?? '0' },
+  });
+
+  try {
+    const decrypted = await MWPHostModule.decodeRequest(
+      url,
+      session.sessionPrivateKey,
+      session.clientPublicKey,
+    );
+
+    emitEvent({
+      name: 'decrypt_request_success',
+      params: { callbackUrl: dappURL, sdkVersion: version ?? '0' },
+    });
+
+    return decrypted as DecryptedRequest;
+  } catch (e) {
+    emitEvent({
+      name: 'decrypt_request_failure',
+      params: {
+        error: (e as Error).message,
+        callbackUrl: session.dappURL,
+        sdkVersion: session.version ?? '0',
+      },
+    });
+
+    throw e;
+  }
 }

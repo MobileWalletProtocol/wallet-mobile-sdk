@@ -1,7 +1,7 @@
 {
   "name": "@coinbase/mobile-wallet-protocol-host",
   "version": "0.1.0",
-  "description": "test",
+  "description": "A React Native library that implements the host side of the Mobile Wallet Protocol",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
@@ -42,7 +42,7 @@
   ],
   "repository": "https://github.com/coinbase/wallet-mobile-sdk",
   "author": "Coinbase",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/coinbase/wallet-mobile-sdk/issues"
   },
@@ -91,10 +91,14 @@
       "prettier/prettier": [
         "error",
         {
-          "quoteProps": "consistent",
+          "arrowParens": "always",
+          "bracketSameLine": false,
+          "jsxSingleQuote": false,
+          "printWidth": 100,
+          "semi": true,
           "singleQuote": true,
           "tabWidth": 2,
-          "trailingComma": "es5",
+          "trailingComma": "all",
           "useTabs": false
         }
       ]
@@ -105,10 +109,14 @@
     "lib/"
   ],
   "prettier": {
-    "quoteProps": "consistent",
+    "arrowParens": "always",
+    "bracketSameLine": false,
+    "jsxSingleQuote": false,
+    "printWidth": 100,
+    "semi": true,
     "singleQuote": true,
     "tabWidth": 2,
-    "trailingComma": "es5",
+    "trailingComma": "all",
     "useTabs": false
   },
   "react-native-builder-bob": {
@@ -124,5 +132,9 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "buffer": "^6.0.3",
+    "react-native-url-polyfill": "^1.3.0"
   }
 }

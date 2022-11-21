@@ -8,14 +8,11 @@ import {
 } from './sessions';
 
 export function useSessions(storage: SecureStorage) {
-  const getSessions = useCallback(
-    async () => getMWPSessions(storage),
-    [storage]
-  );
+  const getSessions = useCallback(async () => getMWPSessions(storage), [storage]);
 
   const deleteSessions = useCallback(
     async (sessions: Session[]) => deleteMWPSessions(storage, sessions),
-    [storage]
+    [storage],
   );
 
   return {

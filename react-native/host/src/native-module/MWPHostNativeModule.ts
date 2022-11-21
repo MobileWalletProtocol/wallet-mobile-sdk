@@ -92,26 +92,26 @@ type MWPHostNativeModule = {
   decodeRequest: (
     url: string,
     sessionPrivateKey: string,
-    clientPublicKey: string
+    clientPublicKey: string,
   ) => Promise<DecodeRequestResult>;
 
   encodeResponse: (
     unencodedResponse: UnencodedResponse | string,
     clientUrl: string,
     sessionPrivateKey: string,
-    clientPublicKey: string
+    clientPublicKey: string,
   ) => Promise<string>;
 
-  getClientAppMetadata: (
-    wellKnownCertificates: string[]
-  ) => Promise<GetClientAppMetadataResult>;
+  getClientAppMetadata: (wellKnownCertificates: string[]) => Promise<GetClientAppMetadataResult>;
 
   getClientAppMetadataV2: () => Promise<GetClientAppMetadataV2Result>;
 
   getClientAppSignatures: () => Promise<string[]>;
 
   triggerWalletSDKCallback: (domain: string) => Promise<void>;
+
+  getIntentUrl: () => Promise<string | null>;
 };
 
-export const MWPHostModule =
-  NativeModules.MobileWalletProtocolHost as MWPHostNativeModule;
+export const MWPHostModule = NativeModules.MobileWalletProtocolHost as MWPHostNativeModule;
+export const getAndroidIntentUrl = MWPHostModule.getIntentUrl;

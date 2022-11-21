@@ -7,7 +7,11 @@ export {
   isHandshakeAction,
 } from './action/action';
 export * from './action/ethereum';
-export { MWPHostModule as NativeSdkSupport } from './native-module/MWPHostNativeModule';
+export { addEventListener } from './events/events';
+export {
+  MWPHostModule as NativeSdkSupport,
+  getAndroidIntentUrl,
+} from './native-module/MWPHostNativeModule';
 export { MobileWalletProtocolProvider } from './provider/MobileWalletProtocolProvider';
 export { useMobileWalletProtocolHost } from './provider/useMobileWalletProtocolHost';
 export { type SecureStorage } from './sessions/sessions';

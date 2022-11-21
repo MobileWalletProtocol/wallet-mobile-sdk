@@ -19,7 +19,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 
 class MobileWalletProtocolHostModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
-    override fun getName(): String = "NativeSdkSupport"
+    override fun getName(): String = "MobileWalletProtocolHost"
 
     private val unencryptedMessageSerializer by lazy {
         val requestSerializer = RequestSerializer(sharedSecret = null, encrypted = false)
@@ -183,5 +183,12 @@ class MobileWalletProtocolHostModule(reactContext: ReactApplicationContext) : Re
         } catch (e: Throwable) {
             promise.reject(e)
         }
+    }
+
+    @ReactMethod
+    fun getIntentUrl(promise: Promise) {
+        val activity = requireNotNull(currentActivity)
+        val data = activity.intent.data
+        promise.resolve(data?.toString())
     }
 }
