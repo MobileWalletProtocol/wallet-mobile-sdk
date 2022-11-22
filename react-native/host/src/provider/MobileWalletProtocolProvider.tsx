@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useCallback, useMemo, useState } from 'react';
 
-import { HandshakeAction, isHandshakeAction, RequestAction } from '../action/action';
+import { isHandshakeAction, RequestAction } from '../action/action';
 import { decodeRequest, decryptRequest } from '../request/decoding';
 import {
   mapDecryptedContentToRequest,
@@ -34,7 +34,7 @@ type MWPHostContextType = {
   handleRequestUrl: (url: string) => Promise<boolean>;
   fetchClientAppMetadata: () => Promise<AppMetadata | null>;
   isClientAppVerified: () => Promise<boolean>;
-  approveHandshake: (action: HandshakeAction, metadata: AppMetadata) => Promise<void>;
+  approveHandshake: (metadata: AppMetadata | null) => Promise<void>;
   rejectHandshake: (description: string) => Promise<void>;
   approveAction: (action: RequestAction, result: ResultValue) => Promise<void>;
   rejectAction: (action: RequestAction, error: ErrorValue) => Promise<void>;
@@ -46,7 +46,6 @@ type MWPHostProviderProps = {
   children?: ReactNode;
 };
 
-let prevRequestUUID: string | null = null;
 const actionToResponseMap = new Map<number, ReturnValue>();
 
 export const MobileWalletProtocolContext = createContext<MWPHostContextType | null>(null);
@@ -69,11 +68,6 @@ export function MobileWalletProtocolProvider({
       if (!decoded) {
         return false;
       }
-
-      if (prevRequestUUID === decoded.uuid) {
-        return false;
-      }
-      prevRequestUUID = decoded.uuid;
 
       if ('handshake' in decoded.content) {
         const message = mapHandshakeToRequest(decoded.content.handshake, decoded);
@@ -150,16 +144,26 @@ export function MobileWalletProtocolProvider({
   }, [activeMessage?.actions]);
 
   const approveHandshake = useCallback(
-    async (action: HandshakeAction, metadata: AppMetadata) => {
+    async (metadata: AppMetadata | null) => {
       if (!activeMessage) {
         throw new Error('No message found');
       }
 
-      const session = await createSession(metadata, action, activeMessage);
+      const action = activeMessage.actions.find(isHandshakeAction);
+      if (!action) {
+        throw new Error('No handshake action');
+      }
+
+      const appMetadata = metadata ?? {
+        appId: action.appId,
+        appUrl: action.callback,
+      };
+
+      const session = await createSession(appMetadata, action, activeMessage);
       const sessions = await getSessions(secureStorage);
 
       // Delete existing session if it matches the app id
-      const existingSession = sessions.find((value) => value.dappId === metadata.appId);
+      const existingSession = sessions.find((value) => value.dappId === appMetadata.appId);
       if (existingSession) {
         await deleteSessions(secureStorage, [existingSession]);
       }
