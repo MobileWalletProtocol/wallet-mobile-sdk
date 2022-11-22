@@ -1,5 +1,5 @@
 import { Linking, Platform } from 'react-native';
-import { emitEvent } from '../events/events';
+import { diagnosticLog } from '../events/events';
 import type { DecodedRequest } from '../request/decoding';
 
 import { isHandshakeAction, RequestAction } from '../action/action';
@@ -143,25 +143,25 @@ export async function sendResponse(
     sdkVersion: session.version ?? '0',
   };
 
-  emitEvent({
+  diagnosticLog({
     name: 'send_success_response',
     params: eventParams,
   });
 
   try {
-    emitEvent({
+    diagnosticLog({
       name: 'encode_response_start',
       params: eventParams,
     });
 
     await respond(response, session.dappURL, session.sessionPrivateKey, session.clientPublicKey);
 
-    emitEvent({
+    diagnosticLog({
       name: 'encode_response_success',
       params: eventParams,
     });
   } catch (e) {
-    emitEvent({
+    diagnosticLog({
       name: 'encode_response_failure',
       params: {
         ...eventParams,
@@ -197,25 +197,25 @@ export async function sendError(description: string, message: RequestMessage | D
     sdkVersion: message.version,
   };
 
-  emitEvent({
+  diagnosticLog({
     name: 'send_failure_response',
     params: eventParams,
   });
 
   try {
-    emitEvent({
+    diagnosticLog({
       name: 'encode_response_start',
       params: eventParams,
     });
 
     await respond(response, message.callbackUrl);
 
-    emitEvent({
+    diagnosticLog({
       name: 'encode_response_success',
       params: eventParams,
     });
   } catch (e) {
-    emitEvent({
+    diagnosticLog({
       name: 'encode_response_failure',
       params: {
         ...eventParams,

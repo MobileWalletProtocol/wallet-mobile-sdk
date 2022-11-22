@@ -1,4 +1,4 @@
-import { emitEvent } from '../events/events';
+import { diagnosticLog } from '../events/events';
 import { MWPHostModule } from '../native-module/MWPHostNativeModule';
 import type { Session } from '../sessions/sessions';
 import { URL } from 'react-native-url-polyfill';
@@ -58,7 +58,7 @@ export async function decodeRequest(url: string): Promise<DecodedRequest | null>
 export async function decryptRequest(url: string, session: Session): Promise<DecryptedRequest> {
   const { dappURL, version } = session;
 
-  emitEvent({
+  diagnosticLog({
     name: 'decrypt_request_start',
     params: { callbackUrl: dappURL, sdkVersion: version ?? '0' },
   });
@@ -70,14 +70,14 @@ export async function decryptRequest(url: string, session: Session): Promise<Dec
       session.clientPublicKey,
     );
 
-    emitEvent({
+    diagnosticLog({
       name: 'decrypt_request_success',
       params: { callbackUrl: dappURL, sdkVersion: version ?? '0' },
     });
 
     return decrypted as DecryptedRequest;
   } catch (e) {
-    emitEvent({
+    diagnosticLog({
       name: 'decrypt_request_failure',
       params: {
         error: (e as Error).message,

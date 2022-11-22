@@ -108,10 +108,10 @@ type MWPEvent =
 
 const diagnosticLogger = new EventEmitter();
 
-export function addEventListener(listener: (event: MWPEvent) => void): EmitterSubscription {
+export function addDiagnosticLogListener(listener: (event: MWPEvent) => void): EmitterSubscription {
   return diagnosticLogger.addListener('mwp_event', listener);
 }
 
-export function emitEvent(event: MWPEvent) {
+export function diagnosticLog(event: MWPEvent) {
   diagnosticLogger.emit('mwp_event', event);
 }

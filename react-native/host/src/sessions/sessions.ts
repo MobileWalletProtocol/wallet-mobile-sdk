@@ -1,4 +1,4 @@
-import { emitEvent } from '../events/events';
+import { diagnosticLog } from '../events/events';
 
 const SESSIONS_KEY = 'nativeSessions';
 
@@ -80,7 +80,7 @@ export async function getSession(
 export async function addSession(storage: SecureStorage, session: Session) {
   await addSessions(storage, [session]);
 
-  emitEvent({
+  diagnosticLog({
     name: 'session_added',
     params: {
       callbackUrl: session.dappURL,
