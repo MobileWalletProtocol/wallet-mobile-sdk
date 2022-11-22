@@ -10,8 +10,6 @@ import CoinbaseWalletSDK
 
 class PickerViewController: UITableViewController {
     
-    let cellReuseIdentifier = "walletCell"
-    
     let wallets = Wallet.defaultWallets()
     
     override func viewDidLoad() {
@@ -27,7 +25,7 @@ class PickerViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier)!
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: "walletCell")!
         
         cell.textLabel?.text = self.wallets[indexPath.row].name
         

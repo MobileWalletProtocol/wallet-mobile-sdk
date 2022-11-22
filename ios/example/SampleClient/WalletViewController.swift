@@ -68,7 +68,7 @@ class WalletViewController: UITableViewController {
         
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(logOutgoingURL),
+            selector: #selector(logOpenExternalURL),
             name: kOpenExternalURLNotification,
             object: nil
         )
@@ -167,7 +167,7 @@ class WalletViewController: UITableViewController {
         }
     }
     
-    @objc func logOutgoingURL(notification: Notification) {
+    @objc func logOpenExternalURL(notification: Notification) {
         guard let url = notification.object as? URL else { return }
         self.log("URL: \(url)")
     }
