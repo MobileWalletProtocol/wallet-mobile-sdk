@@ -1,5 +1,10 @@
 package com.mobilewalletprotocolhostexample;
 
+import android.os.Bundle;
+import android.view.Window;
+
+import androidx.core.view.WindowCompat;
+
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
@@ -28,6 +33,13 @@ public class MainActivity extends ReactActivity {
   public static class MainActivityDelegate extends ReactActivityDelegate {
     public MainActivityDelegate(ReactActivity activity, String mainComponentName) {
       super(activity, mainComponentName);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+      Window window = getPlainActivity().getWindow();
+      WindowCompat.setDecorFitsSystemWindows(window, false);
     }
 
     @Override
