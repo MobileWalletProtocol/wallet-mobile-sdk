@@ -14,5 +14,7 @@ export {
 } from './native-module/MWPHostNativeModule';
 export { MobileWalletProtocolProvider } from './provider/MobileWalletProtocolProvider';
 export { useMobileWalletProtocolHost } from './provider/useMobileWalletProtocolHost';
+export { type RequestMessage } from './request/request';
 export { type SecureStorage } from './sessions/sessions';
 export { useSessions } from './sessions/useSessions';
+export { type AppMetadata } from './utils/fetchClientAppMetadata';

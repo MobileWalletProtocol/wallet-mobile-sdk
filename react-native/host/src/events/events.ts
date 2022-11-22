@@ -1,4 +1,4 @@
-import { EmitterSubscription, EventEmitter } from 'react-native';
+import { EventEmitter } from 'events';
 
 // Request Decoding
 type RequestEventParams = {
@@ -108,8 +108,11 @@ type MWPEvent =
 
 const diagnosticLogger = new EventEmitter();
 
-export function addDiagnosticLogListener(listener: (event: MWPEvent) => void): EmitterSubscription {
-  return diagnosticLogger.addListener('mwp_event', listener);
+export function addDiagnosticLogListener(listener: (event: MWPEvent) => void) {
+  diagnosticLogger.addListener('mwp_event', listener);
+  return () => {
+    diagnosticLogger.removeListener('mwp_event', listener);
+  };
 }
 
 export function diagnosticLog(event: MWPEvent) {

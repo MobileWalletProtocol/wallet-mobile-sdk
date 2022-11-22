@@ -131,6 +131,7 @@ class MobileWalletProtocolHostModule(reactContext: ReactApplicationContext) : Re
         }
     }
 
+    @ReactMethod
     fun getClientAppMetadataV2(promise: Promise) {
         try {
             val activity = requireNotNull(currentActivity)
