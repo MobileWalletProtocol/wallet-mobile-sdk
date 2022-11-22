@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  WalletViewController.swift
 //  SampleWeb3App
 //
 //  Created by Jungho Bang on 6/27/22.
@@ -8,7 +8,7 @@
 import UIKit
 import CoinbaseWalletSDK
 
-class ViewController: UITableViewController {
+class WalletViewController: UITableViewController {
     
     @IBOutlet weak var isCBWalletInstalledLabel: UILabel!
     @IBOutlet weak var isConnectedLabel: UILabel!
@@ -17,7 +17,9 @@ class ViewController: UITableViewController {
     
     @IBOutlet weak var logTextView: UITextView!
     
-    private lazy var cbwallet = { CoinbaseWalletSDK.shared }()
+    var wallet: Wallet!
+    var mwpClient: MWPClient!
+    
     private var address: String?
     private let typedData = [
         "types": [
@@ -56,12 +58,28 @@ class ViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        guard let wallet = wallet else { preconditionFailure() }
+        self.mwpClient = MWPClient.getInstance(to: wallet)
+        
+        self.title = wallet.name
         isCBWalletInstalledLabel.text = "\(CoinbaseWalletSDK.isCoinbaseWalletInstalled())"
         updateSessionStatus()
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(logOutgoingURL),
+            name: kOpenExternalURLNotification,
+            object: nil
+        )
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     @IBAction func initiateHandshake() {
-        cbwallet.initiateHandshake(
+        mwpClient.initiateHandshake(
             initialActions: [
                 Action(jsonRpc: .eth_requestAccounts)
             ]
@@ -84,7 +102,7 @@ class ViewController: UITableViewController {
     @IBAction func resetConnection() {
         self.address = nil
         
-        let result = cbwallet.resetSession()
+        let result = mwpClient.resetSession()
         self.log("\(result)")
         
         updateSessionStatus()
@@ -96,7 +114,7 @@ class ViewController: UITableViewController {
             self.log("address hasn't been set.")
         }
         
-        cbwallet.makeRequest(
+        mwpClient.makeRequest(
             Request(actions: [
                 Action(jsonRpc: .personal_sign(address: address, message: "message")),
                 Action(jsonRpc: .eth_signTypedData_v3(
@@ -128,12 +146,12 @@ class ViewController: UITableViewController {
     
     private func updateSessionStatus() {
         DispatchQueue.main.async {
-            let isConnected = self.cbwallet.isConnected()
+            let isConnected = self.mwpClient.isConnected()
             self.isConnectedLabel.textColor = isConnected ? .green : .red
             self.isConnectedLabel.text = "\(isConnected)"
             
-            self.ownPubKeyLabel.text = self.cbwallet.ownPublicKey.rawRepresentation.base64EncodedString()
-            self.peerPubKeyLabel.text = self.cbwallet.peerPublicKey?.rawRepresentation.base64EncodedString() ?? "(nil)"
+            self.ownPubKeyLabel.text = self.mwpClient.ownPublicKey.rawRepresentation.base64EncodedString()
+            self.peerPubKeyLabel.text = self.mwpClient.peerPublicKey?.rawRepresentation.base64EncodedString() ?? "(nil)"
         }
     }
     
@@ -149,9 +167,9 @@ class ViewController: UITableViewController {
         }
     }
     
-    func logURL(_ url: URL?, function: String = #function) {
-        guard let url = url else { return }
-        self.log("URL: \(url)", function: function)
+    @objc func logOutgoingURL(notification: Notification) {
+        guard let url = notification.object as? URL else { return }
+        self.log("URL: \(url)")
     }
     
     private func log(_ text: String, function: String = #function) {

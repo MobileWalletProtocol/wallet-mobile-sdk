@@ -7,16 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D03D1AF292D7DE2008FDBB1 /* PickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D03D1AE292D7DE2008FDBB1 /* PickerViewController.swift */; };
 		5DA9B3CF286A755E0089D6DB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA9B3CE286A755E0089D6DB /* AppDelegate.swift */; };
-		5DA9B3D3286A755E0089D6DB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA9B3D2286A755E0089D6DB /* ViewController.swift */; };
+		5DA9B3D3286A755E0089D6DB /* WalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA9B3D2286A755E0089D6DB /* WalletViewController.swift */; };
 		5DA9B3D6286A755E0089D6DB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DA9B3D4286A755E0089D6DB /* Main.storyboard */; };
 		D6752D43EA87EC720AB457B0 /* Pods_SampleClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D748670EFBABCFCAAF467051 /* Pods_SampleClient.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D03D1AE292D7DE2008FDBB1 /* PickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerViewController.swift; sourceTree = "<group>"; };
 		5DA9B3CB286A755E0089D6DB /* SampleClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DA9B3CE286A755E0089D6DB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		5DA9B3D2286A755E0089D6DB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		5DA9B3D2286A755E0089D6DB /* WalletViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletViewController.swift; sourceTree = "<group>"; };
 		5DA9B3D5286A755E0089D6DB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5DA9B3DC286A755F0089D6DB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6AD987FC34FA605B42114137 /* Pods-SampleClient.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleClient.release.xcconfig"; path = "Target Support Files/Pods-SampleClient/Pods-SampleClient.release.xcconfig"; sourceTree = "<group>"; };
@@ -79,7 +81,8 @@
 			isa = PBXGroup;
 			children = (
 				5DA9B3CE286A755E0089D6DB /* AppDelegate.swift */,
-				5DA9B3D2286A755E0089D6DB /* ViewController.swift */,
+				5D03D1AE292D7DE2008FDBB1 /* PickerViewController.swift */,
+				5DA9B3D2286A755E0089D6DB /* WalletViewController.swift */,
 				5DA9B3D4286A755E0089D6DB /* Main.storyboard */,
 				5DA9B3DC286A755F0089D6DB /* Info.plist */,
 			);
@@ -199,7 +202,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5DA9B3D3286A755E0089D6DB /* ViewController.swift in Sources */,
+				5D03D1AF292D7DE2008FDBB1 /* PickerViewController.swift in Sources */,
+				5DA9B3D3286A755E0089D6DB /* WalletViewController.swift in Sources */,
 				5DA9B3CF286A755E0089D6DB /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

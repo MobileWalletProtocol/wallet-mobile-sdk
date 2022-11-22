@@ -43,6 +43,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+let kOpenExternalURLNotification = Notification.Name("kOpenExternalURLNotification")
+
 extension UIApplication {
     static func swizzleOpenURL() {
         guard
@@ -53,20 +55,12 @@ extension UIApplication {
     }
     
     @objc func swizzledOpen(_ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any], completionHandler completion: ((Bool) -> Void)?) {
-        logWalletSegueMessage(url: url)
+        NotificationCenter.default.post(
+            name: kOpenExternalURLNotification,
+            object: url
+        )
         
         // it's not recursive. below is actually the original open(_:) method
         self.swizzledOpen(url, options: options, completionHandler: completion)
-    }
-}
-
-func logWalletSegueMessage(url: URL, function: String = #function) {
-    let keyWindow = UIApplication.shared.connectedScenes
-            .filter({$0.activationState == .foregroundActive})
-            .compactMap({$0 as? UIWindowScene})
-            .first?.windows
-            .filter({$0.isKeyWindow}).first
-    if let vc = keyWindow?.rootViewController as? ViewController {
-        vc.logURL(url, function: function)
     }
 }
