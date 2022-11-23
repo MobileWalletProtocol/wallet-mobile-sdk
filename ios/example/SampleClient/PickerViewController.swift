@@ -9,12 +9,7 @@ import UIKit
 import CoinbaseWalletSDK
 
 class PickerViewController: UITableViewController {
-    
     let wallets = Wallet.defaultWallets()
-    
-    override func viewDidLoad() {
-        
-    }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -25,9 +20,11 @@ class PickerViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCell(withIdentifier: "walletCell")!
+        let wallet = self.wallets[indexPath.row]
         
-        cell.textLabel?.text = self.wallets[indexPath.row].name
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: "walletCell") as! PickerTableViewCell
+        cell.nameTextLabel.text = wallet.name
+        cell.iconImageView.load(url: wallet.iconUrl)
         
         return cell
     }
@@ -43,6 +40,9 @@ class PickerViewController: UITableViewController {
         
         wvc.wallet = wallets[indexPath.row]
     }
-    
 }
 
+class PickerTableViewCell: UITableViewCell {
+    @IBOutlet weak var nameTextLabel: UILabel!
+    @IBOutlet weak var iconImageView: UIImageView!
+}
