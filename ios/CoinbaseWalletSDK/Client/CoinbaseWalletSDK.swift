@@ -15,7 +15,7 @@ extension CoinbaseWalletSDK {
     
     @available(*, deprecated, message: "Use {Wallet}.isInstalled instead")
     static public func isCoinbaseWalletInstalled() -> Bool {
-        return UIApplication.shared.canOpenURL(URL(string: "cbwallet://")!)
+        return Wallet.coinbaseWallet.isInstalled
     }
     
     @available(*, deprecated, message: "Use MWPClient.getInstance(:) instead")
