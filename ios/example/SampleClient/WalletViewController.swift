@@ -10,73 +10,28 @@ import CoinbaseWalletSDK
 
 class WalletViewController: UITableViewController {
     
-    @IBOutlet weak var isCBWalletInstalledLabel: UILabel!
+    @IBOutlet weak var isWalletInstalledLabel: UILabel!
     @IBOutlet weak var isConnectedLabel: UILabel!
     @IBOutlet weak var ownPubKeyLabel: UILabel!
     @IBOutlet weak var peerPubKeyLabel: UILabel!
-    
     @IBOutlet weak var logTextView: UITextView!
     
     var wallet: Wallet!
-    var mwpClient: MWPClient!
-    
+    private var mwpClient: MWPClient!
     private var address: String?
-    private let typedData = [
-        "types": [
-            "EIP712Domain": [
-                ["name": "name", "type": "string"],
-                ["name": "version", "type": "string"],
-                ["name": "chainId", "type": "uint256"],
-                ["name": "verifyingContract", "type": "address"],
-                ["name": "salt", "type": "bytes32"],
-            ],
-            "Bid": [
-                ["name": "amount", "type": "uint256"],
-                ["name": "bidder", "type": "Identity"],
-            ],
-            "Identity": [
-                ["name": "userId", "type": "uint256"],
-                ["name": "wallet", "type": "address"],
-            ],
-        ],
-        "domain": [
-            "name": "DApp Browser Test DApp",
-            "version": "1",
-            "chainId": 1,
-            "verifyingContract": "0x1C56346CD2A2Bf3202F771f50d3D14a367B48070",
-            "salt": "0xf2d857f4a3edcb9b78b4d503bfe733db1e3f6cdc2b7971ee739626c97e86a558",
-        ],
-        "primaryType": "Bid",
-        "message": [
-            "amount": 100,
-            "bidder": [
-                "userId": 323,
-                "wallet": "0x3333333333333333333333333333333333333333"
-            ],
-        ],
-    ] as [String: Any]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         guard let wallet = wallet else { preconditionFailure() }
-        self.mwpClient = MWPClient.getInstance(to: wallet)
         
         self.title = wallet.name
-        // TODO
-//        isCBWalletInstalledLabel.text = "\(MWPClient.isCoinbaseWalletInstalled())"
+        self.mwpClient = MWPClient.getInstance(to: wallet)
+        
+        isWalletInstalledLabel.text = "\(wallet.isInstalled)"
         updateSessionStatus()
         
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(logOpenExternalURL),
-            name: kOpenExternalURLNotification,
-            object: nil
-        )
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
+        addLogNotificationObserver()
     }
     
     @IBAction func initiateHandshake() {
@@ -115,6 +70,41 @@ class WalletViewController: UITableViewController {
             self.log("address hasn't been set.")
         }
         
+        let typedData = [
+            "types": [
+                "EIP712Domain": [
+                    ["name": "name", "type": "string"],
+                    ["name": "version", "type": "string"],
+                    ["name": "chainId", "type": "uint256"],
+                    ["name": "verifyingContract", "type": "address"],
+                    ["name": "salt", "type": "bytes32"],
+                ],
+                "Bid": [
+                    ["name": "amount", "type": "uint256"],
+                    ["name": "bidder", "type": "Identity"],
+                ],
+                "Identity": [
+                    ["name": "userId", "type": "uint256"],
+                    ["name": "wallet", "type": "address"],
+                ],
+            ],
+            "domain": [
+                "name": "DApp Browser Test DApp",
+                "version": "1",
+                "chainId": 1,
+                "verifyingContract": "0x1C56346CD2A2Bf3202F771f50d3D14a367B48070",
+                "salt": "0xf2d857f4a3edcb9b78b4d503bfe733db1e3f6cdc2b7971ee739626c97e86a558",
+            ],
+            "primaryType": "Bid",
+            "message": [
+                "amount": 100,
+                "bidder": [
+                    "userId": 323,
+                    "wallet": "0x3333333333333333333333333333333333333333"
+                ],
+            ],
+        ] as [String: Any]
+        
         mwpClient.makeRequest(
             Request(actions: [
                 Action(jsonRpc: .personal_sign(address: address, message: "message")),
@@ -143,8 +133,6 @@ class WalletViewController: UITableViewController {
         }
     }
     
-    // i should have chosen SwiftUI template...
-    
     private func updateSessionStatus() {
         DispatchQueue.main.async {
             let isConnected = self.mwpClient.isConnected()
@@ -154,6 +142,17 @@ class WalletViewController: UITableViewController {
             self.ownPubKeyLabel.text = self.mwpClient.ownPublicKey.rawRepresentation.base64EncodedString()
             self.peerPubKeyLabel.text = self.mwpClient.peerPublicKey?.rawRepresentation.base64EncodedString() ?? "(nil)"
         }
+    }
+    
+    // MARK: - Log
+    
+    private func addLogNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(logOpenExternalURL),
+            name: kOpenExternalURLNotification,
+            object: nil
+        )
     }
     
     private func logObject<T: Encodable>(label: String = "", _ object: T, function: String = #function) {
@@ -176,9 +175,12 @@ class WalletViewController: UITableViewController {
     private func log(_ text: String, function: String = #function) {
         DispatchQueue.main.async {
             self.logTextView.text = "\(function): \(text)\n\n\(self.logTextView.text ?? "")"
-            //  self.logTextView.text += "\(function): \(text)\n\n"
-            //  self.logTextView.scrollRangeToVisible(NSMakeRange(self.logTextView.text.count - 1, 1))
         }
     }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
 }
 
