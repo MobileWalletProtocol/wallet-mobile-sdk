@@ -154,7 +154,7 @@ public class MWPClient {
     @discardableResult
     static public func handleResponse(_ url: URL) throws -> Bool {
         let encryptedResponse: EncryptedResponseMessage = try MessageConverter.decodeWithoutDecryption(url)
-        guard let task = TaskManager.findTask(for: encryptedResponse.uuid),
+        guard let task = TaskManager.findTask(for: encryptedResponse.content.requestId),
               let instance = instances[task.host] else {
             throw MWPError.walletInstanceNotFound
         }
@@ -174,7 +174,7 @@ public class MWPClient {
         }
         
         // no symmetric key yet
-        let task = TaskManager.findTask(for: encryptedResponse.uuid)
+        let task = TaskManager.findTask(for: encryptedResponse.content.requestId)
         guard case .handshake = task?.request.content else {
             throw MWPError.missingSymmetricKey
         }
