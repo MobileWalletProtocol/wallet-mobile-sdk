@@ -1,0 +1,52 @@
+name: Version Update PR (Host)
+
+on:
+  workflow_dispatch:
+    inputs:
+      packageVersion:
+        description: "The version to publish in MAJOR.MINOR.PATCH format"
+        required: true
+        default: ""
+
+jobs:
+  authorize:
+    name: Authorize
+    runs-on: ubuntu-latest
+    steps:
+      - name: ${{ github.actor }} permission check to update release version
+        uses: "lannonbr/repo-permission-check-action@2.0.2"
+        with:
+          permission: "write"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  version:
+    name: Update package version
+    runs-on: ubuntu-latest
+    needs: authorize
+    env:
+      V_REGEX: '[0-9]+\.[0-9]+\.[0-9]+'
+      NEW_VERSION: ${{ github.event.inputs.packageVersion }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Update React Native version
+        run: |
+          sed -i '' -E 's/(version":) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' react-native/host/package.json
+
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          add-paths: |
+            react-native/host/package.json
+          title: "[Version update host] v${{env.NEW_VERSION}}"
+          body: "Automated workflow: version update"
+          branch: version-update-host-v${{env.NEW_VERSION}}
+          reviewers: |
+            bangtoven
+            vishnumad
+            AMITGOELNY
+          commit-message: "[Version update host] v${{env.NEW_VERSION}}"
+          labels: version-update-host
+          delete-branch: true
