@@ -14,25 +14,22 @@
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   spec: [
-    'spec-overview',
+    "spec-overview",
     {
-      type: 'category',
-      label: 'Messages',
+      type: "category",
+      label: "Messages",
       link: {
-        type: 'doc',
-        id: 'spec/messages',
+        type: "doc",
+        id: "spec/messages",
       },
-      items: [
-        'spec/messages-request',
-        'spec/messages-response'
-      ]
+      items: ["spec/messages-request", "spec/messages-response"],
     },
-    'spec/batch',
-    'spec/encryption',
-    'spec/handshake',
-    'spec/verification',
-    'spec/multi-chain',
-    'spec/network',
+    "spec/batch",
+    "spec/encryption",
+    "spec/handshake",
+    "spec/verification",
+    "spec/multi-chain",
+    "spec/network",
   ],
   clientSdk: [
     "client-sdk/mobile-sdk-overview",
@@ -44,8 +41,8 @@ const sidebars = {
         "client-sdk/ios-setup",
         "client-sdk/ios-establishing-a-connection",
         "client-sdk/ios-making-requests",
-        "client-sdk/ios-api-reference"
-      ]
+        "client-sdk/ios-api-reference",
+      ],
     },
     {
       type: "category",
@@ -55,11 +52,21 @@ const sidebars = {
         "client-sdk/android-setup",
         "client-sdk/android-establishing-a-connection",
         "client-sdk/android-making-requests",
-        "client-sdk/android-api-reference"
-      ]
-    }
+        "client-sdk/android-api-reference",
+      ],
+    },
+    {
+      type: "category",
+      label: "React Native",
+      items: [
+        "client-sdk/rn-install",
+        "client-sdk/rn-setup",
+        "client-sdk/rn-establishing-a-connection",
+        "client-sdk/rn-making-requests",
+        "client-sdk/rn-api-reference",
+      ],
+    },
   ],
-  
 };
 
 module.exports = sidebars;
