@@ -40,6 +40,8 @@ class WalletViewController: UITableViewController {
                 Action(jsonRpc: .personal_sign(address: "", message: "message"))
             ]
         ) { result, account in
+            self.updateSessionStatus()
+            
             switch result {
             case .success(let response):
                 self.log("Response: \(response.content)")
@@ -51,7 +53,6 @@ class WalletViewController: UITableViewController {
             case .failure(let error):
                 self.log("\(error)")
             }
-            self.updateSessionStatus()
         }
     }
     
