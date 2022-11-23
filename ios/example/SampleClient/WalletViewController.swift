@@ -63,7 +63,8 @@ class WalletViewController: UITableViewController {
         self.mwpClient = MWPClient.getInstance(to: wallet)
         
         self.title = wallet.name
-        isCBWalletInstalledLabel.text = "\(CoinbaseWalletSDK.isCoinbaseWalletInstalled())"
+        // TODO
+//        isCBWalletInstalledLabel.text = "\(MWPClient.isCoinbaseWalletInstalled())"
         updateSessionStatus()
         
         NotificationCenter.default.addObserver(
