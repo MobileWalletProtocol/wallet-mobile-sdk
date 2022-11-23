@@ -9,7 +9,15 @@ import UIKit
 import CoinbaseWalletSDK
 
 class PickerViewController: UITableViewController {
-    let wallets = Wallet.defaultWallets()
+    let wallets = Wallet.defaultWallets() + [
+        Wallet(
+            name: "Sample Wallet",
+            iconUrl: URL(string: "https://...")!,
+            url: URL(string: "samplewallet://wsegue")!, // Should use universal links in production
+            mwpScheme: URL(string: "samplewallet://")!,
+            appStoreUrl: URL(string: "https://apps.apple.com/app/...")!
+        )
+    ]
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1

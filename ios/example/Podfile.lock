@@ -10,6 +10,7 @@ PODS:
 
 DEPENDENCIES:
   - CoinbaseWalletSDK (from `../../`)
+  - CoinbaseWalletSDK/Core (from `../../`)
   - CoinbaseWalletSDK/Host (from `../../`)
   - CoinbaseWalletSDK/Test (from `../../`)
 
@@ -20,6 +21,6 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   CoinbaseWalletSDK: 924f6028d2f57ba9079b2e157a912368388b19c4
 
-PODFILE CHECKSUM: f823550033f0f642ab843e71dafb66cc65c61e57
+PODFILE CHECKSUM: 9e6206b8e45183d46161dc2f00dc53d4f6425bf0
 
 COCOAPODS: 1.11.3

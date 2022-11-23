@@ -1,6 +1,6 @@
 //
 //  WalletViewController.swift
-//  SampleWeb3App
+//  SampleClient
 //
 //  Created by Jungho Bang on 6/27/22.
 //
