@@ -7,8 +7,11 @@
 
 import Foundation
 
+@available(iOS 13.0, *)
+public typealias CoinbaseWalletSDK = MWPClient
+
 @available(iOS, introduced: 13.0, deprecated, message: "Use MWPClient")
-public final class CoinbaseWalletSDK: MWPClient {
+extension CoinbaseWalletSDK {
     
     @available(*, deprecated, message: "Use {Wallet}.isInstalled instead")
     static public func isCoinbaseWalletInstalled() -> Bool {
@@ -17,7 +20,7 @@ public final class CoinbaseWalletSDK: MWPClient {
     
     @available(*, deprecated, message: "Use MWPClient.getInstance(:) instead")
     static public var shared: CoinbaseWalletSDK = {
-        MWPClient.getInstance(to: .coinbaseWallet) as! CoinbaseWalletSDK
+        MWPClient.getInstance(to: .coinbaseWallet)!
     }()
     
     @available(*, deprecated, message: "Use MWPClient.handleResponse(:) instead")

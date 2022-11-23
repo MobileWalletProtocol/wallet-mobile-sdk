@@ -10,7 +10,7 @@ import CryptoKit
 import UIKit
 
 @available(iOS 13.0, *)
-public class MWPClient {
+public final class MWPClient {
 
     // MARK: - Instantiate
     

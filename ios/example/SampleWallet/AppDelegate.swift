@@ -32,11 +32,11 @@ extension AppDelegate: UIAlertViewDelegate {
             return nil
         }
         
-        return try? CoinbaseWalletHostSDK.deriveSymmetricKey(with: o, p)
+        return try? MWPHost.deriveSymmetricKey(with: o, p)
     }
     
     func handleWalletSegue(url: URL) {
-        guard let request: RequestMessage = try? CoinbaseWalletHostSDK.decode(url, with: symmetricKey) else { return }
+        guard let request: RequestMessage = try? MWPHost.decode(url, with: symmetricKey) else { return }
         
         self.requestMessage = request
         if case .handshake(_, let callback, _, _, _) = request.content {
@@ -57,7 +57,7 @@ extension AppDelegate: UIAlertViewDelegate {
         guard let requestMessage = requestMessage else { preconditionFailure() }
         
         let content: ResponseContent
-        let sender: CoinbaseWalletSDK.PublicKey
+        let sender: PublicKey
         if buttonIndex == 0 { // cancel
             content = .failure(
                 requestId: requestMessage.uuid,
@@ -69,7 +69,7 @@ extension AppDelegate: UIAlertViewDelegate {
             switch requestMessage.content {
             case .handshake:
                 self.peerPublicKey = requestMessage.sender
-                self.ownPrivateKey = CoinbaseWalletSDK.PrivateKey()
+                self.ownPrivateKey = PrivateKey()
                 let account = Account(chain: "eth", networkId: 0, address: "0x571a6a108adb08f9ca54fe8605280F9EE0eD4AF6")
                 returnValues = [
                     .result(value: JSONString(encode: account)!)
@@ -91,7 +91,7 @@ extension AppDelegate: UIAlertViewDelegate {
             content: content
         )
         
-        let url = try! CoinbaseWalletHostSDK.encode(
+        let url = try! MWPHost.encode(
             response,
             to: peerCallback!,
             with: symmetricKey

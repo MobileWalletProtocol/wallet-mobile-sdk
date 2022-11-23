@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  SampleWeb3App
+//  SampleClient
 //
 //  Created by Jungho Bang on 6/27/22.
 //
@@ -15,9 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UIApplication.swizzleOpenURL()
         
-        #warning("Should use universal links in production")
-        CoinbaseWalletSDK.configure(
-//            host: URL(string: "samplewallet://wsegue")!,
+        MWPClient.configure(
             callback: URL(string: "myappxyz://mycallback")!
         )
         
@@ -25,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        if (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true {
+        if (try? MWPClient.handleResponse(url)) == true {
             return true
         }
         // handle other types of deep links
@@ -34,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         if let url = userActivity.webpageURL,
-           (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true {
+           (try? MWPClient.handleResponse(url)) == true {
             return true
         }
         // handle other types of deep links
@@ -42,6 +40,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 }
+
+let kOpenExternalURLNotification = Notification.Name("kOpenExternalURLNotification")
 
 extension UIApplication {
     static func swizzleOpenURL() {
@@ -53,20 +53,12 @@ extension UIApplication {
     }
     
     @objc func swizzledOpen(_ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any], completionHandler completion: ((Bool) -> Void)?) {
-        logWalletSegueMessage(url: url)
+        NotificationCenter.default.post(
+            name: kOpenExternalURLNotification,
+            object: url
+        )
         
         // it's not recursive. below is actually the original open(_:) method
         self.swizzledOpen(url, options: options, completionHandler: completion)
-    }
-}
-
-func logWalletSegueMessage(url: URL, function: String = #function) {
-    let keyWindow = UIApplication.shared.connectedScenes
-            .filter({$0.activationState == .foregroundActive})
-            .compactMap({$0 as? UIWindowScene})
-            .first?.windows
-            .filter({$0.isKeyWindow}).first
-    if let vc = keyWindow?.rootViewController as? ViewController {
-        vc.logURL(url, function: function)
     }
 }

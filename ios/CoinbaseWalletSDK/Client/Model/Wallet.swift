@@ -15,6 +15,20 @@ public struct Wallet {
     public let mwpScheme: URL
     public let appStoreUrl: URL
     
+    public init(
+        name: String,
+        iconUrl: URL,
+        url: URL,
+        mwpScheme: URL,
+        appStoreUrl: URL
+    ) {
+        self.name = name
+        self.iconUrl = iconUrl
+        self.url = url
+        self.mwpScheme = mwpScheme
+        self.appStoreUrl = appStoreUrl
+    }
+    
     ///  return `true` if it can verify MWP supporting version of the wallet is installed on user's device.
     public var isInstalled: Bool {
         return UIApplication.shared.canOpenURL(mwpScheme)
