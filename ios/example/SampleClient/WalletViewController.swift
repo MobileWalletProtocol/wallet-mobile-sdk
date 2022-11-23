@@ -37,7 +37,7 @@ class WalletViewController: UITableViewController {
     @IBAction func initiateHandshake() {
         mwpClient.initiateHandshake(
             initialActions: [
-                Action(jsonRpc: .eth_requestAccounts)
+                Action(jsonRpc: .personal_sign(address: "", message: "message"))
             ]
         ) { result, account in
             switch result {
