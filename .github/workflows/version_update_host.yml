@@ -24,22 +24,26 @@ jobs:
     name: Update package version
     runs-on: ubuntu-latest
     needs: authorize
+    defaults:
+      run:
+        working-directory: ./react-native/host
     env:
-      V_REGEX: '[0-9]+\.[0-9]+\.[0-9]+'
       NEW_VERSION: ${{ github.event.inputs.packageVersion }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Update React Native version
-        run: |
-          sed -i '' -E 's/(version":) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' react-native/host/package.json
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+
+      - name: Update host library version
+        run: yarn version --new-version ${{env.NEW_VERSION}} --no-git-tag-version
 
       - name: Open pull request
         uses: peter-evans/create-pull-request@v4
         with:
-          add-paths: |
-            react-native/host/package.json
+          add-paths: react-native/host/package.json
           title: "[Version update host] v${{env.NEW_VERSION}}"
           body: "Automated workflow: version update"
           branch: version-update-host-v${{env.NEW_VERSION}}
