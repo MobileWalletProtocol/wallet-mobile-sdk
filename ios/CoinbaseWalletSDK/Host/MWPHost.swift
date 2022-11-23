@@ -1,5 +1,5 @@
 //
-//  CoinbaseWalletHostSDK.swift
+//  MWPHost.swift
 //  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 9/2/22.
@@ -9,7 +9,7 @@ import Foundation
 import CryptoKit
 
 @available(iOS 13.0, *)
-public final class CoinbaseWalletHostSDK {
+public final class MWPHost {
     public static func deriveSymmetricKey(
         with ownPrivateKey: PrivateKey,
         _ peerPublicKey: PublicKey
