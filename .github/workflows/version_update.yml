@@ -1,4 +1,4 @@
-name: Version Update PR
+name: Version Update PR (Client)
 
 on:
   workflow_dispatch:
@@ -35,16 +35,16 @@ jobs:
         run: |
           sed -i '' -E "s/= '${{env.V_REGEX}}/= '${{env.NEW_VERSION}}/" CoinbaseWalletSDK.podspec
           sed -i '' -E 's/= "${{env.V_REGEX}}/= "${{env.NEW_VERSION}}/' ios/CoinbaseWalletSDK/MobileWalletProtocol.swift
-      
+
       - name: Update Android version
         run: |
           sed -i '' -E 's/(sdk-version =) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' android/gradle/libs.versions.toml
 
       - name: Update React Native version
         run: |
-          sed -i '' -E "s/(CoinbaseWalletSDK\/CrossPlatform',) '${{env.V_REGEX}}/\1 '${{env.NEW_VERSION}}/" react-native/ios/CoinbaseWalletSDKExpo.podspec
-          sed -i '' -E 's/(com.coinbase:coinbase-wallet-sdk):${{env.V_REGEX}}/\1:${{env.NEW_VERSION}}/' react-native/android/build.gradle
-          sed -i '' -E 's/(version":) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' react-native/package.json
+          sed -i '' -E "s/(CoinbaseWalletSDK\/CrossPlatform',) '${{env.V_REGEX}}/\1 '${{env.NEW_VERSION}}/" react-native/client/ios/CoinbaseWalletSDKExpo.podspec
+          sed -i '' -E 's/(com.coinbase:coinbase-wallet-sdk):${{env.V_REGEX}}/\1:${{env.NEW_VERSION}}/' react-native/client/android/build.gradle
+          sed -i '' -E 's/(version":) "${{env.V_REGEX}}/\1 "${{env.NEW_VERSION}}/' react-native/client/package.json
 
       - name: Update Flutter version
         run: |
@@ -55,7 +55,7 @@ jobs:
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7.5'
+          ruby-version: "2.7.5"
           bundler-cache: true
 
       - name: Update iOS example
@@ -65,11 +65,11 @@ jobs:
       # - name: Update React Native example
       #   run: bundle exec pod install
       #   working-directory: react-native/example/ios
-        
+
       # - name: Update Flutter example
       #   run: bundle exec pod install
       #   working-directory: flutter/example/ios
-      
+
       - name: Open pull request
         uses: peter-evans/create-pull-request@v4
         with:
@@ -78,9 +78,9 @@ jobs:
             ios/CoinbaseWalletSDK/MobileWalletProtocol.swift
             ios/example/Podfile.lock
             android/gradle/libs.versions.toml
-            react-native/ios/CoinbaseWalletSDKExpo.podspec
-            react-native/android/build.gradle
-            react-native/package.json
+            react-native/client/ios/CoinbaseWalletSDKExpo.podspec
+            react-native/client/android/build.gradle
+            react-native/client/package.json
             flutter/ios/coinbase_wallet_sdk.podspec
             flutter/android/build.gradle
             flutter/pubspec.yaml
