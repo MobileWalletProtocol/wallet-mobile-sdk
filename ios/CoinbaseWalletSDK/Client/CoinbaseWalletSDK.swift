@@ -7,10 +7,10 @@
 
 import Foundation
 
-@available(iOS, introduced: 13.0, deprecated, message: "Use MWPClient")
+@available(iOS 13.0, *)
 public typealias CoinbaseWalletSDK = MWPClient
 
-@available(iOS 13.0, *)
+@available(iOS, introduced: 13.0, deprecated, message: "Use MWPClient")
 extension CoinbaseWalletSDK {
     
     @available(*, deprecated, message: "Use {Wallet}.isInstalled instead")
