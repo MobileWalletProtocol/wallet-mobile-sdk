@@ -45,7 +45,6 @@ class PickerViewController: UITableViewController {
             let wvc = segue.destination as? WalletViewController
         else { return }
         
-        
         wvc.wallet = wallets[indexPath.row]
     }
 }
