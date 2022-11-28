@@ -6,6 +6,7 @@ import { isHandshakeAction, RequestAction } from '../action/action';
 import { MWPHostModule } from '../native-module/MWPHostNativeModule';
 import type { RequestMessage } from '../request/request';
 import { getSession, SecureStorage, updateSessions } from '../sessions/sessions';
+import { uuidV4 } from '../utils/uuid';
 import { URL } from 'react-native-url-polyfill';
 import { Buffer } from 'buffer';
 
@@ -124,7 +125,7 @@ export async function sendResponse(
   const response: ResponseMessage = {
     version: session.version ?? '0', // TODO: Should this be version of sdk in host library?
     sender: session.sessionPublicKey,
-    uuid: session.sessionId, // TODO: Should this be a unique id?
+    uuid: uuidV4(),
     callbackUrl: session.dappURL,
     timestamp: Date.now(),
     content: {
@@ -177,7 +178,7 @@ export async function sendError(description: string, message: RequestMessage | D
   const response: ResponseMessage = {
     version: message.version,
     sender: message.sender,
-    uuid: message.uuid, // TODO: Should this be a unique uuid?
+    uuid: uuidV4(),
     callbackUrl: message.callbackUrl,
     timestamp: Date.now(),
     content: {
