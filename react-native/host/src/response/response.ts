@@ -122,8 +122,10 @@ export async function sendResponse(
     },
   ]);
 
+  const sdkVersion = await MWPHostModule.getSdkVersion();
+
   const response: ResponseMessage = {
-    version: session.version ?? '0', // TODO: Should this be version of sdk in host library?
+    version: sdkVersion,
     sender: session.sessionPublicKey,
     uuid: uuidV4(),
     callbackUrl: session.dappURL,
@@ -175,8 +177,10 @@ export async function sendResponse(
 }
 
 export async function sendError(description: string, message: RequestMessage | DecodedRequest) {
+  const sdkVersion = await MWPHostModule.getSdkVersion();
+
   const response: ResponseMessage = {
-    version: message.version,
+    version: sdkVersion,
     sender: message.sender,
     uuid: uuidV4(),
     callbackUrl: message.callbackUrl,

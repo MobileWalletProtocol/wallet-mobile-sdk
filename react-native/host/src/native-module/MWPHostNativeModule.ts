@@ -87,6 +87,8 @@ type UnencodedResponse = {
 };
 
 type MWPHostNativeModule = {
+  getSdkVersion: () => Promise<string>;
+
   generateKeyPair: () => Promise<GenerateKeyPairResult>;
 
   decodeRequest: (

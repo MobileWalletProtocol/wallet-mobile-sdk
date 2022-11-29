@@ -27,6 +27,12 @@ class MobileWalletProtocolHostModule(reactContext: ReactApplicationContext) : Re
     }
 
     @ReactMethod
+    fun getSdkVersion(promise: Promise) {
+        // TODO: Get SDK Version from Client SDK
+        promise.resolve(BuildConfig.MOBILE_SDK_VERSION)
+    }
+
+    @ReactMethod
     fun generateKeyPair(promise: Promise) {
         val sessionKeyPair = EllipticCurves.generateKeyPair(EllipticCurves.CurveType.NIST_P256)
         val keyMap = Arguments.createMap().apply {

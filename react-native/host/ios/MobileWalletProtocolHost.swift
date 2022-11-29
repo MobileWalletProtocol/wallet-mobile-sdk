@@ -4,6 +4,16 @@ import CryptoKit
 @available(iOS 13.0, *)
 @objc(MobileWalletProtocolHost)
 class MobileWalletProtocolHost: NSObject {
+
+    @objc(getSdkVersion:rejecter:)
+    public func getSdkVersion(
+        resolve: RCTPromiseResolveBlock,
+        reject: RCTPromiseRejectBlock
+    ) {
+        // TODO: Get SDK Version from Client SDK
+        resolve("1.0.4")
+    }
+
     @objc(generateKeyPair:rejecter:)
     public func generateKeyPair(
         resolve: RCTPromiseResolveBlock,

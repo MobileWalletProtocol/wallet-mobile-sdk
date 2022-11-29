@@ -33,14 +33,20 @@ def getExtOrIntegerDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['MobileWalletProtocolHost_' + name]).toInteger()
 }
 
+// Mobile SDK Version
+def sdk_version = "1.0.4"
+
 android {
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
 
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault('minSdkVersion')
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
+
     buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+    buildConfigField "String", "MOBILE_SDK_VERSION", "\"${sdk_version}\""
   }
+
   buildTypes {
     release {
       minifyEnabled false
@@ -135,7 +141,7 @@ dependencies {
   implementation "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-  implementation "com.coinbase:coinbase-wallet-sdk:1.0.3"
+  implementation "com.coinbase:coinbase-wallet-sdk:$sdk_version"
   implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3"
   implementation 'com.google.crypto.tink:tink-android:1.6.1'
   implementation 'androidx.core:core-ktx:1.8.0'
