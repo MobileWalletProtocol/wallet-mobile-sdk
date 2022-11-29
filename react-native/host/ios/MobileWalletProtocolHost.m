@@ -18,6 +18,9 @@ RCT_EXTERN_METHOD(encodeResponse:(NSDictionary*)dictionary
 RCT_EXTERN_METHOD(generateKeyPair:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(getSdkVersion:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 + (BOOL)requiresMainQueueSetup
 {
     return NO;
