@@ -21,3 +21,12 @@ export type Result = {
   errorCode?: number;
   errorMessage?: string;
 };
+
+export type Wallet = {
+  name: string;
+  iconUrl?: string;
+  url?: string;
+  mwpScheme?: string;
+  appStoreUrl?: string;
+  packageName?: string;
+};

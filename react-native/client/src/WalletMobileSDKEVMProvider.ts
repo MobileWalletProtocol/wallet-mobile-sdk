@@ -1,25 +1,16 @@
+import {RequestArguments, Web3Provider,} from "@coinbase/wallet-sdk/dist/provider/Web3Provider";
+import {JSONRPCMethod, JSONRPCRequest, JSONRPCResponse,} from "@coinbase/wallet-sdk/dist/provider/JSONRPC";
+import {AddressString, Callback, IntNumber,} from "@coinbase/wallet-sdk/dist/types";
+import {ethErrors} from "eth-rpc-errors";
 import {
-  RequestArguments,
-  Web3Provider,
-} from "@coinbase/wallet-sdk/dist/provider/Web3Provider";
-import {
-  JSONRPCMethod,
-  JSONRPCRequest,
-  JSONRPCResponse,
-} from "@coinbase/wallet-sdk/dist/provider/JSONRPC";
-import {
-  AddressString,
-  Callback,
-  IntNumber,
-} from "@coinbase/wallet-sdk/dist/types";
-import { ethErrors } from "eth-rpc-errors";
-import {
+  connectWallet,
+  getWallets,
   initiateHandshake,
   isConnected,
   makeRequest,
   resetSession,
 } from "./CoinbaseWalletSDK";
-import { Account, Action, Result } from "./CoinbaseWalletSDK.types";
+import {Account, Action, Result, Wallet} from "./CoinbaseWalletSDK.types";
 import {
   bigIntStringFromBN,
   ensureAddressString,
@@ -31,9 +22,9 @@ import {
   hexStringFromIntNumber,
   prepend0x,
 } from "@coinbase/wallet-sdk/dist/util";
-import { EthereumTransactionParams } from "@coinbase/wallet-sdk/dist/relay/EthereumTransactionParams";
+import {EthereumTransactionParams} from "@coinbase/wallet-sdk/dist/relay/EthereumTransactionParams";
 import BN from "bn.js";
-import { MMKV, NativeMMKV } from "react-native-mmkv";
+import {MMKV, NativeMMKV} from "react-native-mmkv";
 import SafeEventEmitter from "@metamask/safe-event-emitter";
 
 global.Buffer = global.Buffer || require("buffer").Buffer;
@@ -129,6 +120,14 @@ export class WalletMobileSDKEVMProvider
     } else {
       throw new Error("No jsonRpcUrl provided");
     }
+  }
+
+  public get getWallets(): Wallet[] {
+    return getWallets();
+  }
+
+  public connectWallet(wallet: Wallet) {
+    return connectWallet(wallet);
   }
 
   public get connected(): boolean {

@@ -35,36 +35,67 @@ struct ActionResultRecord : Record {
     var errorCode: Int? = nil
 }
 
+struct WalletRecord : Record {
+    @Field
+    var name: String = ""
+
+    @Field
+    var iconUrl: String = ""
+
+    @Field
+    var url: String = ""
+
+    @Field
+    var mwpScheme: String = ""
+
+    @Field
+    var appStoreUrl: String = ""
+
+    @Field
+    var packageName: String? = nil
+}
+
 public class CoinbaseWalletSDKModule: Module {
 
     var hasConfigured: Bool = false
+
+    private var mwpClient: MWPClient? = nil
 
     public func definition() -> ModuleDefinition {
 
         Name("CoinbaseWalletSDK")
 
-        Function("configure") { (callbackURL: String, hostURL: String?, _: String?) in
+        Function("configure") { (callbackURL: String) in
             guard #available(iOS 13.0, *), !self.hasConfigured else {
                 return
             }
 
-            let host: URL
-            if let hostURLStr = hostURL {
-                host = URL(string: hostURLStr)!
-            } else {
-                host = URL(string: "https://wallet.coinbase.com/wsegue")!
+            self.hasConfigured = true
+            MWPClient.configure(callback: URL(string: callbackURL)!)
+            CoinbaseWalletSDK.appendVersionTag("rn")
+        }
+
+        Function("connectWallet") { (walletRecord: WalletRecord) in
+            guard #available(iOS 13.0, *) else {
+                return
             }
 
-            self.hasConfigured = true
-            CoinbaseWalletSDK.configure(
-                host: host,
-                callback: URL(string: callbackURL)!
+            let wallet = Wallet(
+                name: walletRecord.name,
+                iconUrl: URL(string:  walletRecord.iconUrl)!,
+                url: URL(string: walletRecord.url)!,
+                mwpScheme: URL(string: walletRecord.mwpScheme)!,
+                appStoreUrl: URL(string: walletRecord.appStoreUrl)!
             )
-            CoinbaseWalletSDK.appendVersionTag("rn")
+            self.mwpClient = MWPClient.getInstance(to: wallet)
         }
 
         AsyncFunction("initiateHandshake") { (initialActions: [ActionRecord], promise: Promise) in
             guard #available(iOS 13.0, *) else {
+                return
+            }
+
+            guard let client = self.mwpClient else {
                 return
             }
 
@@ -74,7 +105,7 @@ public class CoinbaseWalletSDKModule: Module {
                 return Action(method: record.method, params: params)
             }
 
-            CoinbaseWalletSDK.shared.initiateHandshake(initialActions: actions) { result, account in
+            client.initiateHandshake(initialActions: actions) { result, account in
                 switch result {
                 case .success(let response):
                     let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
@@ -88,6 +119,10 @@ public class CoinbaseWalletSDKModule: Module {
 
         AsyncFunction("makeRequest") { (actions: [ActionRecord], account: AccountRecord?, promise: Promise) in
             guard #available(iOS 13.0, *) else {
+                return
+            }
+
+            guard let client = self.mwpClient else {
                 return
             }
 
@@ -108,7 +143,7 @@ public class CoinbaseWalletSDKModule: Module {
                 requestAccount = nil
             }
 
-            CoinbaseWalletSDK.shared.makeRequest(
+            client.makeRequest(
                 Request(actions: requestActions, account: requestAccount)
             ) { result in
                 switch result {
@@ -127,7 +162,7 @@ public class CoinbaseWalletSDKModule: Module {
             }
 
             let responseURL = URL(string: url)!
-            if (try? CoinbaseWalletSDK.shared.handleResponse(responseURL)) == true {
+            if (try? MWPClient.handleResponse(responseURL)) == true {
                 return true
             }
 
@@ -147,15 +182,28 @@ public class CoinbaseWalletSDKModule: Module {
                 return false
             }
 
-            return CoinbaseWalletSDK.shared.isConnected()
+            guard let client = self.mwpClient else {
+                return false
+            }
+
+            return client.isConnected()
         }
 
         Function("resetSession") {
             guard #available(iOS 13.0, *) else {
                 return
             }
+            guard let client = self.mwpClient else {
+                return
+            }
 
-            CoinbaseWalletSDK.shared.resetSession()
+            client.resetSession()
+        }
+
+        Function("getWallets") { () -> [WalletRecord.Dict] in
+            let wallets = Wallet.defaultWallets()
+            let results: [WalletRecord.Dict] = wallets.map { $0.asRecord }
+            return results
         }
     }
 }
@@ -183,6 +231,18 @@ extension Account {
         record.networkId = Int(self.networkId)
         record.address = self.address
         
+        return record.toDictionary()
+    }
+}
+
+extension Wallet {
+    var asRecord: WalletRecord.Dict {
+        let record = WalletRecord()
+        record.name = self.name
+        record.iconUrl = self.iconUrl.absoluteString
+        record.url = self.url.absoluteString
+        record.mwpScheme = self.mwpScheme.absoluteString
+        record.appStoreUrl = self.appStoreUrl.absoluteString
         return record.toDictionary()
     }
 }

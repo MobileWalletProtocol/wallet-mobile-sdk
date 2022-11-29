@@ -4,20 +4,13 @@ import {
   Account,
   ConfigurationParams,
   Result,
+  Wallet,
 } from "./CoinbaseWalletSDK.types";
 
 export { WalletMobileSDKEVMProvider } from "./WalletMobileSDKEVMProvider";
 
-export function configure({
-  callbackURL,
-  hostURL,
-  hostPackageName,
-}: ConfigurationParams) {
-  CoinbaseWalletSDK.configure(
-    callbackURL.toString(),
-    hostURL?.toString(),
-    hostPackageName
-  );
+export function configure({ callbackURL }: ConfigurationParams) {
+  CoinbaseWalletSDK.configure(callbackURL.toString());
 }
 
 export async function initiateHandshake(
@@ -64,4 +57,12 @@ export function isConnected(): boolean {
 
 export function resetSession() {
   CoinbaseWalletSDK.resetSession();
+}
+
+export function getWallets(): Wallet[] {
+  return CoinbaseWalletSDK.getWallets();
+}
+
+export function connectWallet(wallet: Wallet) {
+  CoinbaseWalletSDK.connectWallet(wallet);
 }

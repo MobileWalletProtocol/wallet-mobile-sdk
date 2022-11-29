@@ -35,6 +35,7 @@ class CoinbaseWalletSDK internal constructor(
 
 
     val isConnected: Boolean get() = keyManager.peerPublicKey != null
+    val isCoinbaseWalletInstalled get() = launchWalletIntent != null
 
     private val config: ClientConfiguration.Configuration
         get() = ClientConfiguration.config
@@ -42,8 +43,6 @@ class CoinbaseWalletSDK internal constructor(
 
     private val launchWalletIntent: Intent?
         get() = config.context.packageManager.getLaunchIntentForPackage(hostPackageName)
-
-    val isCoinbaseWalletInstalled get() = launchWalletIntent != null
 
     init {
         instances[scheme] = this

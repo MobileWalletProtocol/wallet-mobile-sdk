@@ -1,10 +1,13 @@
 package expo.modules.coinbasewalletsdkexpo
 
+import android.app.Application
 import android.net.Uri
 import com.coinbase.android.nativesdk.CoinbaseWalletSDK
 import com.coinbase.android.nativesdk.message.request.Account
 import com.coinbase.android.nativesdk.message.request.Action
 import com.coinbase.android.nativesdk.message.request.RequestContent
+import com.coinbase.android.nativesdk.DefaultWallets
+import com.coinbase.android.nativesdk.Wallet
 import expo.modules.kotlin.Promise
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
@@ -23,22 +26,25 @@ class ActionRecord : Record {
 }
 
 class CoinbaseWalletSDKModule : Module() {
-    private lateinit var sdk: CoinbaseWalletSDK
+    private var sdk: CoinbaseWalletSDK? = null
 
     override fun definition() = ModuleDefinition {
 
         Name("CoinbaseWalletSDK")
 
-        Function("configure") { callbackURL: String, _: String?, hostPackageName: String? ->
-            IntentLauncher.onResult = { uri -> sdk.handleResponse(uri) }
-
-            sdk = CoinbaseWalletSDK(
+        Function("configure") { callbackURL: String ->
+            CoinbaseWalletSDK.configure(
                 domain = Uri.parse(callbackURL),
-                appContext = requireNotNull(appContext.reactContext),
-                hostPackageName = hostPackageName ?: "org.toshi",
-                openIntent = { IntentLauncher.launcher?.launch(it) }
+                context = requireNotNull(appContext.reactContext?.applicationContext)
             )
-            sdk.appendVersionTag("rn")
+            CoinbaseWalletSDK.openIntent = { IntentLauncher.launcher?.launch(it) }
+            IntentLauncher.onResult = { uri -> sdk?.handleResponse(uri) }
+        }
+
+        Function("connectWallet") { walletRecord: WalletRecord ->
+            val wallet = walletRecord.asWallet
+            sdk = CoinbaseWalletSDK.getClient(wallet)
+            sdk?.appendVersionTag("rn")
         }
 
         AsyncFunction("initiateHandshake") { initialActions: List<ActionRecord>, promise: Promise ->
@@ -50,7 +56,7 @@ class CoinbaseWalletSDKModule : Module() {
                 )
             }
 
-            sdk.initiateHandshake(handshakeActions) { result, account ->
+            sdk?.initiateHandshake(handshakeActions) { result, account ->
                 result
                     .onSuccess { responses ->
                         val results: List<ActionResultRecord> = responses.map { it.asRecord }
@@ -81,7 +87,7 @@ class CoinbaseWalletSDKModule : Module() {
             }
 
             val request = RequestContent.Request(actions = requestActions, account = requestAccount)
-            sdk.makeRequest(request) { result ->
+            sdk?.makeRequest(request) { result ->
                 result
                     .onSuccess { responses ->
                         val results: List<ActionResultRecord> = responses.map { it.asRecord }
@@ -94,25 +100,27 @@ class CoinbaseWalletSDKModule : Module() {
         }
 
         Function("handleResponse") { url: String ->
-            val responseURL = Uri.parse(url)
-
-            try {
-                return@Function sdk.handleResponse(responseURL)
-            } catch (error: Exception) {
-                return@Function false
-            }
+            return@Function runCatching {
+                val responseURL = Uri.parse(url)
+                sdk?.handleResponse(responseURL)
+            }.getOrDefault(false)
         }
 
         Function("isCoinbaseWalletInstalled") {
-            return@Function sdk.isCoinbaseWalletInstalled
+            return@Function sdk?.isCoinbaseWalletInstalled == true
         }
 
         Function("isConnected") {
-            return@Function sdk.isConnected
+            return@Function sdk?.isConnected
         }
 
         Function("resetSession") {
-            sdk.resetSession()
+            sdk?.resetSession()
+        }
+
+        Function("getWallets") {
+            val wallets = DefaultWallets.getWallets()
+            return@Function wallets.map { it.asRecord }
         }
     }
 }

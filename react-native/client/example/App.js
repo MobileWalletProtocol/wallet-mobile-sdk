@@ -2,6 +2,7 @@ import React from 'react';
 import {useState, useMemo, useEffect, useCallback} from 'react';
 import {
   Button,
+  Image,
   Linking,
   SafeAreaView,
   ScrollView,
@@ -22,9 +23,7 @@ import {MMKV} from 'react-native-mmkv';
 
 // Configure Mobile SDK
 configure({
-  hostURL: new URL('https://wallet.coinbase.com/wsegue'),
   callbackURL: new URL('example.rn.dapp://'), // Your app's Universal Link
-  hostPackageName: 'org.toshi',
 });
 
 const provider = new WalletMobileSDKEVMProvider();
@@ -35,6 +34,8 @@ const App = function () {
 
   const cachedAddress = useMemo(() => storage.getString('address'), []);
   const [address, setAddress] = useState(cachedAddress);
+  const [activeWallet, setActiveWallet] = useState(undefined);
+  const [wallets, setWallets] = useState([]);
 
   const isConnected = address !== undefined;
 
@@ -52,6 +53,10 @@ const App = function () {
 
   const logMessage = useCallback(message => {
     setLog(prev => `${message}\n${prev}`);
+  }, []);
+
+  useEffect(function getWallets() {
+    setWallets(provider.getWallets);
   }, []);
 
   // Initiate connection to Wallet
@@ -161,7 +166,24 @@ const App = function () {
     backgroundColor: Colors.lighter,
   };
 
-  return (
+  const selectWallet = useCallback(
+    wallet => {
+      setActiveWallet(wallet);
+      try {
+        console.log(wallet);
+        provider.connectWallet(wallet);
+      } catch (e) {
+        console.error(e.message);
+      }
+    },
+    [setActiveWallet],
+  );
+
+  const disconnectWallet = useCallback(() => {
+    setActiveWallet(undefined);
+  }, [setActiveWallet]);
+
+  return activeWallet ? (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar />
       <ScrollView style={styles.scrollViewStyle}>
@@ -186,6 +208,7 @@ const App = function () {
               />
             </>
           )}
+          <Button title="Close Wallet Connection" onPress={disconnectWallet} />
         </Section>
       </ScrollView>
       <ScrollView style={styles.scrollViewStyle}>
@@ -193,6 +216,24 @@ const App = function () {
           <Text style={{color: Colors.black}}>{log}</Text>
         </Section>
       </ScrollView>
+    </SafeAreaView>
+  ) : (
+    <SafeAreaView style={backgroundStyle}>
+      <StatusBar />
+      <Section title="Choose Wallet">
+        {wallets.map(wallet => {
+          return (
+            <View
+              style={walletStyles.view}
+              onTouchStart={() => {
+                selectWallet(wallet);
+              }}>
+              <Image style={walletStyles.logo} source={{uri: wallet.iconUrl}} />
+              <Text style={walletStyles.item}>{wallet.name}</Text>
+            </View>
+          );
+        })}
+      </Section>
     </SafeAreaView>
   );
 };
@@ -233,6 +274,28 @@ const styles = StyleSheet.create({
   },
   scrollViewStyle: {
     height: '50%',
+  },
+});
+
+const walletStyles = StyleSheet.create({
+  container: {
+    height: '100%',
+    padding: 50,
+  },
+  view: {
+    flexDirection: 'row',
+    height: 100,
+    padding: 10,
+  },
+  item: {
+    padding: 20,
+    fontSize: 15,
+    marginTop: 0,
+    color: Colors.black,
+  },
+  logo: {
+    width: 66,
+    height: 58,
   },
 });
 
