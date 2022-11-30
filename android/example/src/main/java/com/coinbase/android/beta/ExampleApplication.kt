@@ -11,8 +11,7 @@ class ExampleApplication : Application() {
         CoinbaseWalletSDK.configure(
             domain = Uri.parse("myappxyz://mycallback"),
             context = this,
-            appName = getString(R.string.app_name),
-            appIconUrl = null
+            appName = getString(R.string.app_name)
         )
     }
 }

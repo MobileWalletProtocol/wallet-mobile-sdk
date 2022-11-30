@@ -17,7 +17,7 @@ object ClientConfiguration {
                 domain
             },
             context = context,
-            name = appName,
+            name = appName ?: context.getAppName(),
             iconUrl = appIconUrl
         )
     }
@@ -25,7 +25,9 @@ object ClientConfiguration {
     data class Configuration(
         val domain: Uri,
         val context: Context,
-        val name: String?,
+        val name: String,
         val iconUrl: String? = null
     )
 }
+
+fun Context.getAppName(): String = applicationInfo.loadLabel(packageManager).toString()

@@ -237,7 +237,7 @@ class CoinbaseWalletSDK internal constructor(
 
         lateinit var openIntent: (Intent) -> Unit
 
-        fun configure(domain: Uri, context: Context, appName: String?, appIconUrl: String?) {
+        fun configure(domain: Uri, context: Context, appName: String? = null, appIconUrl: String? = null) {
             ClientConfiguration.configure(domain, context, appName, appIconUrl)
         }
 
