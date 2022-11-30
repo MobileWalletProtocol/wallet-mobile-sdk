@@ -12,7 +12,7 @@ sealed class RequestContent {
     class Handshake(
         val appId: String,
         val callback: String,
-        val appName: String,
+        val appName: String?,
         val appIconUrl: String?,
         val initialActions: List<Action>? = null
     ) : RequestContent()
