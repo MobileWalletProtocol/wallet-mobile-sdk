@@ -88,7 +88,7 @@ class CoinbaseWalletSDK internal constructor(
             content = RequestContent.Handshake(
                 appId = config.context.packageName,
                 callback = config.domain.toString(),
-                appName = config.name,
+                appName = config.name.orEmpty(),
                 appIconUrl = config.iconUrl,
                 initialActions = initialActions
             ),
@@ -237,7 +237,7 @@ class CoinbaseWalletSDK internal constructor(
 
         lateinit var openIntent: (Intent) -> Unit
 
-        fun configure(domain: Uri, context: Context, appName: String, appIconUrl: String?) {
+        fun configure(domain: Uri, context: Context, appName: String?, appIconUrl: String?) {
             ClientConfiguration.configure(domain, context, appName, appIconUrl)
         }
 

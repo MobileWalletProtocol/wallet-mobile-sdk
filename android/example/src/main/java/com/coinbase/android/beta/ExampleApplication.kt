@@ -12,7 +12,7 @@ class ExampleApplication : Application() {
             domain = Uri.parse("myappxyz://mycallback"),
             context = this,
             appName = getString(R.string.app_name),
-            appIconUrl = ""
+            appIconUrl = null
         )
     }
 }
