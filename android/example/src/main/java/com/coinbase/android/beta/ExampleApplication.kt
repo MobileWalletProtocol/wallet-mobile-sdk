@@ -8,6 +8,6 @@ class ExampleApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        CoinbaseWalletSDK.configure(Uri.parse("https://myappxyz.com"), this)
+        CoinbaseWalletSDK.configure(Uri.parse("myappxyz://mycallback"), this)
     }
 }

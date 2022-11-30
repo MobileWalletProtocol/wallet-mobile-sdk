@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public struct Wallet {
+public struct Wallet: Codable {
     public let name: String
     public let iconUrl: URL
     public let url: URL
