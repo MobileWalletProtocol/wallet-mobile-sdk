@@ -8,10 +8,6 @@ class ExampleApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        CoinbaseWalletSDK.configure(
-            domain = Uri.parse("myappxyz://mycallback"),
-            context = this,
-            appName = getString(R.string.app_name)
-        )
+        CoinbaseWalletSDK.configure(Uri.parse("myappxyz://mycallback"), this)
     }
 }
