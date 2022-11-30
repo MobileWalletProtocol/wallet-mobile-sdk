@@ -1,6 +1,7 @@
 package com.coinbase.android.nativesdk
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.coinbase.android.nativesdk.key.IKeyManager
@@ -236,7 +237,7 @@ class CoinbaseWalletSDK internal constructor(
 
         lateinit var openIntent: (Intent) -> Unit
 
-        fun configure(domain: Uri, context: Application, appName: String, appIconUrl: String?) {
+        fun configure(domain: Uri, context: Context, appName: String, appIconUrl: String?) {
             ClientConfiguration.configure(domain, context, appName, appIconUrl)
         }
 

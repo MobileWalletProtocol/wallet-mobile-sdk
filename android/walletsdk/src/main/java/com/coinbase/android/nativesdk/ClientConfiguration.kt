@@ -1,13 +1,13 @@
 package com.coinbase.android.nativesdk
 
-import android.app.Application
+import android.content.Context
 import android.net.Uri
 
 object ClientConfiguration {
 
     lateinit var config: Configuration
 
-    fun configure(domain: Uri, context: Application, appName: String, appIconUrl: String?) {
+    fun configure(domain: Uri, context: Context, appName: String, appIconUrl: String?) {
         config = Configuration(
             domain = if (domain.pathSegments.size < 2) {
                 domain.buildUpon()
@@ -24,7 +24,7 @@ object ClientConfiguration {
 
     data class Configuration(
         val domain: Uri,
-        val context: Application,
+        val context: Context,
         val name: String,
         val iconUrl: String? = null
     )
