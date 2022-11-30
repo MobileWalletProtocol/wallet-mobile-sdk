@@ -39,6 +39,12 @@ class CoinbaseWalletSDK internal constructor(
     private val config: ClientConfiguration.Configuration
         get() = ClientConfiguration.config
 
+
+    private val launchWalletIntent: Intent?
+        get() = config.context.packageManager.getLaunchIntentForPackage(hostPackageName)
+
+    val isCoinbaseWalletInstalled get() = launchWalletIntent != null
+
     init {
         instances[scheme] = this
     }
@@ -203,12 +209,21 @@ class CoinbaseWalletSDK internal constructor(
             return
         }
 
-        TaskManager.registerResponseHandler(message, onResponse, scheme)
-
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = uri
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val intent = launchWalletIntent
+        if (intent == null) {
+            onResponse(Result.failure(CoinbaseWalletSDKError.OpenWalletFailed))
+            return
         }
+
+        // Prevent intent from launching app in new window
+        intent.type = Intent.ACTION_VIEW
+        if (intent.flags and Intent.FLAG_ACTIVITY_NEW_TASK > 0) {
+            intent.flags = intent.flags and Intent.FLAG_ACTIVITY_NEW_TASK.inv()
+        }
+
+        intent.data = uri
+
+        TaskManager.registerResponseHandler(message, onResponse, scheme)
         openIntent(intent)
     }
 
