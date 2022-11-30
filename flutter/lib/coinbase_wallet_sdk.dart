@@ -6,6 +6,7 @@ import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk_platform_interface.dart'
 import 'package:coinbase_wallet_sdk/configuration.dart';
 import 'package:coinbase_wallet_sdk/request.dart';
 import 'package:coinbase_wallet_sdk/return_value.dart';
+import 'package:coinbase_wallet_sdk/wallet.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 
@@ -89,6 +90,20 @@ class CoinbaseWalletSDK {
     }
     await CoinbaseWalletSdkFlutterPlatform.instance
         .call('configure', configuration.toJson());
+  }
+
+  Future<List<Wallet>> getWallets() async {
+    final result =
+        await CoinbaseWalletSdkFlutterPlatform.instance.call('getWallets');
+
+    final wallets =
+        (result ?? []).map((e) => Wallet.fromJson(e)).cast<Wallet>().toList();
+    return wallets;
+  }
+
+  Future<void> connectWallet(Wallet wallet) async {
+    await CoinbaseWalletSdkFlutterPlatform.instance
+        .call('connectWallet', jsonEncode(wallet.toJson()));
   }
 }
 
