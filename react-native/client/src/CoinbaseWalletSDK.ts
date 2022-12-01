@@ -6,6 +6,7 @@ import {
   Result,
   Wallet,
 } from "./CoinbaseWalletSDK.types";
+import {WalletMobileSDKEVMProvider, WalletMobileSDKProviderOptions} from "./WalletMobileSDKEVMProvider";
 
 export { WalletMobileSDKEVMProvider } from "./WalletMobileSDKEVMProvider";
 
@@ -65,4 +66,8 @@ export function getWallets(): Wallet[] {
 
 export function connectWallet(wallet: Wallet) {
   CoinbaseWalletSDK.connectWallet(wallet);
+}
+
+export function getEvmProvider(wallet: Wallet, opts?: WalletMobileSDKProviderOptions) {
+  return new WalletMobileSDKEVMProvider(opts);
 }

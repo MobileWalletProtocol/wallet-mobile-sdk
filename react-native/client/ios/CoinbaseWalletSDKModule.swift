@@ -66,7 +66,7 @@ public class CoinbaseWalletSDKModule: Module {
         Name("CoinbaseWalletSDK")
 
         Function("configure") { (callbackURL: String) in
-            guard #available(iOS 13.0, *), !self.hasConfigured else {
+            guard !self.hasConfigured else {
                 return
             }
 
@@ -76,10 +76,6 @@ public class CoinbaseWalletSDKModule: Module {
         }
 
         Function("connectWallet") { (walletRecord: WalletRecord) in
-            guard #available(iOS 13.0, *) else {
-                return
-            }
-
             let wallet = Wallet(
                 name: walletRecord.name,
                 iconUrl: URL(string:  walletRecord.iconUrl)!,
@@ -91,11 +87,8 @@ public class CoinbaseWalletSDKModule: Module {
         }
 
         AsyncFunction("initiateHandshake") { (initialActions: [ActionRecord], promise: Promise) in
-            guard #available(iOS 13.0, *) else {
-                return
-            }
-
             guard let client = self.mwpClient else {
+                promise.reject("Client not initialized", "Must Initialize client before making request")
                 return
             }
 
@@ -118,11 +111,8 @@ public class CoinbaseWalletSDKModule: Module {
         }
 
         AsyncFunction("makeRequest") { (actions: [ActionRecord], account: AccountRecord?, promise: Promise) in
-            guard #available(iOS 13.0, *) else {
-                return
-            }
-
             guard let client = self.mwpClient else {
+                promise.reject("Client not initialized", "Must Initialize client before making request")
                 return
             }
 
@@ -157,10 +147,6 @@ public class CoinbaseWalletSDKModule: Module {
         }
 
         Function("handleResponse") { (url: String) -> Bool in
-            guard #available(iOS 13.0, *) else {
-                return false
-            }
-
             let responseURL = URL(string: url)!
             if (try? MWPClient.handleResponse(responseURL)) == true {
                 return true
@@ -170,18 +156,10 @@ public class CoinbaseWalletSDKModule: Module {
         }
 
         Function("isCoinbaseWalletInstalled") { () -> Bool in
-            guard #available(iOS 13.0, *) else {
-                return false
-            }
-
             return CoinbaseWalletSDK.isCoinbaseWalletInstalled()
         }
 
         Function("isConnected") { () -> Bool in
-            guard #available(iOS 13.0, *) else {
-                return false
-            }
-
             guard let client = self.mwpClient else {
                 return false
             }
@@ -190,9 +168,6 @@ public class CoinbaseWalletSDKModule: Module {
         }
 
         Function("resetSession") {
-            guard #available(iOS 13.0, *) else {
-                return
-            }
             guard let client = self.mwpClient else {
                 return
             }

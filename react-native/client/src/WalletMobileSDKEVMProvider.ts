@@ -4,7 +4,6 @@ import {AddressString, Callback, IntNumber,} from "@coinbase/wallet-sdk/dist/typ
 import {ethErrors} from "eth-rpc-errors";
 import {
   connectWallet,
-  getWallets,
   initiateHandshake,
   isConnected,
   makeRequest,
@@ -76,7 +75,7 @@ export class WalletMobileSDKEVMProvider
   private _chainId?: number;
   private _jsonRpcUrl?: string;
   private _addresses: AddressString[] = [];
-  private _storage: KVStorage;
+  _storage: KVStorage;
 
   constructor(opts?: WalletMobileSDKProviderOptions) {
     super();
@@ -120,14 +119,6 @@ export class WalletMobileSDKEVMProvider
     } else {
       throw new Error("No jsonRpcUrl provided");
     }
-  }
-
-  public get getWallets(): Wallet[] {
-    return getWallets();
-  }
-
-  public connectWallet(wallet: Wallet) {
-    return connectWallet(wallet);
   }
 
   public get connected(): boolean {

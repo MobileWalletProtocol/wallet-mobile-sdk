@@ -16,8 +16,10 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import {
   configure,
+  connectWallet,
+  getEvmProvider,
+  getWallets,
   handleResponse,
-  WalletMobileSDKEVMProvider,
 } from '@coinbase/wallet-mobile-sdk';
 import {MMKV} from 'react-native-mmkv';
 
@@ -26,18 +28,25 @@ configure({
   callbackURL: new URL('example.rn.dapp://'), // Your app's Universal Link
 });
 
-const provider = new WalletMobileSDKEVMProvider();
-const storage = new MMKV();
-
 const App = function () {
   const [log, setLog] = useState('');
 
-  const cachedAddress = useMemo(() => storage.getString('address'), []);
-  const [address, setAddress] = useState(cachedAddress);
   const [activeWallet, setActiveWallet] = useState(undefined);
+  const [providerMap, setProviderMap] = useState(new Map());
+  const cachedAddress = useMemo(
+    () =>
+      activeWallet
+        ? providerMap.get(activeWallet.url)._storage.getString('address')
+        : undefined,
+    [activeWallet, providerMap],
+  );
+  const [address, setAddress] = useState(cachedAddress);
   const [wallets, setWallets] = useState([]);
-
   const isConnected = address !== undefined;
+
+  const add = (key, value) => {
+    setProviderMap(prev => new Map([...prev, [key, value]]));
+  };
 
   useEffect(function setupDeeplinkHandling() {
     // Pass incoming deeplinks into Mobile SDK
@@ -55,42 +64,52 @@ const App = function () {
     setLog(prev => `${message}\n${prev}`);
   }, []);
 
-  useEffect(function getWallets() {
-    setWallets(provider.getWallets);
+  useEffect(() => {
+    setWallets(getWallets());
   }, []);
 
+  useEffect(() => {
+    if (activeWallet && providerMap.has(activeWallet.url)) {
+      setAddress(
+        providerMap.get(activeWallet.url)._storage.getString('address'),
+      );
+    }
+  }, [providerMap, activeWallet]);
+
   // Initiate connection to Wallet
-  const connectWallet = useCallback(async () => {
+  const connectWallet2 = useCallback(async () => {
     logMessage('--> eth_requestAccounts\n');
 
     try {
+      const provider = providerMap.get(activeWallet.url);
       const accounts = await provider.request({
         method: 'eth_requestAccounts',
         params: [],
       });
       setAddress(accounts[0]);
-      storage.set('address', accounts[0]);
+      provider._storage.set('address', accounts[0]);
 
       logMessage(`<-- ${accounts}`);
     } catch (e) {
       console.error(e.message);
       logMessage('<-- error connecting');
     }
-  }, [logMessage]);
+  }, [activeWallet, logMessage, providerMap]);
 
   // Reset connection to Wallet
   const resetConnection = useCallback(() => {
     logMessage('--- Disconnect\n');
-
+    const provider = providerMap.get(activeWallet.url);
     provider.disconnect();
     setAddress(undefined);
-    storage.delete('address');
-  }, [logMessage]);
+    provider._storage.delete('address');
+  }, [activeWallet, logMessage, providerMap]);
 
   const personalSign = useCallback(async () => {
     logMessage('--> personal_sign\n');
 
     try {
+      const provider = providerMap.get(activeWallet.url);
       const result = await provider.request({
         method: 'personal_sign',
         params: ['0x48656c6c6f20776f726c64', address],
@@ -100,12 +119,13 @@ const App = function () {
     } catch (e) {
       logMessage(`<-- ${e.message}`);
     }
-  }, [logMessage, address]);
+  }, [logMessage, providerMap, activeWallet, address]);
 
   const switchToEthereumChain = useCallback(async () => {
     logMessage('--> wallet_switchEthereumChain: 0x1\n');
 
     try {
+      const provider = providerMap.get(activeWallet.url);
       const result = await provider.request({
         method: 'wallet_switchEthereumChain',
         params: [{chainId: '0x1'}],
@@ -116,12 +136,13 @@ const App = function () {
       console.error(e.message);
       logMessage('<-- error');
     }
-  }, [logMessage]);
+  }, [activeWallet, logMessage, providerMap]);
 
   const switchToPolygonChain = useCallback(async () => {
     logMessage('--> wallet_switchEthereumChain: 0x89\n');
 
     try {
+      const provider = providerMap.get(activeWallet.url);
       const result = await provider.request({
         method: 'wallet_switchEthereumChain',
         params: [{chainId: '0x89'}],
@@ -132,12 +153,13 @@ const App = function () {
       console.error(e.message);
       logMessage('<-- error');
     }
-  }, [logMessage]);
+  }, [activeWallet, logMessage, providerMap]);
 
   const addMumbaiTestnet = useCallback(async () => {
     logMessage('--> wallet_addEthereumChain: Mumbai Testnet\n');
 
     try {
+      const provider = providerMap.get(activeWallet.url);
       const result = await provider.request({
         method: 'wallet_addEthereumChain',
         params: [
@@ -160,7 +182,7 @@ const App = function () {
       console.error(e.message);
       logMessage('<-- error');
     }
-  }, [logMessage]);
+  }, [activeWallet, logMessage, providerMap]);
 
   const backgroundStyle = {
     backgroundColor: Colors.lighter,
@@ -170,17 +192,24 @@ const App = function () {
     wallet => {
       setActiveWallet(wallet);
       try {
-        console.log(wallet);
-        provider.connectWallet(wallet);
+        if (!providerMap.has(wallet.url)) {
+          const localStorage = new MMKV({
+            id: `${wallet.name}.mobile_sdk.store`,
+          });
+          const options = {storage: localStorage};
+          add(wallet.url, getEvmProvider(wallet, options));
+        }
+        connectWallet(wallet);
       } catch (e) {
         console.error(e.message);
       }
     },
-    [setActiveWallet],
+    [providerMap, setActiveWallet],
   );
 
   const disconnectWallet = useCallback(() => {
     setActiveWallet(undefined);
+    setAddress(undefined);
   }, [setActiveWallet]);
 
   return activeWallet ? (
@@ -189,7 +218,7 @@ const App = function () {
       <ScrollView style={styles.scrollViewStyle}>
         <Section title="Methods">
           {!isConnected ? (
-            <Button title="Connect Wallet" onPress={connectWallet} />
+            <Button title="Connect Wallet" onPress={connectWallet2} />
           ) : (
             <>
               <Button title="Reset Connection" onPress={resetConnection} />
@@ -255,6 +284,7 @@ const Section = function ({children, title}) {
   );
 };
 
+// noinspection JSUnresolvedFunction
 const styles = StyleSheet.create({
   sectionContainer: {
     marginTop: 24,
@@ -277,6 +307,7 @@ const styles = StyleSheet.create({
   },
 });
 
+// noinspection JSUnresolvedFunction
 const walletStyles = StyleSheet.create({
   container: {
     height: '100%',
