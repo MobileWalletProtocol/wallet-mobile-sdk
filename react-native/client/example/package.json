@@ -3,14 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "start": "react-native start",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "test": "jest",
     "lint": "eslint ."
   },
   "dependencies": {
-    "@coinbase/wallet-mobile-sdk": "file:..",
     "expo": "^46.0.16",
     "react": "^18.2.0",
     "react-native": "^0.70.4",
@@ -31,5 +30,10 @@
   },
   "resolutions": {
     "@xmldom/xmldom": "^0.7.7"
+  },
+  "expo": {
+    "autolinking": {
+      "nativeModulesDir": ".."
+    }
   }
 }
