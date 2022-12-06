@@ -255,9 +255,14 @@ class CoinbaseWalletSDK internal constructor(
         }
 
         fun handleResponse(uri: Uri): Boolean {
-            val requestId = checkNotNull(MessageConverter.getRequestIdFromResponse(uri)) { "Callback not found" }
-            val host = TaskManager.findRequestId(requestId) ?: return false
-            return instances[host]?.handleResponse(uri) == true
+            try {
+                val requestId = checkNotNull(MessageConverter.getRequestIdFromResponse(uri)) { "requestId not found" }
+                val host = TaskManager.findRequestId(requestId) ?: return false
+                return instances[host]?.handleResponse(uri) ?: false
+            } catch (e: IllegalStateException) {
+                // Fallback to CB Wallet instance
+                return instances[DefaultWallets.coinbaseWallet.url]?.handleResponse(uri) ?: false
+            }
         }
     }
 }

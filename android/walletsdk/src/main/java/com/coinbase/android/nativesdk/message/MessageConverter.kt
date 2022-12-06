@@ -82,7 +82,15 @@ object MessageConverter {
         val encodedMessage = requireNotNull(uri.getQueryParameter("p"))
         val messageJsonString = String(Base64.decode(encodedMessage))
         val messageJson = JSON.parseToJsonElement(messageJsonString)
-        return messageJson.jsonObject["uuid"]?.jsonPrimitive?.content
+
+        //TODO: Create `decodeWithoutDecryption` function
+        messageJson.jsonObject["content"]?.let { content ->
+            content.jsonObject["response"]?.let { response ->
+                return response.jsonObject["requestId"]?.jsonPrimitive?.content
+            }
+        }
+
+        return null
     }
 
     private fun getSharedSecret(
