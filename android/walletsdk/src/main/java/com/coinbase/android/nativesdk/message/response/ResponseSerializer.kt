@@ -37,7 +37,12 @@ class ResponseSerializer(
                             secret = sharedSecret ?: throw CoinbaseWalletSDKError.MissingSharedSecret,
                             message = formatter.encodeToString(value)
                         )
-                        formatter.encodeToJsonElement(EncryptedResponse(encryptedData))
+                        formatter.encodeToJsonElement(
+                            EncryptedResponse(
+                                requestId = value.requestId,
+                                data = encryptedData
+                            )
+                        )
                     } else {
                         formatter.encodeToJsonElement(value)
                     }
