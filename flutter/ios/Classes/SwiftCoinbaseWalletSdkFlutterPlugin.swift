@@ -44,6 +44,20 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
         result(FlutterMethodNotImplemented)
     }
     
+    private func getClientInstance(_ call: FlutterMethodCall) -> MWPClient? {
+        let decoder = JSONDecoder()
+        guard
+            let args = call.arguments as? String,
+            let jsonData = args.data(using: .utf8),
+            let typedArgs = try? decoder.decode(InstanceMethodCallArgument<String?>.self, from: jsonData),
+            let mwpClient = MWPClient.getInstance(to: typedArgs.wallet)
+        else {
+            return nil
+        }
+        
+        return mwpClient
+    }
+    
     private func isAppInstalled(args: Any?, result: @escaping FlutterResult) {
         result(CoinbaseWalletSDK.isCoinbaseWalletInstalled())
     }
