@@ -221,6 +221,7 @@ export function MobileWalletProtocolProvider({
         }
       } else {
         await sendResponse(actionToResponseMap, activeMessage, secureStorage);
+        updateActiveMessage(null);
       }
     },
     [activeMessage, secureStorage, updateActiveMessage],
