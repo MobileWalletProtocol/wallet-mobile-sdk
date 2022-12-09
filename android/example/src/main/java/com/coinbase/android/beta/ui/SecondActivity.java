@@ -1,7 +1,5 @@
 package com.coinbase.android.beta.ui;
 
-import static com.coinbase.android.nativesdk.CoinbaseWalletSDKKt.CBW_PACKAGE_NAME;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,13 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.coinbase.android.beta.R;
 import com.coinbase.android.nativesdk.CoinbaseWalletSDK;
+import com.coinbase.android.nativesdk.DefaultWallets;
 import com.coinbase.android.nativesdk.message.request.Action;
 import com.coinbase.android.nativesdk.message.request.Web3JsonRPC;
 import com.coinbase.android.nativesdk.message.response.ActionResult;
 
 import java.util.ArrayList;
-
-import kotlin.Unit;
 
 public class SecondActivity extends AppCompatActivity {
 
@@ -30,10 +27,15 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        client = new CoinbaseWalletSDK(
-                CBW_PACKAGE_NAME,
-                ""
-        );
+        CoinbaseWalletSDK.setOpenIntentCallback(intent -> startActivityForResult(intent, CBW_ACTIVITY_RESULT_CODE));
+
+        client = CoinbaseWalletSDK.getClient(DefaultWallets.coinbaseWallet);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CoinbaseWalletSDK.setOpenIntentCallback(null);
     }
 
     @Override
@@ -41,14 +43,9 @@ public class SecondActivity extends AppCompatActivity {
         super.onStart();
 
         ArrayList<Action> actions = new ArrayList<>();
-        actions.add(
-                new Web3JsonRPC.RequestAccounts().action(false)
-        );
+        actions.add(new Web3JsonRPC.RequestAccounts().action(false));
+        actions.add(new Web3JsonRPC.PersonalSign("", "0xdeadbeef").action(false));
 
-        CoinbaseWalletSDK.openIntent = intent -> {
-            startActivityForResult(intent, CBW_ACTIVITY_RESULT_CODE);
-            return Unit.INSTANCE;
-        };
 
         client.initiateHandshake(
                 actions,

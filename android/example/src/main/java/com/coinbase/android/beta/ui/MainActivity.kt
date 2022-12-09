@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), WalletPickerBottomSheetFragment.Wallet
         SharedPrefsManager.init(this)
         launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val uri = result.data?.data ?: return@registerForActivityResult
-            CoinbaseWalletSDK.handleResponse(uri)
+            CoinbaseWalletSDK.handleResponseUrl(uri)
         }
     }
 
