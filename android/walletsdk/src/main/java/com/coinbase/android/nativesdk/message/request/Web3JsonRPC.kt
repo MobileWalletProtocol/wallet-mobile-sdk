@@ -17,9 +17,8 @@ const val WALLET_SWITCH_ETHEREUM_CHAIN = "wallet_switchEthereumChain"
 const val WALLET_ADD_ETHEREUM_CHAIN = "wallet_addEthereumChain"
 const val WALLET_WATCH_ASSET = "wallet_watchAsset"
 
-val nonHandshakeActions = listOf(ETH_SEND_TRANSACTION, ETH_SIGN_TRANSACTION)
+val unsupportedHandshakeActions = listOf(ETH_SEND_TRANSACTION, ETH_SIGN_TRANSACTION)
 
-@Suppress("unused")
 @Serializable
 sealed class Web3JsonRPC {
 
@@ -29,28 +28,28 @@ sealed class Web3JsonRPC {
 
     @Serializable
     @SerialName(PERSONAL_SIGN)
-    class PersonalSign(
+    data class PersonalSign(
         val address: String,
         val message: String
     ) : Web3JsonRPC()
 
     @Serializable
     @SerialName(ETH_SIGN_TYPED_DATA_V3)
-    class SignTypedDataV3(
+    data class SignTypedDataV3(
         val address: String,
         val typedDataJson: String
     ) : Web3JsonRPC()
 
     @Serializable
     @SerialName(ETH_SIGN_TYPED_DATA_V4)
-    class SignTypedDataV4(
+    data class SignTypedDataV4(
         val address: String,
         val typedDataJson: String
     ) : Web3JsonRPC()
 
     @Serializable
     @SerialName(ETH_SIGN_TRANSACTION)
-    class SignTransaction(
+    data class SignTransaction(
         val fromAddress: String,
         val toAddress: String?,
         val weiValue: BigInt,
@@ -65,7 +64,7 @@ sealed class Web3JsonRPC {
 
     @Serializable
     @SerialName(ETH_SEND_TRANSACTION)
-    class SendTransaction(
+    data class SendTransaction(
         val fromAddress: String,
         val toAddress: String?,
         val weiValue: BigInt,
@@ -80,11 +79,11 @@ sealed class Web3JsonRPC {
 
     @Serializable
     @SerialName(WALLET_SWITCH_ETHEREUM_CHAIN)
-    class SwitchEthereumChain(val chainId: String) : Web3JsonRPC()
+    data class SwitchEthereumChain(val chainId: String) : Web3JsonRPC()
 
     @Serializable
     @SerialName(WALLET_ADD_ETHEREUM_CHAIN)
-    class AddEthereumChain(
+    data class AddEthereumChain(
         val chainId: String,
         val blockExplorerUrls: List<String>? = null,
         val chainName: String? = null,
@@ -95,7 +94,7 @@ sealed class Web3JsonRPC {
 
     @Serializable
     @SerialName(WALLET_WATCH_ASSET)
-    class WatchAsset(
+    data class WatchAsset(
         val type: String,
         val options: WatchAssetOptions
     ) : Web3JsonRPC()
@@ -122,7 +121,7 @@ sealed class Web3JsonRPC {
 }
 
 @Serializable
-class AddChainNativeCurrency(val name: String, val symbol: String, val decimals: Int)
+data class AddChainNativeCurrency(val name: String, val symbol: String, val decimals: Int)
 
 @Serializable
-class WatchAssetOptions(val address: String, val symbol: String?, val decimals: Int?, val image: String?)
+data class WatchAssetOptions(val address: String, val symbol: String?, val decimals: Int?, val image: String?)

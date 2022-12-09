@@ -1,21 +1,22 @@
 package com.coinbase.android.nativesdk
 
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.coinbase.android.nativesdk.key.IKeyManager
 import com.coinbase.android.nativesdk.key.KeyManager
 import com.coinbase.android.nativesdk.message.JSON
-import com.coinbase.android.nativesdk.message.MessageConverter
 import com.coinbase.android.nativesdk.message.request.Account
 import com.coinbase.android.nativesdk.message.request.Action
 import com.coinbase.android.nativesdk.message.request.ETH_REQUEST_ACCOUNTS
 import com.coinbase.android.nativesdk.message.request.RequestContent
-import com.coinbase.android.nativesdk.message.request.RequestMessage
-import com.coinbase.android.nativesdk.message.request.nonHandshakeActions
+import com.coinbase.android.nativesdk.message.request.RequestConverter
+import com.coinbase.android.nativesdk.message.request.UnencryptedRequestContent
+import com.coinbase.android.nativesdk.message.request.UnencryptedRequestMessage
+import com.coinbase.android.nativesdk.message.request.unsupportedHandshakeActions
 import com.coinbase.android.nativesdk.message.response.ActionResult
 import com.coinbase.android.nativesdk.message.response.FailureResponseCallback
+import com.coinbase.android.nativesdk.message.response.ResponseConverter
 import com.coinbase.android.nativesdk.message.response.ResponseHandler
 import com.coinbase.android.nativesdk.message.response.ResponseResult
 import com.coinbase.android.nativesdk.message.response.SuccessHandshakeResponseCallback
@@ -26,14 +27,12 @@ import java.security.interfaces.ECPublicKey
 import java.util.Date
 import java.util.UUID
 
-const val CBW_PACKAGE_NAME = "org.toshi"
-
 class CoinbaseWalletSDK internal constructor(
     private val hostPackageName: String,
     private val scheme: String,
     private val keyManager: IKeyManager
 ) {
-    private var sdkVersion = BuildConfig.LIBRARY_VERSION_NAME
+
 
     val isConnected: Boolean get() = keyManager.peerPublicKey != null
 
@@ -59,10 +58,6 @@ class CoinbaseWalletSDK internal constructor(
         KeyManager(ClientConfiguration.config.context, hostPackageName),
     )
 
-    fun appendVersionTag(tag: String) {
-        sdkVersion += "/$tag"
-    }
-
     /**
      * Make handshake request to get session key from wallet
      * @param initialActions Batch of actions that you'd want to execute after successful handshake. `eth_requestAccounts` by default.
@@ -74,23 +69,25 @@ class CoinbaseWalletSDK internal constructor(
     ) {
         resetSession()
 
-        val hasIllegalAction = initialActions?.any { nonHandshakeActions.contains(it.method) } == true
+        val hasIllegalAction = initialActions?.any { unsupportedHandshakeActions.contains(it.method) } == true
         if (hasIllegalAction) {
             onResponse(Result.failure(CoinbaseWalletSDKError.InvalidHandshakeRequest), null)
             return
         }
 
-        val message = RequestMessage(
+        val message = UnencryptedRequestMessage(
             uuid = UUID.randomUUID().toString(),
             version = sdkVersion,
             timestamp = Date(),
             sender = keyManager.ownPublicKey,
-            content = RequestContent.Handshake(
-                appId = config.context.packageName,
-                callback = config.domain.toString(),
-                appName = config.name.orEmpty(),
-                appIconUrl = config.iconUrl,
-                initialActions = initialActions
+            content = UnencryptedRequestContent(
+                handshake = RequestContent.Handshake(
+                    appId = config.context.packageName,
+                    callback = config.domain.toString(),
+                    appName = config.name.orEmpty(),
+                    appIconUrl = config.iconUrl,
+                    initialActions = initialActions
+                )
             ),
             callbackUrl = config.domain.toString()
         )
@@ -137,12 +134,12 @@ class CoinbaseWalletSDK internal constructor(
         request: RequestContent.Request,
         onResponse: ResponseHandler
     ) {
-        val message = RequestMessage(
+        val message = UnencryptedRequestMessage(
             uuid = UUID.randomUUID().toString(),
             version = sdkVersion,
             timestamp = Date(),
             sender = keyManager.ownPublicKey,
-            content = request,
+            content = UnencryptedRequestContent(request = request),
             callbackUrl = config.domain.toString()
         )
 
@@ -174,7 +171,7 @@ class CoinbaseWalletSDK internal constructor(
         val ownPublicKey = keyManager.ownPublicKey
         val peerPublicKey = keyManager.peerPublicKey
 
-        val message = MessageConverter.decodeResponse(
+        val message = ResponseConverter.decode(
             url = url,
             ownPublicKey = ownPublicKey,
             ownPrivateKey = keyManager.ownPrivateKey,
@@ -193,10 +190,10 @@ class CoinbaseWalletSDK internal constructor(
         keyManager.resetKeys()
     }
 
-    private fun send(message: RequestMessage, onResponse: ResponseHandler) {
+    private fun send(message: UnencryptedRequestMessage, onResponse: ResponseHandler) {
         val uri: Uri
         try {
-            uri = MessageConverter.encodeRequest(
+            uri = RequestConverter.encode(
                 message = message,
                 recipient = Uri.parse(scheme),
                 ownPrivateKey = keyManager.ownPrivateKey,
@@ -225,7 +222,7 @@ class CoinbaseWalletSDK internal constructor(
         intent.data = uri
 
         TaskManager.registerResponseHandler(message, onResponse, scheme)
-        openIntent(intent)
+        openIntent?.invoke(intent)
     }
 
     private fun isWalletSegueResponseURL(uri: Uri): Boolean {
@@ -235,18 +232,32 @@ class CoinbaseWalletSDK internal constructor(
     companion object {
         private val instances: MutableMap<String, CoinbaseWalletSDK> = mutableMapOf()
 
-        lateinit var openIntent: (Intent) -> Unit
+        var openIntent: ((Intent) -> Unit)? = null
 
+        @JvmStatic
+        var sdkVersion = BuildConfig.LIBRARY_VERSION_NAME
+            private set
+
+        @JvmStatic
         fun configure(domain: Uri, context: Context, appName: String? = null, appIconUrl: String? = null) {
             ClientConfiguration.configure(domain, context, appName, appIconUrl)
         }
 
-        fun getClient(wallet: Wallet): CoinbaseWalletSDK {
-            if (!this::openIntent.isInitialized) {
-                throw CoinbaseWalletSDKError.WalletReturnedError(
-                    "Must initialize open intent callback before getting CoinbaseWalletSDK instance"
-                )
+        @JvmStatic
+        fun setOpenIntentCallback(callback: OpenIntentCallback?) {
+            openIntent = if (callback == null) {
+                null
+            } else {
+                { intent -> callback.call(intent) }
             }
+        }
+
+        @JvmStatic
+        fun getClient(wallet: Wallet): CoinbaseWalletSDK {
+            if (openIntent == null) {
+                throw IllegalStateException("Must initialize open intent callback before getting CoinbaseWalletSDK instance")
+            }
+
             return instances[wallet.url] ?: CoinbaseWalletSDK(
                 hostPackageName = wallet.packageName,
                 scheme = wallet.url,
@@ -254,15 +265,27 @@ class CoinbaseWalletSDK internal constructor(
             )
         }
 
-        fun handleResponse(uri: Uri): Boolean {
+        @JvmStatic
+        fun handleResponseUrl(uri: Uri): Boolean {
             try {
-                val requestId = checkNotNull(MessageConverter.getRequestIdFromResponse(uri)) { "requestId not found" }
-                val host = TaskManager.findRequestId(requestId) ?: return false
-                return instances[host]?.handleResponse(uri) ?: false
+                val content = ResponseConverter.decodeWithoutDecryption(uri).content
+                val requestId = when {
+                    content.response != null -> checkNotNull(content.response.requestId) { "requestId not found" }
+                    content.failure != null -> content.failure.requestId
+                    else -> return false
+                }
+
+                val task = TaskManager.findTask(requestId) ?: return false
+                return instances[task.host]?.handleResponse(uri) ?: false
             } catch (e: IllegalStateException) {
                 // Fallback to CB Wallet instance
                 return instances[DefaultWallets.coinbaseWallet.url]?.handleResponse(uri) ?: false
             }
+        }
+
+        @JvmStatic
+        fun appendVersionTag(tag: String) {
+            sdkVersion += "/$tag"
         }
     }
 }

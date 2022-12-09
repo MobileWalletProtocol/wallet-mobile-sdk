@@ -14,6 +14,8 @@ data class Wallet(
 }
 
 object DefaultWallets {
+
+    @JvmField
     val coinbaseWallet = Wallet(
         name = "Coinbase Wallet",
         iconUrl = "https://play-lh.googleusercontent.com/wrgUujbq5kbn4Wd4tzyhQnxOXkjiGqq39N4zBvCHmxpIiKcZw_Pb065KTWWlnoejsg",
@@ -21,6 +23,7 @@ object DefaultWallets {
         url = "cbwallet://wsegue"
     )
 
+    @JvmField
     val coinbaseRetail = Wallet(
         name = "Coinbase",
         iconUrl = "https://play-lh.googleusercontent.com/PjoJoG27miSglVBXoXrxBSLveV6e3EeBPpNY55aiUUBM9Q1RCETKCOqdOkX2ZydqVf0",
@@ -29,5 +32,6 @@ object DefaultWallets {
         url = "cbwallet22://wsegue"
     )
 
+    @JvmStatic
     fun getWallets(): List<Wallet> = listOf(coinbaseWallet, coinbaseRetail)
 }

@@ -30,4 +30,4 @@ object ClientConfiguration {
     )
 }
 
-fun Context.getAppName(): String = applicationInfo.loadLabel(packageManager).toString()
+private fun Context.getAppName(): String = applicationInfo.loadLabel(packageManager).toString()
