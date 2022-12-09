@@ -268,8 +268,13 @@ class CoinbaseWalletSDK internal constructor(
         @JvmStatic
         fun handleResponseUrl(uri: Uri): Boolean {
             try {
-                val response = ResponseConverter.decodeWithoutDecryption(uri)
-                val requestId = checkNotNull(response.content.response?.requestId) { "requestId not found" }
+                val content = ResponseConverter.decodeWithoutDecryption(uri).content
+                val requestId = when {
+                    content.response != null -> checkNotNull(content.response.requestId) { "requestId not found" }
+                    content.failure != null -> content.failure.requestId
+                    else -> return false
+                }
+
                 val task = TaskManager.findTask(requestId) ?: return false
                 return instances[task.host]?.handleResponse(uri) ?: false
             } catch (e: IllegalStateException) {
