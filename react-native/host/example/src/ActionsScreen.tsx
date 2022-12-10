@@ -20,16 +20,19 @@ export function ActionsScreen({ message }: ActionsScreenProps) {
     return null;
   }
 
+  const nextAction = (shouldContinue: boolean) => {
+    // Iterate to next action if host library tells us to proceed
+    if (shouldContinue) {
+      setActiveIndex((i) => i + 1);
+    }
+  };
+
   if (isHandshakeAction(activeAction)) {
-    return (
-      <HandshakeActionItem action={activeAction} onHandled={() => setActiveIndex((i) => i + 1)} />
-    );
+    return <HandshakeActionItem action={activeAction} onHandled={nextAction} />;
   }
 
   if (isEthereumAction(activeAction)) {
-    return (
-      <RequestActionItem action={activeAction} onHandled={() => setActiveIndex((i) => i + 1)} />
-    );
+    return <RequestActionItem action={activeAction} onHandled={nextAction} />;
   }
 
   return (

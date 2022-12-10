@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type RequestItemProps = {
   action: EthereumRequestAction;
-  onHandled: () => void;
+  onHandled: (shouldContinue: boolean) => void;
 };
 
 export function RequestActionItem({ action, onHandled }: RequestItemProps) {
@@ -17,13 +17,13 @@ export function RequestActionItem({ action, onHandled }: RequestItemProps) {
   const { approveAction, rejectAction } = useMobileWalletProtocolHost();
 
   const approve = async () => {
-    await approveAction(action, { value: '0xdeadbeef' });
-    onHandled();
+    const proceed = await approveAction(action, { value: '0xdeadbeef' });
+    onHandled(proceed);
   };
 
   const reject = async () => {
-    await rejectAction(action, { code: 4001, message: 'User rejected request' });
-    onHandled();
+    const proceed = await rejectAction(action, { code: 4001, message: 'User rejected request' });
+    onHandled(proceed);
   };
 
   return (

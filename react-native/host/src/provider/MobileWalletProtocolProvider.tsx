@@ -34,10 +34,10 @@ type MWPHostContextType = {
   handleRequestUrl: (url: string) => Promise<boolean>;
   fetchClientAppMetadata: () => Promise<AppMetadata | null>;
   isClientAppVerified: () => Promise<boolean>;
-  approveHandshake: (metadata: AppMetadata | null) => Promise<void>;
-  rejectHandshake: (description: string) => Promise<void>;
-  approveAction: (action: RequestAction, result: ResultValue) => Promise<void>;
-  rejectAction: (action: RequestAction, error: ErrorValue) => Promise<void>;
+  approveHandshake: (metadata: AppMetadata | null) => Promise<boolean>;
+  rejectHandshake: (description: string) => Promise<boolean>;
+  approveAction: (action: RequestAction, result: ResultValue) => Promise<boolean>;
+  rejectAction: (action: RequestAction, error: ErrorValue) => Promise<boolean>;
 };
 
 type MWPHostProviderProps = {
@@ -144,7 +144,7 @@ export function MobileWalletProtocolProvider({
   }, [activeMessage?.actions]);
 
   const approveHandshake = useCallback(
-    async (metadata: AppMetadata | null) => {
+    async (metadata: AppMetadata | null): Promise<boolean> => {
       if (!activeMessage) {
         throw new Error('No message found');
       }
@@ -173,25 +173,29 @@ export function MobileWalletProtocolProvider({
       if (shouldRespondToClient(actionToResponseMap, activeMessage)) {
         await sendResponse(actionToResponseMap, activeMessage, secureStorage);
         updateActiveMessage(null);
+        return false;
       }
+
+      return true;
     },
     [activeMessage, secureStorage, updateActiveMessage],
   );
 
   const rejectHandshake = useCallback(
-    async (description: string) => {
+    async (description: string): Promise<boolean> => {
       if (!activeMessage) {
         throw new Error('No message found');
       }
 
       await sendError(description, activeMessage);
       updateActiveMessage(null);
+      return false;
     },
     [activeMessage, updateActiveMessage],
   );
 
   const approveAction = useCallback(
-    async (action: RequestAction, result: ResultValue) => {
+    async (action: RequestAction, result: ResultValue): Promise<boolean> => {
       if (!activeMessage) {
         throw new Error('No message found');
       }
@@ -201,13 +205,16 @@ export function MobileWalletProtocolProvider({
       if (shouldRespondToClient(actionToResponseMap, activeMessage)) {
         await sendResponse(actionToResponseMap, activeMessage, secureStorage);
         updateActiveMessage(null);
+        return false;
       }
+
+      return true;
     },
     [activeMessage, secureStorage, updateActiveMessage],
   );
 
   const rejectAction = useCallback(
-    async (action: RequestAction, error: ErrorValue) => {
+    async (action: RequestAction, error: ErrorValue): Promise<boolean> => {
       if (!activeMessage) {
         throw new Error('No message found');
       }
@@ -218,10 +225,15 @@ export function MobileWalletProtocolProvider({
         if (shouldRespondToClient(actionToResponseMap, activeMessage)) {
           await sendResponse(actionToResponseMap, activeMessage, secureStorage);
           updateActiveMessage(null);
+          return false;
         }
       } else {
         await sendResponse(actionToResponseMap, activeMessage, secureStorage);
+        updateActiveMessage(null);
+        return false;
       }
+
+      return true;
     },
     [activeMessage, secureStorage, updateActiveMessage],
   );
