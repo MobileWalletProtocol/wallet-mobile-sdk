@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type HandshakeItemProps = {
   action: HandshakeAction;
-  onHandled: () => void;
+  onHandled: (shouldContinue: boolean) => void;
 };
 
 export function HandshakeActionItem({ action, onHandled }: HandshakeItemProps) {
@@ -31,13 +31,13 @@ export function HandshakeActionItem({ action, onHandled }: HandshakeItemProps) {
   }, [fetchClientAppMetadata, isClientAppVerified]);
 
   const approve = async () => {
-    await approveHandshake(metadata);
-    onHandled();
+    const proceed = await approveHandshake(metadata);
+    onHandled(proceed);
   };
 
   const reject = async () => {
-    await rejectHandshake('User rejected handshake');
-    onHandled();
+    const proceed = await rejectHandshake('User rejected handshake');
+    onHandled(proceed);
   };
 
   return (
