@@ -57,7 +57,6 @@ public class CoinbaseWalletSDKModule: Module {
 
             self.hasConfigured = true
             CoinbaseWalletSDK.configure(
-                host: host,
                 callback: URL(string: callbackURL)!
             )
             CoinbaseWalletSDK.appendVersionTag("rn")
