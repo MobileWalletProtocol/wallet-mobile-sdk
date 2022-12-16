@@ -28,6 +28,8 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
                 return try initiateHandshake(call.arguments, result: result)
             case "makeRequest":
                 return try makeRequest(call.arguments, result: result)
+            case "isConnected":
+                return try isConnected(call.arguments, result: result)
             case "resetSession":
                 return try resetSession(call.arguments, result: result)
             
@@ -40,10 +42,12 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    enum HandleMethodCallError: Swift.Error {
+    enum HandleMethodCallError: Swift.Error, LocalizedError {
         case invalidArgumentFormat
         case noMWPClient
         case missingArgument
+        
+        var errorDescription: String? { return String(reflecting: self) }
     }
     
     private func configure(_ args: Any?, result: @escaping FlutterResult) throws {
@@ -113,6 +117,16 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
                 result: result
             )
         }
+    }
+    
+    private func isConnected(_ args: Any?, result: @escaping FlutterResult) throws {
+        let (wallet, _) = try decodeArguments(args, extraArgType: NoArgument.self)
+        
+        guard let client = MWPClient.getInstance(to: wallet) else {
+            throw HandleMethodCallError.noMWPClient
+        }
+        
+        result(client.isConnected())
     }
     
     private func resetSession(_ args: Any?, result: @escaping FlutterResult) throws {

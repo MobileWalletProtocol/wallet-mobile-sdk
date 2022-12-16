@@ -100,7 +100,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<List<Wallet>> getWallets() async {
-    List<Wallet> wallets = await MWPClient.getWallets();
+    List<Wallet> wallets = await Wallet.getDefaultWallets();
     return wallets;
   }
 
@@ -137,6 +137,14 @@ class _MyAppState extends State<MyApp> {
                 const SizedBox(height: 50),
                 Text(
                   'Is installed? ${_client!.wallet.isInstalled}',
+                ),
+                FutureBuilder<bool>(
+                  future: _client!.isConnected(),
+                  builder: ((context, snapshot) {
+                    return Text(
+                      'Is connected? ${snapshot.data}',
+                    );
+                  }),
                 ),
                 TextButton(
                   onPressed: () => _requestAccount(),

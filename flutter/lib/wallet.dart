@@ -1,3 +1,5 @@
+import 'coinbase_wallet_sdk_platform_interface.dart';
+
 class Wallet {
   final String name;
   final String iconUrl;
@@ -38,5 +40,14 @@ class Wallet {
         packageName: json['packageName'] as String?,
         isInstalled: json['isInstalled'] as bool?
     );
+  }
+
+  static Future<List<Wallet>> getDefaultWallets() async {
+    final result =
+    await CoinbaseWalletSdkFlutterPlatform.instance.call('static_getWallets');
+
+    final wallets =
+    (result ?? []).map((e) => Wallet.fromJson(e)).cast<Wallet>().toList();
+    return wallets;
   }
 }

@@ -74,6 +74,19 @@ class MWPClient {
         .toList();
   }
 
+  /// Check connection
+  Future<bool> isConnected() async {
+    final result = await CoinbaseWalletSdkFlutterPlatform.instance.call(
+        'isConnected',
+        jsonEncode(<String, dynamic>{
+          'wallet': wallet.toJson(),
+          'argument': null,
+        })
+    );
+
+    return result ?? false;
+  }
+
   /// Disconnect any active session
   Future<void> resetSession() async {
     await CoinbaseWalletSdkFlutterPlatform.instance.call(
@@ -101,15 +114,6 @@ class MWPClient {
     }
     await CoinbaseWalletSdkFlutterPlatform.instance
         .call('configure', configuration.toJson());
-  }
-
-  static Future<List<Wallet>> getWallets() async {
-    final result =
-        await CoinbaseWalletSdkFlutterPlatform.instance.call('static_getWallets');
-
-    final wallets =
-        (result ?? []).map((e) => Wallet.fromJson(e)).cast<Wallet>().toList();
-    return wallets;
   }
 }
 
