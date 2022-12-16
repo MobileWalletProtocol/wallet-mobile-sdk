@@ -18,7 +18,7 @@ object DefaultWallets {
     @JvmField
     val coinbaseWallet = Wallet(
         name = "Coinbase Wallet",
-        iconUrl = "https://play-lh.googleusercontent.com/wrgUujbq5kbn4Wd4tzyhQnxOXkjiGqq39N4zBvCHmxpIiKcZw_Pb065KTWWlnoejsg",
+        iconUrl = "https://wallet.coinbase.com/assets/images/favicon.ico",
         packageName = "org.toshi",
         url = "cbwallet://wsegue"
     )
@@ -26,7 +26,7 @@ object DefaultWallets {
     @JvmField
     val coinbaseRetail = Wallet(
         name = "Coinbase",
-        iconUrl = "https://play-lh.googleusercontent.com/PjoJoG27miSglVBXoXrxBSLveV6e3EeBPpNY55aiUUBM9Q1RCETKCOqdOkX2ZydqVf0",
+        iconUrl = "https://www.coinbase.com/img/favicon/favicon-256.png",
         packageName = "org.toshi.debugger",
         // TODO: Replace with proper coinbase url
         url = "cbwallet22://wsegue"

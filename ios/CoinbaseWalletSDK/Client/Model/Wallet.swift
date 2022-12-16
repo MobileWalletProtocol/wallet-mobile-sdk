@@ -38,7 +38,7 @@ public struct Wallet: Codable {
 extension Wallet {
     public static let coinbaseWallet = Wallet(
         name: "Coinbase Wallet",
-        iconUrl: URL(string: "https://is1-ssl.mzstatic.com/image/thumb/Purple122/v4/bd/2b/dc/bd2bdcac-44ff-0707-3ec1-fde5014a91a1/AppIcon-0-0-1x_U007emarketing-0-0-0-10-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/100x100bb.jpg")!,
+        iconUrl: URL(string: "https://wallet.coinbase.com/assets/images/favicon.ico")!,
         url: URL(string: "https://wallet.coinbase.com/wsegue")!,
         mwpScheme: URL(string: "cbwallet://")!,
         appStoreUrl: URL(string: "https://apps.apple.com/app/id1278383455")!
@@ -46,7 +46,7 @@ extension Wallet {
     
     public static let coinbaseRetail = Wallet(
         name: "Coinbase",
-        iconUrl: URL(string: "https://is5-ssl.mzstatic.com/image/thumb/Purple112/v4/4f/75/a6/4f75a665-0328-7bbc-f7ac-cee4e17c50c6/AppIcon-0-1x_U007emarketing-0-10-0-85-220.png/100x100bb.jpg")!,
+        iconUrl: URL(string: "https://www.coinbase.com/img/favicon/favicon-256.png")!,
         url: URL(string: "https://coinbase.com/wsegue")!,
         mwpScheme: URL(string: "coinbase+mwp://")!,
         appStoreUrl: URL(string: "https://apps.apple.com/app/id886427730")!
