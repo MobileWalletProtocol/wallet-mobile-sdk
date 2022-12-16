@@ -2,7 +2,7 @@ import Flutter
 import UIKit
 import CoinbaseWalletSDK
 
-// TODO: rename MWPClient
+// TODO: rename to MWPClientFlutterPlugin
 public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
     private static let success = "{ \"success\": true}"
     
@@ -19,81 +19,70 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         do {
             switch call.method {
-            case "configure":
-                return configure(args: call.arguments, result: result)
-            case "initiateHandshake":
-                return try initiateHandshake(args: call.arguments, result: result)
-            case "makeRequest":
-                return try makeRequest(args: call.arguments, result: result)
-            case "resetSession":
-                return resetSession(args: call.arguments, result: result)
+            case "static_configure":
+                return try configure(call.arguments, result: result)
+            case "static_getWallets":
+                return try getWallets(result: result)
+                
             case "isAppInstalled":
-                return isAppInstalled(args: call.arguments, result: result)
-            case "getWallets":
-                return try getWallets(args: call.arguments, result: result)
-            case "connectWallet":
-                return connectWallet(args: call.arguments, result: result)
+                return try isAppInstalled(call.arguments, result: result)
+            case "initiateHandshake":
+                return try initiateHandshake(call.arguments, result: result)
+            case "makeRequest":
+                return try makeRequest(call.arguments, result: result)
+            case "resetSession":
+                return resetSession(call.arguments, result: result)
+            
             default:
-                break;
+                result(FlutterMethodNotImplemented)
+                return
             }
         } catch {
             result(FlutterError(code: "handle", message: error.localizedDescription, details: nil))
-            return
-        }
-        
-        result(FlutterMethodNotImplemented)
-    }
-    
-    private func getClientInstance(_ call: FlutterMethodCall) -> MWPClient? {
-        let decoder = JSONDecoder()
-        guard
-            let args = call.arguments as? String,
-            let jsonData = args.data(using: .utf8),
-            let typedArgs = try? decoder.decode(InstanceMethodCallArgument<String?>.self, from: jsonData),
-            let mwpClient = MWPClient.getInstance(to: typedArgs.wallet)
-        else {
-            return nil
-        }
-        
-        return mwpClient
-    }
-    
-    private func isAppInstalled(args: Any?, result: @escaping FlutterResult) {
-        result(CoinbaseWalletSDK.isCoinbaseWalletInstalled())
-    }
-    
-    private func connectWallet(args: Any?, result: @escaping FlutterResult) {
-        guard let args = args as? String else {
-            result(FlutterError(code: "configure", message: "Invalid arguments", details: nil))
-            return
-        }
-        let jsonData = Data(args.utf8)
-        let decoder = JSONDecoder()
-        do {
-            let wallet = try decoder.decode(Wallet.self, from: jsonData)
-            self.mwpClient = MWPClient.getInstance(to: wallet)
-            result(SwiftCoinbaseWalletSdkFlutterPlugin.success)
-        } catch {
-            result(FlutterError(code: "configure", message: "Filed connecting to wallet", details: nil))
         }
     }
     
-    private func configure(args: Any?, result: @escaping FlutterResult) {
+    enum DecodeError: Swift.Error {
+        case invalidFormat
+    }
+    
+    private func configure(_ args: Any?, result: @escaping FlutterResult) throws {
         guard
             let args = args as? [String: Any],
             let callback = args["callback"] as? String,
             let callbackURL = URL(string: callback)
         else {
-            result(FlutterError(code: "configure", message: "Invalid arguments", details: nil))
-            return
+            throw DecodeError.invalidFormat
         }
-        CoinbaseWalletSDK.configure(callback: callbackURL)
-        CoinbaseWalletSDK.appendVersionTag("flutter")
+        MWPClient.configure(callback: callbackURL)
+        MobileWalletProtocol.appendVersionTag("flutter")
         
         result(SwiftCoinbaseWalletSdkFlutterPlugin.success)
     }
     
-    private func initiateHandshake(args: Any?, result: @escaping FlutterResult) throws {
+    // MARK: - instance methods
+    
+    private func decodeArguments<T: Decodable>(_ args: Any?, extraArgType: T.Type) throws -> (Wallet, T?)  {
+        guard
+            let args = args as? String,
+            let jsonData = args.data(using: .utf8)
+        else {
+            throw DecodeError.invalidFormat
+        }
+        
+        let typedArgs = try JSONDecoder().decode(
+            InstanceMethodArgument<T>.self,
+            from: jsonData
+        )
+        return (typedArgs.wallet, typedArgs.argument)
+    }
+    
+    private func isAppInstalled(_ args: Any?, result: @escaping FlutterResult) throws {
+        let (wallet, _) = try decodeArguments(args, extraArgType: NoArgument.self)
+        result(wallet.isInstalled)
+    }
+    
+    private func initiateHandshake(_ args: Any?, result: @escaping FlutterResult) throws {
         var actions = [Action]()
         
         if let args = args as? String, let jsonData = args.data(using: .utf8) {
@@ -115,7 +104,7 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    private func makeRequest(args: Any?, result: @escaping FlutterResult) throws {
+    private func makeRequest(_ args: Any?, result: @escaping FlutterResult) throws {
         guard
             let args = args as? String,
             let jsonData = args.data(using: .utf8)
@@ -141,7 +130,7 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    private func resetSession(args: Any?, result: @escaping FlutterResult) {
+    private func resetSession(_ args: Any?, result: @escaping FlutterResult) {
         guard let client = self.mwpClient else {
             result(FlutterError(code: "reset session", message: "Client can not be null", details: nil))
             return
@@ -199,7 +188,7 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    private func getWallets(args: Any?, result: @escaping FlutterResult) throws {
+    private func getWallets(result: @escaping FlutterResult) throws {
         let defaultWallets = Wallet.defaultWallets()
         let encodedData = try JSONEncoder().encode(defaultWallets)
         let jsonString = String(data: encodedData, encoding: .utf8)

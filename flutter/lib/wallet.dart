@@ -1,7 +1,7 @@
 class Wallet {
   final String name;
-  final String? iconUrl;
-  final String? url;
+  final String iconUrl;
+  final String url;
   final String? mwpScheme;
   final String? appStoreUrl;
   final String? packageName;
@@ -29,8 +29,8 @@ class Wallet {
   factory Wallet.fromJson(Map<String, dynamic> json) {
     return Wallet(
         name: json['name'] as String,
-        iconUrl: json['iconUrl'] as String?,
-        url: json['url'] as String?,
+        iconUrl: json['iconUrl'] as String,
+        url: json['url'] as String,
         mwpScheme: json['mwpScheme'] as String?,
         appStoreUrl: json['appStoreUrl'] as String?,
         packageName: json['packageName'] as String?);
