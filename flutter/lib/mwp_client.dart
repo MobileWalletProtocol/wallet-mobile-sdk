@@ -69,13 +69,6 @@ class MWPClient {
     await CoinbaseWalletSdkFlutterPlatform.instance.call('resetSession');
   }
 
-  /// Check whether CoinbaseWallet app is installed
-  Future<bool> isAppInstalled() async {
-    final result =
-        await CoinbaseWalletSdkFlutterPlatform.instance.call('isAppInstalled');
-    return result ?? false;
-  }
-
   // private helper methods
 
   static Future<void> _configureIOS(IOSConfiguration? configuration) async {
@@ -83,7 +76,7 @@ class MWPClient {
       throw ArgumentError('iOS configuration is missing.');
     }
     await CoinbaseWalletSdkFlutterPlatform.instance
-        .call('configure', configuration.toJson());
+        .call('static_configure', configuration.toJson());
   }
 
   static Future<void> _configureAndroid(AndroidConfiguration? configuration) async {
@@ -96,7 +89,7 @@ class MWPClient {
 
   static Future<List<Wallet>> getWallets() async {
     final result =
-        await CoinbaseWalletSdkFlutterPlatform.instance.call('getWallets');
+        await CoinbaseWalletSdkFlutterPlatform.instance.call('static_getWallets');
 
     final wallets =
         (result ?? []).map((e) => Wallet.fromJson(e)).cast<Wallet>().toList();
