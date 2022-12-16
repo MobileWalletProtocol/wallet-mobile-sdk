@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk.dart';
+import 'package:coinbase_wallet_sdk/mwp_client.dart';
 import 'package:coinbase_wallet_sdk/configuration.dart';
 import 'package:coinbase_wallet_sdk/eth_web3_rpc.dart';
 import 'package:coinbase_wallet_sdk/request.dart';
@@ -22,11 +22,11 @@ class _MyAppState extends State<MyApp> {
   String _addy = "";
   String _signed = "";
   String _sessionCleared = "";
-  Wallet? _activeWallet;
+  MWPClient? _client;
 
   @override
   void initState() {
-    CoinbaseWalletSDK.shared.configure(
+    MWPClient.configure(
       Configuration(
         ios: IOSConfiguration(
           callback: Uri.parse('tribesxyzsample://mycallback'),
@@ -100,7 +100,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<List<Wallet>> getWallets() async {
-    List<Wallet> wallets = await CoinbaseWalletSDK.shared.getWallets();
+    List<Wallet> wallets = await MWPClient.getWallets();
     return wallets;
   }
 
@@ -109,15 +109,14 @@ class _MyAppState extends State<MyApp> {
       _sessionCleared = "";
       _addy = "";
       _signed = "";
-      _activeWallet = null;
+      _client = null;
     });
   }
 
   Future<void> _handleTap(Wallet? wallet) async {
     setState(() {
-      _activeWallet = wallet;
+      if (wallet != null) _client = MWPClient(wallet: wallet);
     });
-    if (wallet != null) await CoinbaseWalletSDK.shared.connectWallet(wallet);
   }
 
   @override

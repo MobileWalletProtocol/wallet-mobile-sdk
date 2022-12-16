@@ -10,13 +10,15 @@ import 'package:coinbase_wallet_sdk/wallet.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 
-class CoinbaseWalletSDK {
-  static const CoinbaseWalletSDK shared = CoinbaseWalletSDK._();
+class MWPClient {
+  final Wallet wallet;
 
-  const CoinbaseWalletSDK._();
+  const MWPClient({
+      required this.wallet
+  });
 
   /// Setup the SDK
-  Future<void> configure(Configuration configuration) async {
+  static Future<void> configure(Configuration configuration) async {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       await _configureIOS(configuration.ios);
     } else if (defaultTargetPlatform == TargetPlatform.android) {
@@ -76,7 +78,7 @@ class CoinbaseWalletSDK {
 
   // private helper methods
 
-  Future<void> _configureIOS(IOSConfiguration? configuration) async {
+  static Future<void> _configureIOS(IOSConfiguration? configuration) async {
     if (configuration == null) {
       throw ArgumentError('iOS configuration is missing.');
     }
@@ -84,7 +86,7 @@ class CoinbaseWalletSDK {
         .call('configure', configuration.toJson());
   }
 
-  Future<void> _configureAndroid(AndroidConfiguration? configuration) async {
+  static Future<void> _configureAndroid(AndroidConfiguration? configuration) async {
     if (configuration == null) {
       throw ArgumentError('Android configuration is missing.');
     }
@@ -92,18 +94,13 @@ class CoinbaseWalletSDK {
         .call('configure', configuration.toJson());
   }
 
-  Future<List<Wallet>> getWallets() async {
+  static Future<List<Wallet>> getWallets() async {
     final result =
         await CoinbaseWalletSdkFlutterPlatform.instance.call('getWallets');
 
     final wallets =
         (result ?? []).map((e) => Wallet.fromJson(e)).cast<Wallet>().toList();
     return wallets;
-  }
-
-  Future<void> connectWallet(Wallet wallet) async {
-    await CoinbaseWalletSdkFlutterPlatform.instance
-        .call('connectWallet', jsonEncode(wallet.toJson()));
   }
 }
 
