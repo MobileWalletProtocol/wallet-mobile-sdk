@@ -37,8 +37,13 @@ class MWPClient {
     final actionsJson =
         (initialActions ?? []).map((action) => action.toJson()).toList();
 
-    final result = await CoinbaseWalletSdkFlutterPlatform.instance
-        .call('initiateHandshake', jsonEncode(actionsJson));
+    final result = await CoinbaseWalletSdkFlutterPlatform.instance.call(
+        'initiateHandshake',
+        jsonEncode(<String, dynamic>{
+          'wallet': wallet.toJson(),
+          'argument': actionsJson,
+        })
+    );
 
     final returnValuesWithAccounts = (result ?? [])
         .map(
@@ -55,8 +60,13 @@ class MWPClient {
 
   /// Send a web3 request to Coinbase Wallet app
   Future<List<ReturnValue>> makeRequest(Request request) async {
-    final result = await CoinbaseWalletSdkFlutterPlatform.instance
-        .call('makeRequest', jsonEncode(request.toJson()));
+    final result = await CoinbaseWalletSdkFlutterPlatform.instance.call(
+        'makeRequest',
+        jsonEncode(<String, dynamic>{
+          'wallet': wallet.toJson(),
+          'argument': request.toJson(),
+        })
+    );
 
     return (result ?? [])
         .map((e) => ReturnValue.fromJson(e))
@@ -66,7 +76,13 @@ class MWPClient {
 
   /// Disconnect any active session
   Future<void> resetSession() async {
-    await CoinbaseWalletSdkFlutterPlatform.instance.call('resetSession');
+    await CoinbaseWalletSdkFlutterPlatform.instance.call(
+        'resetSession',
+        jsonEncode(<String, dynamic>{
+          'wallet': wallet.toJson(),
+          'argument': null,
+        })
+    );
   }
 
   // private helper methods
