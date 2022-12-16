@@ -16,9 +16,3 @@ enum MWPError: Swift.Error {
     case walletReturnedError(String)
     case walletInstanceNotFound
 }
-
-extension MWPError: LocalizedError {
-    public var errorDescription: String? {
-        return String(reflecting: self)
-    }
-}

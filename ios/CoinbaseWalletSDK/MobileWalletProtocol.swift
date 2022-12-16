@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum MobileWalletProtocol {
+enum MobileWalletProtocol {
     // CFBundleShortVersionString doesn't exist if the SDK is built as a static library.
     static private(set) var version = "1.0.4"
     
