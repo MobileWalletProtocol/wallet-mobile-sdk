@@ -10,13 +10,15 @@ import 'package:coinbase_wallet_sdk/wallet.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 
-class CoinbaseWalletSDK {
-  static const CoinbaseWalletSDK shared = CoinbaseWalletSDK._();
+class MWPClient {
+  final Wallet wallet;
 
-  const CoinbaseWalletSDK._();
+  const MWPClient({
+      required this.wallet
+  });
 
   /// Setup the SDK
-  Future<void> configure(Configuration configuration) async {
+  static Future<void> configure(Configuration configuration) async {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       await _configureIOS(configuration.ios);
     } else if (defaultTargetPlatform == TargetPlatform.android) {
@@ -35,8 +37,13 @@ class CoinbaseWalletSDK {
     final actionsJson =
         (initialActions ?? []).map((action) => action.toJson()).toList();
 
-    final result = await CoinbaseWalletSdkFlutterPlatform.instance
-        .call('initiateHandshake', jsonEncode(actionsJson));
+    final result = await CoinbaseWalletSdkFlutterPlatform.instance.call(
+        'initiateHandshake',
+        jsonEncode(<String, dynamic>{
+          'wallet': wallet.toJson(),
+          'argument': actionsJson,
+        })
+    );
 
     final returnValuesWithAccounts = (result ?? [])
         .map(
@@ -53,8 +60,13 @@ class CoinbaseWalletSDK {
 
   /// Send a web3 request to Coinbase Wallet app
   Future<List<ReturnValue>> makeRequest(Request request) async {
-    final result = await CoinbaseWalletSdkFlutterPlatform.instance
-        .call('makeRequest', jsonEncode(request.toJson()));
+    final result = await CoinbaseWalletSdkFlutterPlatform.instance.call(
+        'makeRequest',
+        jsonEncode(<String, dynamic>{
+          'wallet': wallet.toJson(),
+          'argument': request.toJson(),
+        })
+    );
 
     return (result ?? [])
         .map((e) => ReturnValue.fromJson(e))
@@ -62,48 +74,46 @@ class CoinbaseWalletSDK {
         .toList();
   }
 
-  /// Disconnect any active session
-  Future<void> resetSession() async {
-    await CoinbaseWalletSdkFlutterPlatform.instance.call('resetSession');
+  /// Check connection
+  Future<bool> isConnected() async {
+    final result = await CoinbaseWalletSdkFlutterPlatform.instance.call(
+        'isConnected',
+        jsonEncode(<String, dynamic>{
+          'wallet': wallet.toJson(),
+          'argument': null,
+        })
+    );
+
+    return result ?? false;
   }
 
-  /// Check whether CoinbaseWallet app is installed
-  Future<bool> isAppInstalled() async {
-    final result =
-        await CoinbaseWalletSdkFlutterPlatform.instance.call('isAppInstalled');
-    return result ?? false;
+  /// Disconnect any active session
+  Future<void> resetSession() async {
+    await CoinbaseWalletSdkFlutterPlatform.instance.call(
+        'resetSession',
+        jsonEncode(<String, dynamic>{
+          'wallet': wallet.toJson(),
+          'argument': null,
+        })
+    );
   }
 
   // private helper methods
 
-  Future<void> _configureIOS(IOSConfiguration? configuration) async {
+  static Future<void> _configureIOS(IOSConfiguration? configuration) async {
     if (configuration == null) {
       throw ArgumentError('iOS configuration is missing.');
     }
     await CoinbaseWalletSdkFlutterPlatform.instance
-        .call('configure', configuration.toJson());
+        .call('static_configure', configuration.toJson());
   }
 
-  Future<void> _configureAndroid(AndroidConfiguration? configuration) async {
+  static Future<void> _configureAndroid(AndroidConfiguration? configuration) async {
     if (configuration == null) {
       throw ArgumentError('Android configuration is missing.');
     }
     await CoinbaseWalletSdkFlutterPlatform.instance
         .call('configure', configuration.toJson());
-  }
-
-  Future<List<Wallet>> getWallets() async {
-    final result =
-        await CoinbaseWalletSdkFlutterPlatform.instance.call('getWallets');
-
-    final wallets =
-        (result ?? []).map((e) => Wallet.fromJson(e)).cast<Wallet>().toList();
-    return wallets;
-  }
-
-  Future<void> connectWallet(Wallet wallet) async {
-    await CoinbaseWalletSdkFlutterPlatform.instance
-        .call('connectWallet', jsonEncode(wallet.toJson()));
   }
 }
 

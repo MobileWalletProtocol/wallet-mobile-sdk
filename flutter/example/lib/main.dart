@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk.dart';
+import 'package:coinbase_wallet_sdk/mwp_client.dart';
 import 'package:coinbase_wallet_sdk/configuration.dart';
 import 'package:coinbase_wallet_sdk/eth_web3_rpc.dart';
 import 'package:coinbase_wallet_sdk/request.dart';
@@ -22,11 +22,11 @@ class _MyAppState extends State<MyApp> {
   String _addy = "";
   String _signed = "";
   String _sessionCleared = "";
-  Wallet? _activeWallet;
+  MWPClient? _client;
 
   @override
   void initState() {
-    CoinbaseWalletSDK.shared.configure(
+    MWPClient.configure(
       Configuration(
         ios: IOSConfiguration(
           callback: Uri.parse('tribesxyzsample://mycallback'),
@@ -43,7 +43,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _requestAccount() async {
     String addy;
     try {
-      final results = await CoinbaseWalletSDK.shared.initiateHandshake([
+      final results = await _client!.initiateHandshake([
         const RequestAccounts(),
       ]);
       addy = results[0].account?.address ?? "<no address>";
@@ -68,7 +68,7 @@ class _MyAppState extends State<MyApp> {
       final request = Request(
         actions: [PersonalSign(address: _addy, message: message)],
       );
-      final results = await CoinbaseWalletSDK.shared.makeRequest(request);
+      final results = await _client!.makeRequest(request);
 
       signed = results[0].value ?? "<no signature>";
     } catch (e) {
@@ -88,7 +88,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _resetSession() async {
     try {
-      await CoinbaseWalletSDK.shared.resetSession();
+      await _client!.resetSession();
       setState(() {
         _sessionCleared = "Session Cleared!";
       });
@@ -100,24 +100,23 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<List<Wallet>> getWallets() async {
-    List<Wallet> wallets = await CoinbaseWalletSDK.shared.getWallets();
+    List<Wallet> wallets = await Wallet.getDefaultWallets();
     return wallets;
   }
 
-  Future<void> _disconnectWallet() async {
+  Future<void> _back() async {
     setState(() {
       _sessionCleared = "";
       _addy = "";
       _signed = "";
-      _activeWallet = null;
+      _client = null;
     });
   }
 
   Future<void> _handleTap(Wallet? wallet) async {
     setState(() {
-      _activeWallet = wallet;
+      if (wallet != null) _client = MWPClient(wallet: wallet);
     });
-    if (wallet != null) await CoinbaseWalletSDK.shared.connectWallet(wallet);
   }
 
   @override
@@ -131,16 +130,19 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (_activeWallet == null) ...[
+              if (_client == null) ...[
                 Expanded(child: projectWidget())
               ] else ...[
-                Text('Connected With ${_activeWallet!.name}'),
+                Text('Connected With ${_client!.wallet.name}'),
                 const SizedBox(height: 50),
+                Text(
+                  'Is installed? ${_client!.wallet.isInstalled}',
+                ),
                 FutureBuilder<bool>(
-                  future: CoinbaseWalletSDK.shared.isAppInstalled(),
+                  future: _client!.isConnected(),
                   builder: ((context, snapshot) {
                     return Text(
-                      'Is installed? ${snapshot.data}',
+                      'Is connected? ${snapshot.data}',
                     );
                   }),
                 ),
@@ -163,8 +165,8 @@ class _MyAppState extends State<MyApp> {
                 Text('is reset\n\n $_sessionCleared'),
                 const SizedBox(height: 50),
                 TextButton(
-                  onPressed: () => _disconnectWallet(),
-                  child: const Text("Disconnect Wallet"),
+                  onPressed: () => _back(),
+                  child: const Text("Back"),
                 )
               ],
             ],
