@@ -5,14 +5,16 @@ class Wallet {
   final String? mwpScheme;
   final String? appStoreUrl;
   final String? packageName;
+  final bool? isInstalled;
 
   const Wallet({
     required this.name,
     required this.iconUrl,
     required this.url,
-    required this.mwpScheme,
-    required this.appStoreUrl,
-    required this.packageName,
+    this.mwpScheme,
+    this.appStoreUrl,
+    this.packageName,
+    this.isInstalled,
   });
 
   Map<String, dynamic> toJson() {
@@ -22,7 +24,7 @@ class Wallet {
       'url': url,
       'mwpScheme': mwpScheme,
       'appStoreUrl': appStoreUrl,
-      'packageName': packageName,
+      'packageName': packageName
     };
   }
 
@@ -33,6 +35,8 @@ class Wallet {
         url: json['url'] as String,
         mwpScheme: json['mwpScheme'] as String?,
         appStoreUrl: json['appStoreUrl'] as String?,
-        packageName: json['packageName'] as String?);
+        packageName: json['packageName'] as String?,
+        isInstalled: json['isInstalled'] as bool?
+    );
   }
 }

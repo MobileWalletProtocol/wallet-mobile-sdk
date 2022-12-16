@@ -23,9 +23,7 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
                 return try configure(call.arguments, result: result)
             case "static_getWallets":
                 return try getWallets(result: result)
-                
-            case "isAppInstalled":
-                return try isAppInstalled(call.arguments, result: result)
+            
             case "initiateHandshake":
                 return try initiateHandshake(call.arguments, result: result)
             case "makeRequest":
@@ -77,12 +75,6 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
             from: jsonData
         )
         return (typedArgs.wallet, typedArgs.argument)
-    }
-    
-    private func isAppInstalled(_ args: Any?, result: @escaping FlutterResult) throws {
-        let (wallet, _) = try decodeArguments(args, extraArgType: NoArgument.self)
-        
-        result(wallet.isInstalled)
     }
     
     private func initiateHandshake(_ args: Any?, result: @escaping FlutterResult) throws {
@@ -184,8 +176,15 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
     }
     
     private func getWallets(result: @escaping FlutterResult) throws {
-        let defaultWallets = Wallet.defaultWallets()
-        let encodedData = try JSONEncoder().encode(defaultWallets)
+        let dictArray = try Wallet.defaultWallets().map { wallet in
+            var dictionary = try JSONSerialization.jsonObject(
+                with: try JSONEncoder().encode(wallet),
+                options: .allowFragments
+            ) as! [String: Any]
+            dictionary["isInstalled"] = wallet.isInstalled
+            return dictionary
+        }
+        let encodedData = try JSONSerialization.data(withJSONObject: dictArray)
         let jsonString = String(data: encodedData, encoding: .utf8)
         result(jsonString)
     }
