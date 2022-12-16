@@ -28,6 +28,7 @@
 
     <queries>
         <package android:name="org.toshi" />
+        <package android:name="org.toshi.alpha" />
         <package android:name="org.toshi.debugger" />
     </queries>
 </manifest>
