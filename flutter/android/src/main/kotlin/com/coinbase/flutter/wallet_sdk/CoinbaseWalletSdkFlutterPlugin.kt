@@ -35,10 +35,6 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
     /// when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
 
-    private var coinbase: CoinbaseWalletSDK? = null
-
-    private var versionAppended = false
-
     private lateinit var flutterApplicationContext: Context
 
     private var act: android.app.Activity? = null
@@ -55,6 +51,7 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
             domain = Uri.parse("https://www.coinbase.com"),
             context = flutterApplicationContext
         )
+        CoinbaseWalletSDK.appendVersionTag("flutter")
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "coinbase_wallet_sdk")
         channel.setMethodCallHandler(this)
     }
@@ -62,23 +59,19 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
     override fun onMethodCall(call: MethodCall, result: Result) {
         try {
             when (call.method) {
-                "configure" -> return configure(call, result)
+                "static_configure" -> return configure(call, result)
+                "static_getWallets" -> return getWallets(result)
+
                 "initiateHandshake" -> return initiateHandshake(call, result)
                 "makeRequest" -> return makeRequest(call, result)
-                "resetSession" -> return resetSession(result)
-                "isAppInstalled" -> return isAppInstalled(result)
-                "getWallets" -> return getWallets(result)
-                "connectWallet" -> return connectWallet(call, result)
+                "isConnected" -> return isConnected(call, result)
+                "resetSession" -> return resetSession(call, result)
             }
         } catch (e: Throwable) {
             result.error("onMethodCall", e.message, null)
         }
 
         result.notImplemented()
-    }
-
-    private fun isAppInstalled(result: Result) {
-        result.success(coinbase?.isCoinbaseWalletInstalled == true)
     }
 
     private fun configure(call: MethodCall, result: Result) {
@@ -96,27 +89,17 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
         result.success(successJson)
     }
 
-    private fun connectWallet(call: MethodCall, result: Result) {
-        val jsonString = call.arguments as? String
-            ?: return result.error("connectWallet", "Missing arguments", null)
-
-        val wallet = json.decodeFromString<Wallet>(jsonString)
-        coinbase = CoinbaseWalletSDK.getClient(wallet)
-
-        if (!versionAppended) {
-            coinbase?.appendVersionTag("flutter")
-        }
-        result.success(successJson)
-    }
-
     private fun initiateHandshake(call: MethodCall, result: Result) {
         val jsonString = call.arguments
         if (jsonString !is String) {
             return result.error("initiateHandshake", "Missing args", null)
         }
 
-        val actions = Json.decodeFromString<List<Action>>(jsonString)
-        coinbase?.initiateHandshake(initialActions = actions) { responseResult, account ->
+        val decoded = Json.decodeFromString<InstanceMethodArgument<List<Action>>>(jsonString)
+        val mwpClient = CoinbaseWalletSDK.getClient(decoded.wallet)
+        val actions = decoded.argument
+
+        mwpClient?.initiateHandshake(initialActions = actions) { responseResult, account ->
             handleResponse("initiateHandshake", responseResult, account, result)
         }
     }
@@ -127,15 +110,38 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
             return result.error("makeRequest", "Missing args", null)
         }
 
-        val request = Json.decodeFromString<RequestContent.Request>(jsonString)
-        coinbase?.makeRequest(request) { responseResult ->
+        val decoded = Json.decodeFromString<InstanceMethodArgument<RequestContent.Request>>(jsonString)
+        val mwpClient = CoinbaseWalletSDK.getClient(decoded.wallet)
+        val request = decoded.argument
+
+        mwpClient?.makeRequest(request) { responseResult ->
             handleResponse("makeRequest", responseResult, null, result)
         }
     }
 
-    private fun resetSession(result: Result) {
-        coinbase?.resetSession()
+    private fun resetSession(call: MethodCall, result: Result) {
+        val jsonString = call.arguments
+        if (jsonString !is String) {
+            return result.error("resetSession", "Missing args", null)
+        }
+
+        val decoded = Json.decodeFromString<InstanceMethodArgument<NoArgument>>(jsonString)
+        val mwpClient = CoinbaseWalletSDK.getClient(decoded.wallet)
+
+        mwpClient?.resetSession()
         result.success(successJson)
+    }
+
+    private fun isConnected(result: Result) {
+        val jsonString = call.arguments
+        if (jsonString !is String) {
+            return result.error("isConnected", "Missing args", null)
+        }
+
+        val decoded = Json.decodeFromString<InstanceMethodArgument<NoArgument>>(jsonString)
+        val mwpClient = CoinbaseWalletSDK.getClient(decoded.wallet)
+
+        result.success(mwpClient?.isConnected() ?? false)
     }
 
     private fun handleResponse(
@@ -173,8 +179,17 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
     }
 
     private fun getWallets(result: Result) {
-        val wallets = Json.encodeToString(DefaultWallets.getWallets())
-        result.success(wallets)
+        val wallets = DefaultWallets.getWallets().map { wallet ->
+            val element = Json.encodeToJsonElement(wallet).jsonObject
+            element.entries.associate {
+                it.key to ((it.value as? JsonPrimitive)?.content ?: null)
+            }.toMutableMap<String, Any?>().apply {
+                this["isInstalled"] = wallet.isInstalled(flutterApplicationContext)
+            }
+        }
+
+        val jsonString = Json.encodeToString(wallets)
+        result.success(jsonString)
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -200,6 +215,7 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
         val uri = data?.data ?: return false
+        // TODO: retrieve appropriate mwp client from uri
         return coinbase?.handleResponse(uri) == true
     }
 }

@@ -6,8 +6,6 @@ import CoinbaseWalletSDK
 public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
     private static let success = "{ \"success\": true}"
     
-    private var mwpClient: MWPClient? = nil
-    
     public override init() {}
     
     public static func register(with registrar: FlutterPluginRegistrar) {
