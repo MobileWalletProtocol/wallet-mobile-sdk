@@ -1,4 +1,4 @@
-package expo.modules.coinbasewalletsdkexpo
+package expo.modules.coinbasewalletsdkexpo.records
 
 import com.coinbase.android.nativesdk.message.response.ActionResult
 import expo.modules.kotlin.records.Field

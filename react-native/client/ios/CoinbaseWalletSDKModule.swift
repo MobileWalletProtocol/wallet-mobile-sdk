@@ -2,101 +2,51 @@ import ExpoModulesCore
 import CoinbaseWalletSDK
 import Foundation
 
-struct ActionRecord : Record {
-    @Field
-    var method: String
-
-    @Field
-    var paramsJson: String
-
-    @Field
-    var optional: Bool
-}
-
-struct AccountRecord : Record {
-    @Field
-    var chain: String
-
-    @Field
-    var networkId: Int
-
-    @Field
-    var address: String
-}
-
-struct ActionResultRecord : Record {
-    @Field
-    var result: String? = nil
-
-    @Field
-    var errorMessage: String? = nil
-
-    @Field
-    var errorCode: Int? = nil
-}
-
-struct WalletRecord : Record {
-    @Field
-    var name: String = ""
-
-    @Field
-    var iconUrl: String = ""
-
-    @Field
-    var url: String = ""
-
-    @Field
-    var mwpScheme: String = ""
-
-    @Field
-    var appStoreUrl: String = ""
-
-    @Field
-    var packageName: String? = nil
-}
-
 public class CoinbaseWalletSDKModule: Module {
 
     var hasConfigured: Bool = false
-
-    private var mwpClient: MWPClient? = nil
 
     public func definition() -> ModuleDefinition {
 
         Name("CoinbaseWalletSDK")
 
-        Function("configure") { (callbackURL: String) in
+        Function("configure") { (params: ConfigParamsRecord) in
             guard !self.hasConfigured else {
                 return
             }
 
+            var appIconURL: URL? = nil
+            if let iconUrl = params.appIconURL {
+                appIconURL = URL(string: iconUrl)
+            }
+
             self.hasConfigured = true
-            MWPClient.configure(callback: URL(string: callbackURL)!)
+            MWPClient.configure(
+                callback: URL(string: params.callbackURL)!,
+                appId: params.appID,
+                name: params.appName,
+                iconUrl: appIconURL
+            )
+
             CoinbaseWalletSDK.appendVersionTag("rn")
         }
 
-        Function("connectWallet") { (walletRecord: WalletRecord) in
-            let wallet = Wallet(
-                name: walletRecord.name,
-                iconUrl: URL(string:  walletRecord.iconUrl)!,
-                url: URL(string: walletRecord.url)!,
-                mwpScheme: URL(string: walletRecord.mwpScheme)!,
-                appStoreUrl: URL(string: walletRecord.appStoreUrl)!
-            )
-            self.mwpClient = MWPClient.getInstance(to: wallet)
+        Function("handleResponse") { (url: String) -> Bool in
+            let responseURL = URL(string: url)!
+            if (try? MWPClient.handleResponse(responseURL)) == true {
+                return true
+            }
+
+            return false
         }
 
-        AsyncFunction("initiateHandshake") { (initialActions: [ActionRecord], promise: Promise) in
-            guard let client = self.mwpClient else {
-                promise.reject("Client not initialized", "Must Initialize client before making request")
+        AsyncFunction("initiateHandshake") { (wallet: WalletRecord, initialActions: [ActionRecord], promise: Promise) in
+            guard let client = MWPClient.getInstance(to: wallet.asWallet) else {
+                promise.reject("MWPClient not configured", "Must configure client before making handshake request")
                 return
             }
 
-            let actions: [Action] = initialActions.map { record in
-                let paramsJson = record.paramsJson.data(using: .utf8)!
-                let params = try! JSONSerialization.jsonObject(with: paramsJson) as! [String: Any]
-                return Action(method: record.method, params: params)
-            }
+            let actions: [Action] = initialActions.map { $0.asAction }
 
             client.initiateHandshake(initialActions: actions) { result, account in
                 switch result {
@@ -110,32 +60,13 @@ public class CoinbaseWalletSDKModule: Module {
             }
         }
 
-        AsyncFunction("makeRequest") { (actions: [ActionRecord], account: AccountRecord?, promise: Promise) in
-            guard let client = self.mwpClient else {
-                promise.reject("Client not initialized", "Must Initialize client before making request")
+        AsyncFunction("makeRequest") { (wallet: WalletRecord, request: RequestRecord, promise: Promise) in
+            guard let client = MWPClient.getInstance(to: wallet.asWallet) else {
+                promise.reject("MWPClient not configured", "Must configure client before making request")
                 return
             }
 
-            let requestActions: [Action] = actions.map { record in
-                let paramsJson = record.paramsJson.data(using: .utf8)!
-                let params = try! JSONSerialization.jsonObject(with: paramsJson) as! [String: Any]
-                return Action(method: record.method, params: params)
-            }
-
-            let requestAccount: Account?
-            if let account = account {
-                requestAccount = Account(
-                    chain: account.chain,
-                    networkId: UInt(account.networkId),
-                    address: account.address
-                )
-            } else {
-                requestAccount = nil
-            }
-
-            client.makeRequest(
-                Request(actions: requestActions, account: requestAccount)
-            ) { result in
+            client.makeRequest(request.asRequest) { result in
                 switch result {
                 case .success(let response):
                     let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
@@ -146,39 +77,23 @@ public class CoinbaseWalletSDKModule: Module {
             }
         }
 
-        Function("handleResponse") { (url: String) -> Bool in
-            let responseURL = URL(string: url)!
-            if (try? MWPClient.handleResponse(responseURL)) == true {
-                return true
-            }
-
-            return false
-        }
-
-        Function("isCoinbaseWalletInstalled") { () -> Bool in
-            return CoinbaseWalletSDK.isCoinbaseWalletInstalled()
-        }
-
-        Function("isConnected") { () -> Bool in
-            guard let client = self.mwpClient else {
+        Function("isConnected") { (wallet: WalletRecord) -> Bool in
+            if let client = MWPClient.getInstance(to: wallet.asWallet) {
+                return client.isConnected()
+            } else {
                 return false
             }
-
-            return client.isConnected()
         }
 
-        Function("resetSession") {
-            guard let client = self.mwpClient else {
-                return
+        Function("resetSession") { (wallet: WalletRecord) in
+            if let client = MWPClient.getInstance(to: wallet.asWallet) {
+                client.resetSession()
             }
-
-            client.resetSession()
         }
 
         Function("getWallets") { () -> [WalletRecord.Dict] in
             let wallets = Wallet.defaultWallets()
-            let results: [WalletRecord.Dict] = wallets.map { $0.asRecord }
-            return results
+            return wallets.map { $0.asRecord }
         }
     }
 }
@@ -212,12 +127,16 @@ extension Account {
 
 extension Wallet {
     var asRecord: WalletRecord.Dict {
+        let id = WalletIdentifierRecord()
+        id.platform = "ios"
+        id.mwpScheme = self.mwpScheme.absoluteString
+
         let record = WalletRecord()
         record.name = self.name
         record.iconUrl = self.iconUrl.absoluteString
         record.url = self.url.absoluteString
-        record.mwpScheme = self.mwpScheme.absoluteString
         record.appStoreUrl = self.appStoreUrl.absoluteString
+        record.id = id
         return record.toDictionary()
     }
 }
