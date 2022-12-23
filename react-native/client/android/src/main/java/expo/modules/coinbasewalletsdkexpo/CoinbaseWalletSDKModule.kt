@@ -4,13 +4,15 @@ import android.net.Uri
 import com.coinbase.android.nativesdk.CoinbaseWalletSDK
 import com.coinbase.android.nativesdk.DefaultWallets
 import com.coinbase.android.nativesdk.ext.isInstalled
-import expo.modules.coinbasewalletsdkexpo.records.ActionRecord
 import expo.modules.coinbasewalletsdkexpo.records.ActionResultRecord
 import expo.modules.coinbasewalletsdkexpo.records.ConfigParamsRecord
-import expo.modules.coinbasewalletsdkexpo.records.RequestRecord
+import expo.modules.coinbasewalletsdkexpo.records.HandshakeParamsRecord
+import expo.modules.coinbasewalletsdkexpo.records.RequestParamsRecord
+import expo.modules.coinbasewalletsdkexpo.records.WalletRecord
 import expo.modules.coinbasewalletsdkexpo.records.asAction
 import expo.modules.coinbasewalletsdkexpo.records.asRecord
 import expo.modules.coinbasewalletsdkexpo.records.asRequest
+import expo.modules.coinbasewalletsdkexpo.records.asWallet
 import expo.modules.kotlin.Promise
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
@@ -28,9 +30,6 @@ class CoinbaseWalletSDKModule : Module() {
             if (hasConfigured) {
                 return@Function
             }
-
-            CoinbaseWalletSDK.openIntent = { IntentLauncher.launcher?.launch(it) }
-            IntentLauncher.onResult = { uri -> CoinbaseWalletSDK.handleResponseUrl(uri) }
 
             val context = requireNotNull(appContext.reactContext?.applicationContext) {
                 "Application context must not be null"
@@ -52,11 +51,11 @@ class CoinbaseWalletSDKModule : Module() {
             return@Function CoinbaseWalletSDK.handleResponseUrl(responseURL)
         }
 
-        AsyncFunction("initiateHandshake") { wallet: WalletRecord, initialActions: List<ActionRecord>, promise: Promise ->
-            val client = CoinbaseWalletSDK.getClient(wallet.asWallet)
-            val actions = initialActions.map { it.asAction }
+        AsyncFunction("initiateHandshake") { params: HandshakeParamsRecord, promise: Promise ->
+            val client = CoinbaseWalletSDK.getClient(params.wallet.asWallet)
 
-            client.initiateHandshake(actions) { result, account ->
+            val initialActions = params.initialActions.map { it.asAction }
+            client.initiateHandshake(initialActions) { result, account ->
                 result
                     .onSuccess { responses ->
                         val results: List<ActionResultRecord> = responses.map { it.asRecord }
@@ -69,10 +68,10 @@ class CoinbaseWalletSDKModule : Module() {
             }
         }
 
-        AsyncFunction("makeRequest") { wallet: WalletRecord, request: RequestRecord, promise: Promise ->
-            val client = CoinbaseWalletSDK.getClient(wallet.asWallet)
+        AsyncFunction("makeRequest") { params: RequestParamsRecord, promise: Promise ->
+            val client = CoinbaseWalletSDK.getClient(params.wallet.asWallet)
 
-            client.makeRequest(request.asRequest) { result ->
+            client.makeRequest(params.request.asRequest) { result ->
                 result
                     .onSuccess { responses ->
                         val results: List<ActionResultRecord> = responses.map { it.asRecord }
@@ -86,7 +85,7 @@ class CoinbaseWalletSDKModule : Module() {
 
         Function("isInstalled") { wallet: WalletRecord ->
             val context = requireNotNull(appContext.reactContext?.applicationContext) {
-                "Application context must not be null"
+                "MobileWalletProtocol: Application context must not be null"
             }
 
             return@Function wallet.asWallet.isInstalled(context)

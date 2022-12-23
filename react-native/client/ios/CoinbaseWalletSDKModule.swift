@@ -40,13 +40,13 @@ public class CoinbaseWalletSDKModule: Module {
             return false
         }
 
-        AsyncFunction("initiateHandshake") { (wallet: WalletRecord, initialActions: [ActionRecord], promise: Promise) in
-            guard let client = MWPClient.getInstance(to: wallet.asWallet) else {
+        AsyncFunction("initiateHandshake") { (params: HandshakeParamsRecord, promise: Promise) in
+            guard let client = MWPClient.getInstance(to: params.wallet.asWallet) else {
                 promise.reject("MWPClient not configured", "Must configure client before making handshake request")
                 return
             }
 
-            let actions: [Action] = initialActions.map { $0.asAction }
+            let actions: [Action] = params.initialActions.map { $0.asAction }
 
             client.initiateHandshake(initialActions: actions) { result, account in
                 switch result {
@@ -60,13 +60,13 @@ public class CoinbaseWalletSDKModule: Module {
             }
         }
 
-        AsyncFunction("makeRequest") { (wallet: WalletRecord, request: RequestRecord, promise: Promise) in
-            guard let client = MWPClient.getInstance(to: wallet.asWallet) else {
+        AsyncFunction("makeRequest") { (params: RequestParamsRecord, promise: Promise) in
+            guard let client = MWPClient.getInstance(to: params.wallet.asWallet) else {
                 promise.reject("MWPClient not configured", "Must configure client before making request")
                 return
             }
 
-            client.makeRequest(request.asRequest) { result in
+            client.makeRequest(params.request.asRequest) { result in
                 switch result {
                 case .success(let response):
                     let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
@@ -75,6 +75,10 @@ public class CoinbaseWalletSDKModule: Module {
                     promise.reject("request-error", error.localizedDescription)
                 }
             }
+        }
+
+        Function("isInstalled") { (wallet: WalletRecord) -> Bool in
+            return wallet.asWallet.isInstalled
         }
 
         Function("isConnected") { (wallet: WalletRecord) -> Bool in
@@ -95,48 +99,5 @@ public class CoinbaseWalletSDKModule: Module {
             let wallets = Wallet.defaultWallets()
             return wallets.map { $0.asRecord }
         }
-    }
-}
-
-extension ActionResult {
-    var asRecord: ActionResultRecord.Dict {
-        let record = ActionResultRecord()
-
-        switch self {
-        case .success(let value):
-            record.result = value.rawValue
-        case .failure(let error):
-            record.errorCode = error.code
-            record.errorMessage = error.message
-        }
-
-        return record.toDictionary()
-    }
-}
-
-extension Account {
-    var asRecord: AccountRecord.Dict {
-        let record = AccountRecord()
-        record.chain = self.chain
-        record.networkId = Int(self.networkId)
-        record.address = self.address
-        
-        return record.toDictionary()
-    }
-}
-
-extension Wallet {
-    var asRecord: WalletRecord.Dict {
-        let id = WalletIdentifierRecord()
-        id.platform = "ios"
-        id.mwpScheme = self.mwpScheme.absoluteString
-
-        let record = WalletRecord()
-        record.name = self.name
-        record.iconUrl = self.iconUrl.absoluteString
-        record.url = self.url.absoluteString
-        record.appStoreUrl = self.appStoreUrl.absoluteString
-        record.id = id
-        return record.toDictionary()
     }
 }

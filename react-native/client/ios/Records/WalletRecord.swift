@@ -1,10 +1,3 @@
-//
-//  WalletRecord.swift
-//  CoinbaseWalletSDKExpo
-//
-//  Created by Vishnu Madhusoodanan on 12/16/22.
-//
-
 import CoinbaseWalletSDK
 import ExpoModulesCore
 import Foundation
@@ -43,5 +36,20 @@ extension WalletRecord {
             mwpScheme: URL(string: self.id.mwpScheme)!,
             appStoreUrl: URL(string: self.appStoreUrl)!
         )
+    }
+}
+
+extension Wallet {
+    var asRecord: WalletRecord.Dict {
+        let id = WalletIdentifierRecord()
+        id.mwpScheme = self.mwpScheme.absoluteString
+
+        let record = WalletRecord()
+        record.name = self.name
+        record.iconUrl = self.iconUrl.absoluteString
+        record.url = self.url.absoluteString
+        record.appStoreUrl = self.appStoreUrl.absoluteString
+        record.id = id
+        return record.toDictionary()
     }
 }

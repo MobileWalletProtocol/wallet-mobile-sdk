@@ -15,7 +15,7 @@ import {
 import { ethErrors } from "eth-rpc-errors";
 import {
   initiateHandshake,
-  isConnected,
+  isWalletConnected,
   makeRequest,
   resetSession,
 } from "../module/MWPModule";
@@ -33,7 +33,6 @@ import {
 } from "@coinbase/wallet-sdk/dist/util";
 import { EthereumTransactionParams } from "@coinbase/wallet-sdk/dist/relay/EthereumTransactionParams";
 import BN from "bn.js";
-import { MMKV, NativeMMKV } from "react-native-mmkv";
 import SafeEventEmitter from "@metamask/safe-event-emitter";
 
 global.Buffer = global.Buffer || require("buffer").Buffer;
@@ -41,16 +40,19 @@ global.Buffer = global.Buffer || require("buffer").Buffer;
 const CACHED_ADDRESSES_KEY = "mobile_sdk.addresses";
 const CHAIN_ID_KEY = "mobile_sdk.chain_id";
 
-export interface WalletMobileSDKProviderOptions {
+export type WalletMobileSDKProviderOptions = {
   wallet: Wallet;
+  storage: KVStorage;
   chainId?: number;
-  storage?: KVStorage;
   jsonRpcUrl?: string;
   address?: string;
-}
+};
 
-export interface KVStorage
-  extends Pick<NativeMMKV, "set" | "getString" | "delete"> {}
+export type KVStorage = {
+  set: (key: string, value: boolean | string | number) => void;
+  getString: (key: string) => string | undefined;
+  delete: (key: string) => void;
+};
 
 interface AddEthereumChainParams {
   chainId: string;
@@ -100,8 +102,8 @@ export class WalletMobileSDKEVMProvider
     this._getChainId = this._getChainId.bind(this);
 
     this._wallet = opts.wallet;
-    this._storage = opts?.storage ?? new MMKV({ id: "mobile_sdk.store" });
-    this._chainId = opts?.chainId;
+    this._storage = opts.storage;
+    this._chainId = opts.chainId;
     this._jsonRpcUrl = opts?.jsonRpcUrl;
 
     const chainId = this._chainId ?? this._getChainId();
@@ -135,7 +137,7 @@ export class WalletMobileSDKEVMProvider
   }
 
   public get connected(): boolean {
-    return isConnected(this._wallet);
+    return isWalletConnected(this._wallet);
   }
 
   public get chainId(): string {

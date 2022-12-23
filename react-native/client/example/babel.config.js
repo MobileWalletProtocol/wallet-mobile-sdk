@@ -1,7 +1,6 @@
 const path = require('path');
-const pak = require('../package.json');
 
-const libraryIndex = path.join(__dirname, '..', 'src', 'CoinbaseWalletSDK.ts');
+const libraryIndex = path.join(__dirname, '..', 'src', 'index.ts');
 
 module.exports = function (api) {
   api.cache(true);
@@ -14,7 +13,7 @@ module.exports = function (api) {
           extensions: ['.tsx', '.ts', '.js', '.json'],
           alias: {
             // For development, we want to alias the library to the source
-            [pak.name]: libraryIndex,
+            '@coinbase/wallet-mobile-sdk': libraryIndex,
           },
         },
       ],

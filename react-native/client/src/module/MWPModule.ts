@@ -20,8 +20,12 @@ export function getWallets(): Wallet[] {
   return MWPNativeModule.getWallets();
 }
 
-export function isConnected(wallet: Wallet): boolean {
+export function isWalletConnected(wallet: Wallet): boolean {
   return MWPNativeModule.isConnected(wallet);
+}
+
+export function isWalletInstalled(wallet: Wallet): boolean {
+  return MWPNativeModule.isInstalled(wallet);
 }
 
 export function resetSession(wallet: Wallet) {
@@ -33,7 +37,10 @@ export async function initiateHandshake(
   initialActions?: Action[]
 ): Promise<[Result[], Account?]> {
   const actions = initialActions?.map(actionToRecord) ?? [];
-  return await MWPNativeModule.initiateHandshake(wallet, actions);
+  return await MWPNativeModule.initiateHandshake({
+    wallet,
+    initialActions: actions,
+  });
 }
 
 export async function makeRequest(
@@ -45,13 +52,13 @@ export async function makeRequest(
     account,
   };
 
-  return await MWPNativeModule.makeRequest(wallet, requestRecord);
+  return await MWPNativeModule.makeRequest({ wallet, request: requestRecord });
 }
 
 function actionToRecord(action: Action) {
   return {
     method: action.method,
     paramsJson: JSON.stringify(action.params),
-    optional: action.optional ?? false,
+    optional: action.optional,
   };
 }

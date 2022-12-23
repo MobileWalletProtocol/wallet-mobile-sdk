@@ -1,4 +1,4 @@
-package expo.modules.coinbasewalletsdkexpo
+package expo.modules.coinbasewalletsdkexpo.records
 
 import com.coinbase.android.nativesdk.Wallet
 import expo.modules.kotlin.records.Field
@@ -30,6 +30,16 @@ class WalletRecord : Record {
 
 }
 
+val WalletRecord.asWallet: Wallet
+    get() {
+        return Wallet(
+            name = this.name,
+            iconUrl = this.iconUrl,
+            url = this.url,
+            packageName = this.id.packageName
+        )
+    }
+
 val Wallet.asRecord: WalletRecord
     get() {
         val id = WalletIdentifierRecord()
@@ -44,12 +54,3 @@ val Wallet.asRecord: WalletRecord
         return record
     }
 
-val WalletRecord.asWallet: Wallet
-    get() {
-        return Wallet(
-            name = this.name,
-            iconUrl = this.iconUrl,
-            url = this.url,
-            packageName = this.id.packageName
-        )
-    }

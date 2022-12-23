@@ -44,7 +44,11 @@ export class MWPClient {
   }
 
   isConnected(): boolean {
-    return MWPModule.isConnected(this.#wallet);
+    return MWPModule.isWalletConnected(this.#wallet);
+  }
+
+  isInstalled(): boolean {
+    return MWPModule.isWalletInstalled(this.#wallet);
   }
 
   resetSession() {

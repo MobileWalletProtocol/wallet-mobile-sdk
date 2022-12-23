@@ -3,7 +3,7 @@ import { Action } from "./action/action";
 export { Action, EthereumRequestAction } from "./action/action";
 
 export type ConfigurationParams = {
-  callbackURL: URL;
+  callbackURL: string;
   appID?: string;
   appName?: string;
   appIconURL?: string;

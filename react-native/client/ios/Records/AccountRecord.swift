@@ -1,10 +1,3 @@
-//
-//  AccountRecord.swift
-//  CoinbaseWalletSDKExpo
-//
-//  Created by Vishnu Madhusoodanan on 12/16/22.
-//
-
 import CoinbaseWalletSDK
 import ExpoModulesCore
 import Foundation
@@ -27,5 +20,16 @@ extension AccountRecord {
             networkId: UInt(self.networkId),
             address: self.address
         )
+    }
+}
+
+extension Account {
+    var asRecord: AccountRecord.Dict {
+        let record = AccountRecord()
+        record.chain = self.chain
+        record.networkId = Int(self.networkId)
+        record.address = self.address
+
+        return record.toDictionary()
     }
 }
