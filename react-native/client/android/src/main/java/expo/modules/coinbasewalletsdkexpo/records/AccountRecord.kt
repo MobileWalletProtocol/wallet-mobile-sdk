@@ -1,4 +1,4 @@
-package expo.modules.coinbasewalletsdkexpo
+package expo.modules.coinbasewalletsdkexpo.records
 
 import com.coinbase.android.nativesdk.message.request.Account
 import expo.modules.kotlin.records.Field
@@ -14,6 +14,15 @@ class AccountRecord : Record {
     @Field
     var address: String = ""
 }
+
+val AccountRecord.asAccount: Account
+    get() {
+        return Account(
+            chain = this.chain,
+            networkId = this.networkId.toLong(),
+            address = this.address
+        )
+    }
 
 val Account.asRecord: AccountRecord
     get() {

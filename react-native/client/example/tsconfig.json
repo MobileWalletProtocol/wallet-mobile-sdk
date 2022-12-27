@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@coinbase/wallet-mobile-sdk": ["../src/index"],
+      "@coinbase/wallet-mobile-sdk/*": ["../src/*"]
+    }
+  }
+}

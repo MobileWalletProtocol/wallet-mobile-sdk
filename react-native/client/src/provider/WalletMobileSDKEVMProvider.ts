@@ -1,15 +1,25 @@
-import {RequestArguments, Web3Provider,} from "@coinbase/wallet-sdk/dist/provider/Web3Provider";
-import {JSONRPCMethod, JSONRPCRequest, JSONRPCResponse,} from "@coinbase/wallet-sdk/dist/provider/JSONRPC";
-import {AddressString, Callback, IntNumber,} from "@coinbase/wallet-sdk/dist/types";
-import {ethErrors} from "eth-rpc-errors";
 import {
-  connectWallet,
+  RequestArguments,
+  Web3Provider,
+} from "@coinbase/wallet-sdk/dist/provider/Web3Provider";
+import {
+  JSONRPCMethod,
+  JSONRPCRequest,
+  JSONRPCResponse,
+} from "@coinbase/wallet-sdk/dist/provider/JSONRPC";
+import {
+  AddressString,
+  Callback,
+  IntNumber,
+} from "@coinbase/wallet-sdk/dist/types";
+import { ethErrors } from "eth-rpc-errors";
+import {
   initiateHandshake,
-  isConnected,
+  isWalletConnected,
   makeRequest,
   resetSession,
-} from "./CoinbaseWalletSDK";
-import {Account, Action, Result, Wallet} from "./CoinbaseWalletSDK.types";
+} from "../module/MWPModule";
+import { Account, Action, Result, Wallet } from "../types";
 import {
   bigIntStringFromBN,
   ensureAddressString,
@@ -21,9 +31,8 @@ import {
   hexStringFromIntNumber,
   prepend0x,
 } from "@coinbase/wallet-sdk/dist/util";
-import {EthereumTransactionParams} from "@coinbase/wallet-sdk/dist/relay/EthereumTransactionParams";
+import { EthereumTransactionParams } from "@coinbase/wallet-sdk/dist/relay/EthereumTransactionParams";
 import BN from "bn.js";
-import {MMKV, NativeMMKV} from "react-native-mmkv";
 import SafeEventEmitter from "@metamask/safe-event-emitter";
 
 global.Buffer = global.Buffer || require("buffer").Buffer;
@@ -31,15 +40,19 @@ global.Buffer = global.Buffer || require("buffer").Buffer;
 const CACHED_ADDRESSES_KEY = "mobile_sdk.addresses";
 const CHAIN_ID_KEY = "mobile_sdk.chain_id";
 
-export interface WalletMobileSDKProviderOptions {
+export type WalletMobileSDKProviderOptions = {
+  wallet: Wallet;
+  storage: KVStorage;
   chainId?: number;
-  storage?: KVStorage;
   jsonRpcUrl?: string;
   address?: string;
-}
+};
 
-export interface KVStorage
-  extends Pick<NativeMMKV, "set" | "getString" | "delete"> {}
+export type KVStorage = {
+  set: (key: string, value: boolean | string | number) => void;
+  getString: (key: string) => string | undefined;
+  delete: (key: string) => void;
+};
 
 interface AddEthereumChainParams {
   chainId: string;
@@ -75,9 +88,10 @@ export class WalletMobileSDKEVMProvider
   private _chainId?: number;
   private _jsonRpcUrl?: string;
   private _addresses: AddressString[] = [];
-  _storage: KVStorage;
+  private _storage: KVStorage;
+  private _wallet: Wallet;
 
-  constructor(opts?: WalletMobileSDKProviderOptions) {
+  constructor(opts: WalletMobileSDKProviderOptions) {
     super();
 
     this.send = this.send.bind(this);
@@ -87,8 +101,9 @@ export class WalletMobileSDKEVMProvider
     this._setAddresses = this._setAddresses.bind(this);
     this._getChainId = this._getChainId.bind(this);
 
-    this._storage = opts?.storage ?? new MMKV({ id: "mobile_sdk.store" });
-    this._chainId = opts?.chainId;
+    this._wallet = opts.wallet;
+    this._storage = opts.storage;
+    this._chainId = opts.chainId;
     this._jsonRpcUrl = opts?.jsonRpcUrl;
 
     const chainId = this._chainId ?? this._getChainId();
@@ -122,7 +137,7 @@ export class WalletMobileSDKEVMProvider
   }
 
   public get connected(): boolean {
-    return isConnected();
+    return isWalletConnected(this._wallet);
   }
 
   public get chainId(): string {
@@ -134,7 +149,7 @@ export class WalletMobileSDKEVMProvider
   }
 
   public disconnect(): boolean {
-    resetSession();
+    resetSession(this._wallet);
     this._addresses = [];
     this._storage.delete(CACHED_ADDRESSES_KEY);
     return true;
@@ -386,6 +401,7 @@ export class WalletMobileSDKEVMProvider
     const action: Action = {
       method: JSONRPCMethod.eth_requestAccounts,
       params: {},
+      optional: false,
     };
 
     const [, account] = await this._makeHandshakeRequest(action);
@@ -408,6 +424,7 @@ export class WalletMobileSDKEVMProvider
         message,
         address,
       },
+      optional: false,
     };
 
     const res = await this._makeSDKRequest(action);
@@ -435,6 +452,7 @@ export class WalletMobileSDKEVMProvider
         address,
         typedDataJson,
       },
+      optional: false,
     };
 
     const res = await this._makeSDKRequest(action);
@@ -473,6 +491,7 @@ export class WalletMobileSDKEVMProvider
         gasLimit: tx.gasLimit ? bigIntStringFromBN(tx.gasLimit) : null,
         chainId: tx.chainId,
       },
+      optional: false,
     };
 
     const res = await this._makeSDKRequest(action);
@@ -551,6 +570,7 @@ export class WalletMobileSDKEVMProvider
       params: {
         chainId: chainId.toString(),
       },
+      optional: false,
     };
 
     const res = await this._makeSDKRequest(action);
@@ -600,6 +620,7 @@ export class WalletMobileSDKEVMProvider
         nativeCurrency: request.nativeCurrency ?? null,
         rpcUrls: request.rpcUrls ?? [],
       },
+      optional: false,
     };
 
     const res = await this._makeSDKRequest(action);
@@ -653,6 +674,7 @@ export class WalletMobileSDKEVMProvider
           image: image ?? null,
         },
       },
+      optional: false,
     };
 
     const res = await this._makeSDKRequest(action);
@@ -692,7 +714,7 @@ export class WalletMobileSDKEVMProvider
     action: Action
   ): Promise<[unknown, Account]> {
     try {
-      const [[res], account] = await initiateHandshake([action]);
+      const [[res], account] = await initiateHandshake(this._wallet, [action]);
       if (!res.result || !account) {
         throw this._getProviderError(res);
       }
@@ -713,7 +735,7 @@ export class WalletMobileSDKEVMProvider
 
   private async _makeSDKRequest(action: Action): Promise<unknown> {
     try {
-      const [res] = await makeRequest([action]);
+      const [res] = await makeRequest(this._wallet, { actions: [action] });
       if (res.errorMessage || !res.result) {
         throw this._getProviderError(res);
       }
