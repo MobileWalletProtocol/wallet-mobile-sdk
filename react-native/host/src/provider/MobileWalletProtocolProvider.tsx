@@ -87,6 +87,15 @@ export function MobileWalletProtocolProvider({
       }
 
       if ('handshake' in decoded.content) {
+        diagnosticLog({
+          name: 'request_started',
+          params: {
+            requestType: 'handshake',
+            callbackUrl: decoded.callbackUrl,
+            sdkVersion: decoded.version,
+          },
+        });
+
         const message = mapHandshakeToRequest(decoded.content.handshake, decoded);
         updateActiveMessage(message, null);
         return { success: true };
@@ -133,6 +142,17 @@ export function MobileWalletProtocolProvider({
             },
           };
         }
+
+        diagnosticLog({
+          name: 'request_started',
+          params: {
+            requestType: 'request',
+            callbackUrl: decoded.callbackUrl,
+            sdkVersion: decoded.version,
+            appId: session.dappId,
+            appName: session.dappName,
+          },
+        });
 
         const decrypted = await decryptRequest(url, session);
         const message = mapDecryptedContentToRequest(decrypted.content.request, decoded);

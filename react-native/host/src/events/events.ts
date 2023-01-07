@@ -49,7 +49,7 @@ type SessionAddedEvent = {
 };
 
 // Response Encoding
-type ResponseEventParams = {
+export type ResponseEventParams = {
   callbackUrl: string;
   appName: string;
   appId: string;
@@ -72,7 +72,7 @@ type EncodeResponseFailureEvent = {
 };
 
 // Respond to client
-type SendSuccessResponseEvent = {
+export type SendSuccessResponseEvent = {
   name: 'send_success_response';
   params: {
     requestType: 'handshake' | 'request';
@@ -82,7 +82,7 @@ type SendSuccessResponseEvent = {
   };
 };
 
-type SendFailureResponseEvent = {
+export type SendFailureResponseEvent = {
   name: 'send_failure_response';
   params: {
     requestType: 'handshake' | 'request';
@@ -90,6 +90,26 @@ type SendFailureResponseEvent = {
     callbackUrl: string;
     appName?: string;
     appId?: string;
+  };
+};
+
+type RequestStartedEvent = {
+  name: 'request_started';
+  params: {
+    requestType: 'handshake' | 'request';
+    callbackUrl: string;
+    sdkVersion: string;
+    appName?: string;
+    appId?: string;
+  };
+};
+
+type ResponseHandledEvent = {
+  name: 'response_handled';
+  params: {
+    requestType: 'handshake' | 'request';
+    callbackUrl: string;
+    sdkVersion: string;
   };
 };
 
@@ -104,7 +124,9 @@ type MWPEvent =
   | EncodeResponseSuccessEvent
   | EncodeResponseFailureEvent
   | SendSuccessResponseEvent
-  | SendFailureResponseEvent;
+  | SendFailureResponseEvent
+  | RequestStartedEvent
+  | ResponseHandledEvent;
 
 const diagnosticLogger = new EventEmitter();
 
