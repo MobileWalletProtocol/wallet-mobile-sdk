@@ -12,6 +12,7 @@ import { MMKV } from 'react-native-mmkv';
 import { ActionsScreen } from './ActionsScreen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+// NOTE: Use a secure/encrypted storage mechanism in your app for this
 const mmkv = new MMKV();
 const storage: SecureStorage = {
   get: async function <T>(key: string): Promise<T | undefined> {
@@ -41,16 +42,18 @@ export default function Root() {
 }
 
 function App() {
-  const { message, handleRequestUrl } = useMobileWalletProtocolHost();
+  const { message, handleRequestUrl, sendFailureToClient } = useMobileWalletProtocolHost();
 
   // Handle incoming deeplinks
   useEffect(() => {
     const subscription = Linking.addEventListener('url', async ({ url }) => {
       console.log('Linking URL:', url);
 
-      const handled = await handleRequestUrl(url);
-      if (!handled) {
-        // Handle other cases...
+      const response = await handleRequestUrl(url);
+      if (response.error) {
+        // Return error to client app if session is expired or invalid
+        const { errorMessage, decodedRequest } = response.error;
+        await sendFailureToClient(errorMessage, decodedRequest);
       }
     });
 
@@ -62,7 +65,7 @@ function App() {
     })();
 
     return () => subscription.remove();
-  }, [handleRequestUrl]);
+  }, [handleRequestUrl, sendFailureToClient]);
 
   // Handle Android intents
   useEffect(() => {
@@ -70,11 +73,16 @@ function App() {
       (async function handleAndroidIntent() {
         const intentUrl = await getAndroidIntentUrl();
         if (intentUrl) {
-          await handleRequestUrl(intentUrl);
+          const response = await handleRequestUrl(intentUrl);
+          if (response.error) {
+            // Return error to client app if session is expired or invalid
+            const { errorMessage, decodedRequest } = response.error;
+            await sendFailureToClient(errorMessage, decodedRequest);
+          }
         }
       })();
     }
-  }, [handleRequestUrl]);
+  }, [handleRequestUrl, sendFailureToClient]);
 
   // Diagnostic events
   useEffect(() => {

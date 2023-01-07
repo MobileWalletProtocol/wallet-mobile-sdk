@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { isHandshakeAction, RequestAction } from '../action/action';
-import { decodeRequest, decryptRequest } from '../request/decoding';
+import { DecodedRequest, decodeRequest, decryptRequest } from '../request/decoding';
 import {
   mapDecryptedContentToRequest,
   mapHandshakeToRequest,
@@ -33,19 +33,29 @@ import { diagnosticLog } from '../events/events';
 type MWPHostContextType = {
   message: RequestMessage | null;
   session: Session | null;
-  handleRequestUrl: (url: string) => Promise<boolean>;
+  handleRequestUrl: (url: string) => Promise<HandleRequestUrlResponse>;
   fetchClientAppMetadata: () => Promise<AppMetadata | null>;
   isClientAppVerified: () => Promise<boolean>;
   approveHandshake: (metadata: AppMetadata | null) => Promise<boolean>;
   rejectHandshake: (description: string) => Promise<boolean>;
   approveAction: (action: RequestAction, result: ResultValue) => Promise<boolean>;
   rejectAction: (action: RequestAction, error: ErrorValue) => Promise<boolean>;
+  sendFailureToClient: (errorMessage: string, decodedRequest: DecodedRequest) => Promise<void>;
 };
 
 type MWPHostProviderProps = {
   secureStorage: SecureStorage;
   sessionExpiryDays: number;
   children?: ReactNode;
+};
+
+type HandleRequestUrlResponse = {
+  success: boolean;
+  error?: {
+    type: 'session_not_found' | 'session_expired';
+    errorMessage: string;
+    decodedRequest: DecodedRequest;
+  };
 };
 
 const actionToResponseMap = new Map<number, ReturnValue>();
@@ -70,16 +80,16 @@ export function MobileWalletProtocolProvider({
   );
 
   const handleRequestUrl = useCallback(
-    async (url: string): Promise<boolean> => {
+    async (url: string): Promise<HandleRequestUrlResponse> => {
       const decoded = await decodeRequest(url);
       if (!decoded) {
-        return false;
+        return { success: false };
       }
 
       if ('handshake' in decoded.content) {
         const message = mapHandshakeToRequest(decoded.content.handshake, decoded);
         updateActiveMessage(message, null);
-        return true;
+        return { success: true };
       }
 
       if ('request' in decoded.content) {
@@ -90,11 +100,15 @@ export function MobileWalletProtocolProvider({
             params: { callbackUrl: decoded.callbackUrl },
           });
 
-          await sendError(
-            'Session not found. Please initiate a handshake request prior to making a request',
-            decoded,
-          );
-          return false;
+          return {
+            success: false,
+            error: {
+              type: 'session_not_found',
+              errorMessage:
+                'Session not found. Please initiate a handshake request prior to making a request',
+              decodedRequest: decoded,
+            },
+          };
         }
 
         if (!isSessionValid(session, sessionExpiryDays)) {
@@ -108,20 +122,25 @@ export function MobileWalletProtocolProvider({
           });
 
           await deleteSessions(secureStorage, [session]);
-          await sendError(
-            'Session expired. Please initiate another handshake request to connect.',
-            decoded,
-          );
-          return false;
+
+          return {
+            success: false,
+            error: {
+              type: 'session_expired',
+              errorMessage:
+                'Session expired. Please initiate another handshake request to connect.',
+              decodedRequest: decoded,
+            },
+          };
         }
 
         const decrypted = await decryptRequest(url, session);
         const message = mapDecryptedContentToRequest(decrypted.content.request, decoded);
         updateActiveMessage(message, session);
-        return true;
+        return { success: true };
       }
 
-      return false;
+      return { success: false };
     },
     [secureStorage, sessionExpiryDays, updateActiveMessage],
   );
@@ -256,6 +275,7 @@ export function MobileWalletProtocolProvider({
       rejectAction,
       fetchClientAppMetadata: fetchAppMetadata,
       isClientAppVerified: isAppVerified,
+      sendFailureToClient: sendError,
     };
   }, [
     activeMessage,
