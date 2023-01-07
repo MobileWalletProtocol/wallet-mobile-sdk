@@ -23,6 +23,7 @@ import {
   getSessions,
   isSessionValid,
   SecureStorage,
+  Session,
 } from '../sessions/sessions';
 import { AppMetadata, fetchClientAppMetadata } from '../utils/fetchClientAppMetadata';
 import { isClientAppVerified } from '../utils/isClientAppVerified';
@@ -31,6 +32,7 @@ import { diagnosticLog } from '../events/events';
 
 type MWPHostContextType = {
   message: RequestMessage | null;
+  session: Session | null;
   handleRequestUrl: (url: string) => Promise<boolean>;
   fetchClientAppMetadata: () => Promise<AppMetadata | null>;
   isClientAppVerified: () => Promise<boolean>;
@@ -56,11 +58,16 @@ export function MobileWalletProtocolProvider({
   sessionExpiryDays,
 }: MWPHostProviderProps) {
   const [activeMessage, setActiveMessage] = useState<RequestMessage | null>(null);
+  const [activeSession, setActiveSession] = useState<Session | null>(null);
 
-  const updateActiveMessage = useCallback((message: RequestMessage | null) => {
-    actionToResponseMap.clear();
-    setActiveMessage(message);
-  }, []);
+  const updateActiveMessage = useCallback(
+    (message: RequestMessage | null, session: Session | null) => {
+      actionToResponseMap.clear();
+      setActiveMessage(message);
+      setActiveSession(session);
+    },
+    [],
+  );
 
   const handleRequestUrl = useCallback(
     async (url: string): Promise<boolean> => {
@@ -71,7 +78,7 @@ export function MobileWalletProtocolProvider({
 
       if ('handshake' in decoded.content) {
         const message = mapHandshakeToRequest(decoded.content.handshake, decoded);
-        updateActiveMessage(message);
+        updateActiveMessage(message, null);
         return true;
       }
 
@@ -110,7 +117,7 @@ export function MobileWalletProtocolProvider({
 
         const decrypted = await decryptRequest(url, session);
         const message = mapDecryptedContentToRequest(decrypted.content.request, decoded);
-        updateActiveMessage(message);
+        updateActiveMessage(message, session);
         return true;
       }
 
@@ -172,7 +179,7 @@ export function MobileWalletProtocolProvider({
 
       if (shouldRespondToClient(actionToResponseMap, activeMessage)) {
         await sendResponse(actionToResponseMap, activeMessage, secureStorage);
-        updateActiveMessage(null);
+        updateActiveMessage(null, null);
         return false;
       }
 
@@ -188,7 +195,7 @@ export function MobileWalletProtocolProvider({
       }
 
       await sendError(description, activeMessage);
-      updateActiveMessage(null);
+      updateActiveMessage(null, null);
       return false;
     },
     [activeMessage, updateActiveMessage],
@@ -204,7 +211,7 @@ export function MobileWalletProtocolProvider({
 
       if (shouldRespondToClient(actionToResponseMap, activeMessage)) {
         await sendResponse(actionToResponseMap, activeMessage, secureStorage);
-        updateActiveMessage(null);
+        updateActiveMessage(null, null);
         return false;
       }
 
@@ -224,12 +231,12 @@ export function MobileWalletProtocolProvider({
       if (action.optional) {
         if (shouldRespondToClient(actionToResponseMap, activeMessage)) {
           await sendResponse(actionToResponseMap, activeMessage, secureStorage);
-          updateActiveMessage(null);
+          updateActiveMessage(null, null);
           return false;
         }
       } else {
         await sendResponse(actionToResponseMap, activeMessage, secureStorage);
-        updateActiveMessage(null);
+        updateActiveMessage(null, null);
         return false;
       }
 
@@ -241,6 +248,7 @@ export function MobileWalletProtocolProvider({
   const value = useMemo(() => {
     return {
       message: activeMessage,
+      session: activeSession,
       handleRequestUrl,
       approveHandshake,
       rejectHandshake,
@@ -251,6 +259,7 @@ export function MobileWalletProtocolProvider({
     };
   }, [
     activeMessage,
+    activeSession,
     approveAction,
     approveHandshake,
     fetchAppMetadata,
