@@ -1,6 +1,6 @@
 {
   "name": "@coinbase/mobile-wallet-protocol-host",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A React Native library that implements the host side of the Mobile Wallet Protocol",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
