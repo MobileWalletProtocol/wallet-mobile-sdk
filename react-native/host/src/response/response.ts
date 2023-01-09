@@ -1,5 +1,5 @@
 import { Linking, Platform } from 'react-native';
-import { diagnosticLog } from '../events/events';
+import { diagnosticLog, ResponseEventParams } from '../events/events';
 import type { DecodedRequest } from '../request/decoding';
 
 import { isHandshakeAction, RequestAction } from '../action/action';
@@ -42,7 +42,29 @@ type ResponseMessage = {
   callbackUrl: string;
 };
 
-function getRequestType(request: RequestMessage | DecodedRequest): 'handshake' | 'request' {
+type RequestType = 'handshake' | 'request';
+
+type TypedResponseEventParams = ResponseEventParams & { requestType: RequestType };
+
+type EventParams =
+  | {
+      type: 'success';
+      params: TypedResponseEventParams;
+    }
+  | {
+      type: 'failure';
+      params: TypedResponseEventParams & { error: string };
+    };
+
+type RespondParams = {
+  response: ResponseMessage;
+  callbackUrl: string;
+  sessionPrivateKey?: string;
+  clientPublicKey?: string;
+  eventParams: EventParams;
+};
+
+function getRequestType(request: RequestMessage | DecodedRequest): RequestType {
   if ('content' in request) {
     // DecodedRequest
     if ('handshake' in request.content) {
@@ -58,14 +80,19 @@ function getRequestType(request: RequestMessage | DecodedRequest): 'handshake' |
 }
 
 // TODO: Move response encoding into native module and have separate function for encrypting
-async function respond(
-  response: ResponseMessage,
-  callbackUrl: string,
-  sessionPrivateKey?: string,
-  clientPublicKey?: string,
-) {
-  let encodedResponseUrl: string;
+async function respond({
+  response,
+  callbackUrl,
+  sessionPrivateKey,
+  clientPublicKey,
+  eventParams,
+}: RespondParams) {
+  diagnosticLog({
+    name: 'encode_response_start',
+    params: eventParams.params,
+  });
 
+  let encodedResponseUrl: string;
   if (sessionPrivateKey && clientPublicKey) {
     // Encrypted response
     const platformResponse = Platform.OS === 'android' ? JSON.stringify(response) : response;
@@ -82,6 +109,31 @@ async function respond(
     url.searchParams.set('p', encoded);
     encodedResponseUrl = url.toString();
   }
+
+  diagnosticLog({
+    name: 'encode_response_success',
+    params: eventParams.params,
+  });
+
+  switch (eventParams.type) {
+    case 'success':
+      diagnosticLog({
+        name: 'send_success_response',
+        params: eventParams.params,
+      });
+      break;
+    case 'failure':
+      diagnosticLog({
+        name: 'send_failure_response',
+        params: eventParams.params,
+      });
+      break;
+  }
+
+  diagnosticLog({
+    name: 'response_handled',
+    params: eventParams.params,
+  });
 
   if (Platform.OS === 'android') {
     await MWPHostModule.triggerWalletSDKCallback(encodedResponseUrl);
@@ -138,36 +190,30 @@ export async function sendResponse(
     },
   };
 
-  const eventParams = {
-    requestType: getRequestType(message),
-    appId: session.dappId,
-    appName: session.dappName,
-    callbackUrl: session.dappURL,
-    sdkVersion: session.version ?? '0',
+  const eventParams: EventParams = {
+    type: 'success',
+    params: {
+      requestType: getRequestType(message),
+      appId: session.dappId,
+      appName: session.dappName,
+      callbackUrl: session.dappURL,
+      sdkVersion: session.version ?? '0',
+    },
   };
 
-  diagnosticLog({
-    name: 'send_success_response',
-    params: eventParams,
-  });
-
   try {
-    diagnosticLog({
-      name: 'encode_response_start',
-      params: eventParams,
-    });
-
-    await respond(response, session.dappURL, session.sessionPrivateKey, session.clientPublicKey);
-
-    diagnosticLog({
-      name: 'encode_response_success',
-      params: eventParams,
+    await respond({
+      response,
+      callbackUrl: session.dappURL,
+      sessionPrivateKey: session.sessionPrivateKey,
+      clientPublicKey: session.clientPublicKey,
+      eventParams,
     });
   } catch (e) {
     diagnosticLog({
       name: 'encode_response_failure',
       params: {
-        ...eventParams,
+        ...eventParams.params,
         error: (e as Error).message,
       },
     });
@@ -193,37 +239,29 @@ export async function sendError(description: string, message: RequestMessage | D
     },
   };
 
-  const eventParams = {
-    appId: 'unknown',
-    appName: 'unknown',
-    requestType: getRequestType(message),
-    error: description,
-    callbackUrl: message.callbackUrl,
-    sdkVersion: message.version,
+  const eventParams: EventParams = {
+    type: 'failure',
+    params: {
+      requestType: getRequestType(message),
+      appId: 'unknown',
+      appName: 'unknown',
+      error: description,
+      callbackUrl: message.callbackUrl,
+      sdkVersion: message.version,
+    },
   };
 
-  diagnosticLog({
-    name: 'send_failure_response',
-    params: eventParams,
-  });
-
   try {
-    diagnosticLog({
-      name: 'encode_response_start',
-      params: eventParams,
-    });
-
-    await respond(response, message.callbackUrl);
-
-    diagnosticLog({
-      name: 'encode_response_success',
-      params: eventParams,
+    await respond({
+      response,
+      callbackUrl: message.callbackUrl,
+      eventParams,
     });
   } catch (e) {
     diagnosticLog({
       name: 'encode_response_failure',
       params: {
-        ...eventParams,
+        ...eventParams.params,
         error: (e as Error).message,
       },
     });
