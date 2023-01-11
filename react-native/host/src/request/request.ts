@@ -25,6 +25,8 @@ export function mapHandshakeToRequest(
     kind: 'handshake',
     appId: handshake.appId,
     callback: handshake.callback,
+    appName: handshake.appName,
+    appIconUrl: handshake.appIconUrl,
   };
 
   const additionalActions: RequestAction[] =

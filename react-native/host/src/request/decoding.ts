@@ -12,9 +12,10 @@ export type BaseRequest = {
 };
 
 export type HandshakeContent = {
-  // TODO: Handle additional handshake params
   appId: string;
   callback: string;
+  appName?: string;
+  appIconUrl?: string;
   initialActions?: { method: string; optional: boolean; paramsJson: string }[];
 };
 

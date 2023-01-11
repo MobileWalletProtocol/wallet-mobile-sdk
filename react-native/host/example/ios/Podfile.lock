@@ -81,7 +81,7 @@ PODS:
   - MMKV (1.2.14):
     - MMKVCore (~> 1.2.14)
   - MMKVCore (1.2.14)
-  - mobile-wallet-protocol-host (0.1.1):
+  - mobile-wallet-protocol-host (0.1.2):
     - CoinbaseWalletSDK/Host
     - React-Core
   - OpenSSL-Universal (1.1.1100)
@@ -574,7 +574,7 @@ SPEC CHECKSUMS:
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   MMKV: 9c4663aa7ca255d478ff10f2f5cb7d17c1651ccd
   MMKVCore: 89f5c8a66bba2dcd551779dea4d412eeec8ff5bb
-  mobile-wallet-protocol-host: 53e0839f1539a583bbaea2b3f89196f48f010bee
+  mobile-wallet-protocol-host: 022a421565dbd04131048b4527e21d71e47e1676
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   RCT-Folly: 0080d0a6ebf2577475bda044aa59e2ca1f909cda
   RCTRequired: e1866f61af7049eb3d8e08e8b133abd38bc1ca7a
