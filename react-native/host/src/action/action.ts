@@ -4,6 +4,8 @@ export type HandshakeAction = {
   kind: 'handshake';
   appId: string;
   callback: string;
+  appName?: string;
+  appIconUrl?: string;
 };
 
 export type RequestAction = {

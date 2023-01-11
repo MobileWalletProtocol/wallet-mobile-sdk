@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 
 type GenerateKeyPairResult = {
   publicKey: string;
@@ -116,4 +116,11 @@ type MWPHostNativeModule = {
 };
 
 export const MWPHostModule = NativeModules.MobileWalletProtocolHost as MWPHostNativeModule;
-export const getAndroidIntentUrl = MWPHostModule.getIntentUrl;
+
+export function getAndroidIntentUrl(): Promise<string | null> {
+  if (Platform.OS === 'android') {
+    return MWPHostModule.getIntentUrl();
+  } else {
+    return Promise.resolve(null);
+  }
+}
