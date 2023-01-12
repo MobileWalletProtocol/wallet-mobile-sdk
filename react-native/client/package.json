@@ -44,6 +44,7 @@
     "react-native": "*"
   },
   "resolutions": {
-    "@xmldom/xmldom": "^0.7.7"
+    "expo-module-scripts/**/json5": "^2.2.2",
+    "expo-module-scripts/**/jsdom": "^16.5.0"
   }
 }
