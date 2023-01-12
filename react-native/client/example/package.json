@@ -28,12 +28,12 @@
   "jest": {
     "preset": "react-native"
   },
-  "resolutions": {
-    "@xmldom/xmldom": "^0.7.7"
-  },
   "expo": {
     "autolinking": {
       "nativeModulesDir": ".."
     }
+  },
+  "resolutions": {
+    "expo/**/json5": "^2.2.2"
   }
 }
