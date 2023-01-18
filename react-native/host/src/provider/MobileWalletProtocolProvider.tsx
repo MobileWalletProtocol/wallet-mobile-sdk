@@ -222,6 +222,7 @@ export function MobileWalletProtocolProvider({
         return false;
       }
 
+      setActiveSession(session);
       return true;
     },
     [activeMessage, secureStorage, updateActiveMessage],
@@ -284,6 +285,14 @@ export function MobileWalletProtocolProvider({
     [activeMessage, secureStorage, updateActiveMessage],
   );
 
+  const sendFailureToClient = useCallback(
+    async (errorMessage: string, decodedRequest: DecodedRequest) => {
+      await sendError(errorMessage, decodedRequest);
+      updateActiveMessage(null, null);
+    },
+    [updateActiveMessage],
+  );
+
   const value = useMemo(() => {
     return {
       message: activeMessage,
@@ -293,9 +302,9 @@ export function MobileWalletProtocolProvider({
       rejectHandshake,
       approveAction,
       rejectAction,
+      sendFailureToClient,
       fetchClientAppMetadata: fetchAppMetadata,
       isClientAppVerified: isAppVerified,
-      sendFailureToClient: sendError,
     };
   }, [
     activeMessage,
@@ -307,6 +316,7 @@ export function MobileWalletProtocolProvider({
     isAppVerified,
     rejectAction,
     rejectHandshake,
+    sendFailureToClient,
   ]);
 
   return (
