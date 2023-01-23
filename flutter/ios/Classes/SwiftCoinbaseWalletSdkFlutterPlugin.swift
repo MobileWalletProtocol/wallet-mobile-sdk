@@ -58,6 +58,13 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
             return
         }
         
+        guard CoinbaseWalletSDK.isConfigured == false else {
+            #if DEBUG
+            result(FlutterError(code: "configure", message: "`CoinbaseWalletSDK.configure` should be called only once.", details: nil))
+            #endif
+            return
+        }
+        
         CoinbaseWalletSDK.configure(host: hostURL,callback: callbackURL)
         CoinbaseWalletSDK.appendVersionTag("flutter")
         
