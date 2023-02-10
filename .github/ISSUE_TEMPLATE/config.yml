@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Coinbase Cloud Forum
+    url: https://forums.coinbasecloud.dev/c/wallet
+    about: Official discussion site for the developer community building with Coinbase Cloud APIs and tools
   - name: Coinbase Wallet Developer Docs
     url: https://docs.cloud.coinbase.com/wallet-sdk/docs
     about: Coinbase Wallet's developer documentation
