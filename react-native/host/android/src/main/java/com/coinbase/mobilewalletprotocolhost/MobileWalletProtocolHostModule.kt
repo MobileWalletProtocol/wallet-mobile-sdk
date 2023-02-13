@@ -194,8 +194,12 @@ class MobileWalletProtocolHostModule(reactContext: ReactApplicationContext) : Re
 
     @ReactMethod
     fun getIntentUrl(promise: Promise) {
-        val activity = requireNotNull(currentActivity)
-        val data = activity.intent.data
-        promise.resolve(data?.toString())
+        try {
+            val activity = requireNotNull(currentActivity)
+            val data = activity.intent.data
+            promise.resolve(data?.toString())
+        } catch (e: Throwable) {
+            promise.reject(e)
+        }
     }
 }
