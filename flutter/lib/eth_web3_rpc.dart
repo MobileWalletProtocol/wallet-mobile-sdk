@@ -107,8 +107,8 @@ class SendTransaction extends Action {
           paramsJson: jsonEncode({
             'fromAddress': fromAddress,
             'chainId': chainId,
-            'weiValue': weiValue.toString(),
             'data': data,
+            'weiValue': weiValue.toString(),
             if (toAddress != null) 'toAddress': toAddress,
             if (nonce != null) 'nonce': nonce,
             if (gasPriceInWei != null)
