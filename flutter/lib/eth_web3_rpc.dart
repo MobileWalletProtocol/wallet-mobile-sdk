@@ -64,28 +64,30 @@ class SignTypedDataV4 extends Action {
 class SignTransaction extends Action {
   SignTransaction({
     required String fromAddress,
-    required String? toAddress,
+    required String chainId,
     required BigInt weiValue,
     required String data,
-    required int? nonce,
-    required BigInt? gasPriceInWei,
-    required BigInt? maxFeePerGas,
-    required BigInt? maxPriorityFeePerGas,
-    required BigInt? gasLimit,
-    required String chainId,
+    String? toAddress,
+    int? nonce,
+    BigInt? gasPriceInWei,
+    BigInt? maxFeePerGas,
+    BigInt? maxPriorityFeePerGas,
+    BigInt? gasLimit,
   }) : super(
           method: 'eth_signTransaction',
           paramsJson: jsonEncode({
             'fromAddress': fromAddress,
-            'toAddress': toAddress,
-            'weiValue': weiValue.toString(),
             'data': data,
-            'nonce': nonce,
-            'gasPriceInWei': gasPriceInWei?.toString(),
-            'maxFeePerGas': maxFeePerGas?.toString(),
-            'maxPriorityFeePerGas': maxPriorityFeePerGas?.toString(),
-            'gasLimit': gasLimit?.toString(),
             'chainId': chainId,
+            'weiValue': weiValue.toString(),
+            if (toAddress != null) 'toAddress': toAddress,
+            if (nonce != null) 'nonce': nonce,
+            if (gasPriceInWei != null)
+              'gasPriceInWei': gasPriceInWei.toString(),
+            if (maxFeePerGas != null) 'maxFeePerGas': maxFeePerGas.toString(),
+            if (maxPriorityFeePerGas != null)
+              'maxPriorityFeePerGas': maxPriorityFeePerGas.toString(),
+            if (gasLimit != null) 'gasLimit': gasLimit.toString(),
           }),
         );
 }
@@ -107,8 +109,8 @@ class SendTransaction extends Action {
           paramsJson: jsonEncode({
             'fromAddress': fromAddress,
             'chainId': chainId,
-            'data': data,
             'weiValue': weiValue.toString(),
+            'data': data,
             if (toAddress != null) 'toAddress': toAddress,
             if (nonce != null) 'nonce': nonce,
             if (gasPriceInWei != null)
@@ -116,7 +118,7 @@ class SendTransaction extends Action {
             if (maxFeePerGas != null) 'maxFeePerGas': maxFeePerGas.toString(),
             if (maxPriorityFeePerGas != null)
               'maxPriorityFeePerGas': maxPriorityFeePerGas.toString(),
-            if (gasLimit != null) 'gasLimit': gasLimit?.toString(),
+            if (gasLimit != null) 'gasLimit': gasLimit.toString(),
           }),
         );
 }
