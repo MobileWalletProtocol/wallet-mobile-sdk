@@ -1,4 +1,20 @@
 {
   "name": "example",
-  "displayName": "example"
+  "displayName": "example",
+  "android": {
+    "package": "com.anonymous.example"
+  },
+  "ios": {
+    "bundleIdentifier": "com.anonymous.example"
+  },
+  "plugins": [
+    [
+      "expo-build-properties",
+      {
+        "android": {
+          "minSdkVersion": 23
+        }
+      }
+    ]
+  ]
 }
