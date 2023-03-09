@@ -2,39 +2,6 @@ import ExpoModulesCore
 import CoinbaseWalletSDK
 import Foundation
 
-struct ActionRecord : Record {
-    @Field
-    var method: String
-
-    @Field
-    var paramsJson: String
-
-    @Field
-    var optional: Bool
-}
-
-struct AccountRecord : Record {
-    @Field
-    var chain: String
-
-    @Field
-    var networkId: Int
-
-    @Field
-    var address: String
-}
-
-struct ActionResultRecord : Record {
-    @Field
-    var result: String? = nil
-
-    @Field
-    var errorMessage: String? = nil
-
-    @Field
-    var errorCode: Int? = nil
-}
-
 public class CoinbaseWalletSDKModule: Module {
 
     var hasConfigured: Bool = false
@@ -43,13 +10,13 @@ public class CoinbaseWalletSDKModule: Module {
 
         Name("CoinbaseWalletSDK")
 
-        Function("configure") { (callbackURL: String, hostURL: String?, _: String?) in
+        Function("configure") { (params: ConfigParamsRecord) in
             guard #available(iOS 13.0, *), !self.hasConfigured else {
                 return
             }
 
             let host: URL
-            if let hostURLStr = hostURL {
+            if let hostURLStr = params.hostURL {
                 host = URL(string: hostURLStr)!
             } else {
                 host = URL(string: "https://wallet.coinbase.com/wsegue")!
@@ -58,21 +25,17 @@ public class CoinbaseWalletSDKModule: Module {
             self.hasConfigured = true
             CoinbaseWalletSDK.configure(
                 host: host,
-                callback: URL(string: callbackURL)!
+                callback: URL(string: params.callbackURL)!
             )
             CoinbaseWalletSDK.appendVersionTag("rn")
         }
 
-        AsyncFunction("initiateHandshake") { (initialActions: [ActionRecord], promise: Promise) in
+        AsyncFunction("initiateHandshake") { (params: HandshakeParamsRecord, promise: Promise) in
             guard #available(iOS 13.0, *) else {
                 return
             }
 
-            let actions: [Action] = initialActions.map { record in
-                let paramsJson = record.paramsJson.data(using: .utf8)!
-                let params = try! JSONSerialization.jsonObject(with: paramsJson) as! [String: Any]
-                return Action(method: record.method, params: params)
-            }
+            let actions: [Action] = params.initialActions.map { $0.asAction }
 
             CoinbaseWalletSDK.shared.initiateHandshake(initialActions: actions) { result, account in
                 switch result {
@@ -86,19 +49,15 @@ public class CoinbaseWalletSDKModule: Module {
             }
         }
 
-        AsyncFunction("makeRequest") { (actions: [ActionRecord], account: AccountRecord?, promise: Promise) in
+        AsyncFunction("makeRequest") { (params: RequestParamsRecord, promise: Promise) in
             guard #available(iOS 13.0, *) else {
                 return
             }
 
-            let requestActions: [Action] = actions.map { record in
-                let paramsJson = record.paramsJson.data(using: .utf8)!
-                let params = try! JSONSerialization.jsonObject(with: paramsJson) as! [String: Any]
-                return Action(method: record.method, params: params)
-            }
+            let requestActions: [Action] = params.actions.map { $0.asAction }
 
             let requestAccount: Account?
-            if let account = account {
+            if let account = params.account {
                 requestAccount = Account(
                     chain: account.chain,
                     networkId: UInt(account.networkId),
@@ -157,32 +116,5 @@ public class CoinbaseWalletSDKModule: Module {
 
             CoinbaseWalletSDK.shared.resetSession()
         }
-    }
-}
-
-extension ActionResult {
-    var asRecord: ActionResultRecord.Dict {
-        let record = ActionResultRecord()
-
-        switch self {
-        case .success(let value):
-            record.result = value.rawValue
-        case .failure(let error):
-            record.errorCode = error.code
-            record.errorMessage = error.message
-        }
-
-        return record.toDictionary()
-    }
-}
-
-extension Account {
-    var asRecord: AccountRecord.Dict {
-        let record = AccountRecord()
-        record.chain = self.chain
-        record.networkId = Int(self.networkId)
-        record.address = self.address
-        
-        return record.toDictionary()
     }
 }
