@@ -8,13 +8,19 @@ let package = Package(
     products: [
         .library(
             name: "CoinbaseWalletSDK",
-            targets: ["CoinbaseWalletSDK"]),
+            targets: ["CoinbaseWalletSDK"]
+        )
     ],
     targets: [
         .target(
             name: "CoinbaseWalletSDK",
-            path: "ios",
-            exclude: ["example"]
+            path: "ios/CoinbaseWalletSDK",
+            exclude: ["Host", "Test"]
         ),
+        .testTarget(
+            name: "CoinbaseWalletSDKTests",
+            dependencies: ["CoinbaseWalletSDK"],
+            path: "ios/CoinbaseWalletSDK/Test"
+        )
     ]
 )
