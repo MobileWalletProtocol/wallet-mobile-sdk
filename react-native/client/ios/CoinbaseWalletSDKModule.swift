@@ -4,6 +4,7 @@ import Foundation
 
 public class CoinbaseWalletSDKModule: Module {
 
+    let defaults = UserDefaults.standard
     var hasConfigured: Bool = false
 
     public func definition() -> ModuleDefinition {
@@ -37,14 +38,16 @@ public class CoinbaseWalletSDKModule: Module {
 
             let actions: [Action] = params.initialActions.map { $0.asAction }
 
-            CoinbaseWalletSDK.shared.initiateHandshake(initialActions: actions) { result, account in
-                switch result {
-                case .success(let response):
-                    let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
-                    let accountRecord = account?.asRecord
-                    promise.resolve([results, accountRecord])
-                case .failure(let error):
-                    promise.reject("handshake-error", error.localizedDescription)
+            DispatchQueue.main.async {
+                CoinbaseWalletSDK.shared.initiateHandshake(initialActions: actions) { result, account in
+                    switch result {
+                    case .success(let response):
+                        let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
+                        let accountRecord = account?.asRecord
+                        promise.resolve([results, accountRecord])
+                    case .failure(let error):
+                        promise.reject("handshake-error", error.localizedDescription)
+                    }
                 }
             }
         }
@@ -67,15 +70,17 @@ public class CoinbaseWalletSDKModule: Module {
                 requestAccount = nil
             }
 
-            CoinbaseWalletSDK.shared.makeRequest(
-                Request(actions: requestActions, account: requestAccount)
-            ) { result in
-                switch result {
-                case .success(let response):
-                    let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
-                    promise.resolve(results)
-                case .failure(let error):
-                    promise.reject("request-error", error.localizedDescription)
+            DispatchQueue.main.async {
+                CoinbaseWalletSDK.shared.makeRequest(
+                    Request(actions: requestActions, account: requestAccount)
+                ) { result in
+                    switch result {
+                    case .success(let response):
+                        let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
+                        promise.resolve(results)
+                    case .failure(let error):
+                        promise.reject("request-error", error.localizedDescription)
+                    }
                 }
             }
         }
@@ -115,6 +120,18 @@ public class CoinbaseWalletSDKModule: Module {
             }
 
             CoinbaseWalletSDK.shared.resetSession()
+        }
+
+        Function("setValue") { (key: String, value: String) in
+            defaults.set(value, forKey: "mwp_kv_store_\(key)")
+        }
+
+        Function("getValue") { (key: String) -> String? in
+            return defaults.string(forKey: "mwp_kv_store_\(key)")
+        }
+
+        Function("deleteValue") { (key: String) in
+            defaults.removeObject(forKey: "mwp_kv_store_\(key)")
         }
     }
 }

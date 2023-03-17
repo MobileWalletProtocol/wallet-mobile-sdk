@@ -1,5 +1,5 @@
 import React from 'react';
-import {useState, useMemo, useEffect, useCallback} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {
   Button,
   Linking,
@@ -18,7 +18,6 @@ import {
   handleResponse,
   WalletMobileSDKEVMProvider,
 } from '@coinbase/wallet-mobile-sdk';
-import {MMKV} from 'react-native-mmkv';
 
 // Configure Mobile SDK
 configure({
@@ -28,13 +27,11 @@ configure({
 });
 
 const provider = new WalletMobileSDKEVMProvider();
-const storage = new MMKV();
 
 const App = function () {
   const [log, setLog] = useState('');
 
-  const cachedAddress = useMemo(() => storage.getString('address'), []);
-  const [address, setAddress] = useState(cachedAddress);
+  const [address, setAddress] = useState(provider.selectedAddress);
 
   const isConnected = address !== undefined;
 
@@ -64,7 +61,6 @@ const App = function () {
         params: [],
       });
       setAddress(accounts[0]);
-      storage.set('address', accounts[0]);
 
       logMessage(`<-- ${accounts}`);
     } catch (e) {
@@ -79,7 +75,6 @@ const App = function () {
 
     provider.disconnect();
     setAddress(undefined);
-    storage.delete('address');
   }, [logMessage]);
 
   const personalSign = useCallback(async () => {

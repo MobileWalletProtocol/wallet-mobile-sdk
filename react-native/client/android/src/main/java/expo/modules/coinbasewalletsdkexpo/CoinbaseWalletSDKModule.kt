@@ -1,5 +1,6 @@
 package expo.modules.coinbasewalletsdkexpo
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.coinbase.android.nativesdk.CoinbaseWalletSDK
@@ -22,6 +23,9 @@ import expo.modules.kotlin.records.Record
 
 class CoinbaseWalletSDKModule : Module() {
     private var sdk: CoinbaseWalletSDK? = null
+    private val sharedPref by lazy {
+        appContext.reactContext?.applicationContext?.getSharedPreferences("mwp_kv_storage", Context.MODE_PRIVATE)
+    }
 
     override fun definition() = ModuleDefinition {
 
@@ -121,6 +125,24 @@ class CoinbaseWalletSDKModule : Module() {
 
         Function("resetSession") {
             sdk?.resetSession()
+        }
+
+        Function("setValue") { key: String, value: String ->
+            val store = sharedPref ?: return@Function
+            store.edit()
+                .putString(key, value)
+                .apply()
+        }
+
+        Function("getValue") { key: String ->
+            return@Function sharedPref?.getString(key, null)
+        }
+
+        Function("deleteValue") { key: String ->
+            val store = sharedPref ?: return@Function
+            store.edit()
+                .remove(key)
+                .apply()
         }
     }
 }

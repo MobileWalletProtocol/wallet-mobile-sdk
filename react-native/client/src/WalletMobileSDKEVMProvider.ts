@@ -33,8 +33,8 @@ import {
 } from "@coinbase/wallet-sdk/dist/util";
 import { EthereumTransactionParams } from "@coinbase/wallet-sdk/dist/relay/EthereumTransactionParams";
 import BN from "bn.js";
-import { MMKV, NativeMMKV } from "react-native-mmkv";
 import SafeEventEmitter from "@metamask/safe-event-emitter";
+import NativeStorage from "./NativeStorage";
 
 global.Buffer = global.Buffer || require("buffer").Buffer;
 
@@ -48,8 +48,11 @@ export interface WalletMobileSDKProviderOptions {
   address?: string;
 }
 
-export interface KVStorage
-  extends Pick<NativeMMKV, "set" | "getString" | "delete"> {}
+export interface KVStorage {
+  set: (key: string, value: string) => void;
+  getString: (key: string) => string | undefined;
+  delete: (key: string) => void;
+}
 
 interface AddEthereumChainParams {
   chainId: string;
@@ -97,7 +100,7 @@ export class WalletMobileSDKEVMProvider
     this._setAddresses = this._setAddresses.bind(this);
     this._getChainId = this._getChainId.bind(this);
 
-    this._storage = opts?.storage ?? new MMKV({ id: "mobile_sdk.store" });
+    this._storage = opts?.storage ?? NativeStorage;
     this._chainId = opts?.chainId;
     this._jsonRpcUrl = opts?.jsonRpcUrl;
 
