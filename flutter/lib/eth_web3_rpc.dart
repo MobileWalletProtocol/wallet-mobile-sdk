@@ -129,7 +129,7 @@ class SwitchEthereumChain extends Action {
   }) : super(
           method: 'wallet_switchEthereumChain',
           paramsJson: jsonEncode({
-            'chainId': chainId,
+            'chainId': '$chainId',
           }),
         );
 }
