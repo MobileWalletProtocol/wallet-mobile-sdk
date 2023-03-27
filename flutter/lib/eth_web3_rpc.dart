@@ -125,7 +125,7 @@ class SendTransaction extends Action {
 
 class SwitchEthereumChain extends Action {
   SwitchEthereumChain({
-    required int chainId,
+    required String chainId,
   }) : super(
           method: 'wallet_switchEthereumChain',
           paramsJson: jsonEncode({
