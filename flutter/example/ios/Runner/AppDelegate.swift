@@ -17,10 +17,8 @@ import CoinbaseWalletSDK
       open url: URL, 
       options: [UIApplication.OpenURLOptionsKey : Any] = [:]
     ) -> Bool {
-        if(CoinbaseWalletSDK.isConfigured){
-            if (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true {
-                    return true
-                }
+        if (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true {
+            return true
         }
         // handle other types of deep links
         return false
@@ -31,11 +29,9 @@ import CoinbaseWalletSDK
       continue userActivity: NSUserActivity, 
       restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
-        if(CoinbaseWalletSDK.isConfigured){
-           if let url = userActivity.webpageURL,
-              (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true {
-               return true
-           }
+        if let url = userActivity.webpageURL,
+           (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true {
+            return true
         }
         // handle other types of deep links
         return false
