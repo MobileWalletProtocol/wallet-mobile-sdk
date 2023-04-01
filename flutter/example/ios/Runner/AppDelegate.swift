@@ -17,6 +17,8 @@ import CoinbaseWalletSDK
       open url: URL, 
       options: [UIApplication.OpenURLOptionsKey : Any] = [:]
     ) -> Bool {
+        guard CoinbaseWalletSDK.isConfigured else { return false }
+        
         if (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true {
             return true
         }
@@ -29,6 +31,8 @@ import CoinbaseWalletSDK
       continue userActivity: NSUserActivity, 
       restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
+        guard CoinbaseWalletSDK.isConfigured else { return false }
+        
         if let url = userActivity.webpageURL,
            (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true {
             return true
