@@ -1,4 +1,4 @@
-package com.anonymous.example;
+package com.example.rndapp;
 
 import android.app.Application;
 import android.content.res.Configuration;

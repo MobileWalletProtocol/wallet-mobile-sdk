@@ -1,20 +1,23 @@
 {
-  "name": "example",
-  "displayName": "example",
-  "android": {
-    "package": "com.anonymous.example"
-  },
-  "ios": {
-    "bundleIdentifier": "com.anonymous.example"
-  },
-  "plugins": [
-    [
-      "expo-build-properties",
-      {
-        "android": {
-          "minSdkVersion": 23
+  "expo": {
+    "name": "Example RN Dapp",
+    "slug": "example-rn-dapp",
+    "scheme": "example.rn.dapp",
+    "android": {
+      "package": "com.example.rndapp"
+    },
+    "ios": {
+      "bundleIdentifier": "com.example.rndapp"
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 23
+          }
         }
-      }
+      ]
     ]
-  ]
+  }
 }

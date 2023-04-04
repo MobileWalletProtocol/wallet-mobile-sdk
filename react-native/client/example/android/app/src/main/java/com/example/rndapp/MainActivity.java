@@ -1,4 +1,4 @@
-package com.anonymous.example;
+package com.example.rndapp;
 
 import android.os.Build;
 import android.os.Bundle;
