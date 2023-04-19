@@ -4,14 +4,12 @@ import Foundation
 
 public class CoinbaseWalletSDKModule: Module {
 
-    var hasConfigured: Bool = false
-
     public func definition() -> ModuleDefinition {
 
         Name("CoinbaseWalletSDK")
 
         Function("configure") { (params: ConfigParamsRecord) in
-            guard #available(iOS 13.0, *), !self.hasConfigured else {
+            guard #available(iOS 13.0, *), !CoinbaseWalletSDK.isConfigured else {
                 return
             }
 
@@ -22,7 +20,6 @@ public class CoinbaseWalletSDKModule: Module {
                 host = URL(string: "https://wallet.coinbase.com/wsegue")!
             }
 
-            self.hasConfigured = true
             CoinbaseWalletSDK.configure(
                 host: host,
                 callback: URL(string: params.callbackURL)!
