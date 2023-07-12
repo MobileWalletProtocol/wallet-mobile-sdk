@@ -1,6 +1,6 @@
 name: coinbase_wallet_sdk
 description: Fluter implementation of Coinbase Wallet SDK.
-version: 1.0.6
+version: 1.0.7
 homepage: https://wallet.coinbase.com
 
 environment:

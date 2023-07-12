@@ -4,7 +4,7 @@ kotlin = "1.6.21"
 kotlinSerialization = "1.4.1"
 nexus-publish = "1.1.0"
 
-sdk-version = "1.0.4"
+sdk-version = "1.0.7"
 
 [libraries]
 
