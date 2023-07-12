@@ -50,7 +50,6 @@ jobs:
           reviewers: |
             bangtoven
             vishnumad
-            AMITGOELNY
           commit-message: "[Version update host] v${{env.NEW_VERSION}}"
           labels: version-update-host
           delete-branch: true

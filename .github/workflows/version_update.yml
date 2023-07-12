@@ -90,7 +90,6 @@ jobs:
           reviewers: |
             bangtoven
             vishnumad
-            AMITGOELNY
           commit-message: "[Version update] v${{env.NEW_VERSION}}"
           labels: version-update
           delete-branch: true
