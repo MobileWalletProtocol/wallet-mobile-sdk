@@ -105,7 +105,7 @@ class SendTransaction extends Action {
     BigInt? maxPriorityFeePerGas,
     BigInt? gasLimit,
   }) : super(
-          method: 'eth_signTransaction',
+          method: 'eth_sendTransaction',
           paramsJson: jsonEncode({
             'fromAddress': fromAddress,
             'chainId': chainId,
