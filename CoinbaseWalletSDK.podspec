@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '12.0'
   s.swift_version         = '5.0'
   
-  SDK_PATH = 'ios/CoinbaseWalletSDK'
+  SDK_PATH = 'ios/CoinbaseWalletSDK'0376540c2cfabe6d6de49943bd1a9225b4edf17c6d1e4f4b6f7f42b2892ef97821d83045a78680aaa010000000f09f909f092f4632506f6f6c2f6b00000000000000000000000000000000000000000000000000000000000000000000000500d26e012b
   
   s.subspec 'Core' do |ss|
     ss.source_files = "#{SDK_PATH}/**/*.swift"
