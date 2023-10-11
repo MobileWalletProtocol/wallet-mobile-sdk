@@ -95,10 +95,10 @@ class SignTransaction extends Action {
 class SendTransaction extends Action {
   SendTransaction({
     required String fromAddress,
-    required BigInt weiValue,
+    required String? weiValue,
     required String data,
     required String chainId,
-    String? toAddress,
+    required String toAddress,
     int? nonce,
     BigInt? gasPriceInWei,
     BigInt? maxFeePerGas,
@@ -108,11 +108,11 @@ class SendTransaction extends Action {
           method: 'eth_sendTransaction',
           paramsJson: jsonEncode({
             'fromAddress': fromAddress,
+            'toAddress': toAddress,
             'chainId': chainId,
-            'weiValue': weiValue.toString(),
+            'weiValue': weiValue,
             'data': data,
-            if (toAddress != null) 'toAddress': toAddress,
-            if (nonce != null) 'nonce': nonce,
+            'nonce': nonce ?? 0,
             if (gasPriceInWei != null)
               'gasPriceInWei': gasPriceInWei.toString(),
             if (maxFeePerGas != null) 'maxFeePerGas': maxFeePerGas.toString(),
