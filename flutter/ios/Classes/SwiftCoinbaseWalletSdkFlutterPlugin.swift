@@ -34,6 +34,10 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
             if (call.method == "isAppInstalled") {
                 return isAppInstalled(result: result)
             }
+
+            if (call.method == "isConnected") {
+                return isConnected(result: result)
+            }
         } catch {
             result(FlutterError(code: "handle", message: error.localizedDescription, details: nil))
             return
@@ -44,6 +48,10 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
 
     private func isAppInstalled(result: @escaping FlutterResult) {
         result(CoinbaseWalletSDK.isCoinbaseWalletInstalled())
+    }
+
+    private func isConnected(result: @escaping FlutterResult) {
+        result(CoinbaseWalletSDK.shared.isConnected())
     }
     
     private func configure(call: FlutterMethodCall, result: @escaping FlutterResult) {

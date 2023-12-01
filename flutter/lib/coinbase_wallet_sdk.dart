@@ -73,6 +73,13 @@ class CoinbaseWalletSDK {
     return result ?? false;
   }
 
+  /// Check whether there is an active session
+  Future<bool> isConnected() async {
+    final result =
+        await CoinbaseWalletSdkFlutterPlatform.instance.call('isConnected');
+    return result ?? false;
+  }
+
   // private helper methods
 
   Future<void> _configureIOS(IOSConfiguration? configuration) async {
