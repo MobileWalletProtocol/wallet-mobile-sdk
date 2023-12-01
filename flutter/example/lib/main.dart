@@ -117,6 +117,14 @@ class _MyAppState extends State<MyApp> {
                   );
                 }),
               ),
+              FutureBuilder<bool>(
+                future: CoinbaseWalletSDK.shared.isConnected(),
+                builder: ((context, snapshot) {
+                  return Text(
+                    'Is connected? ${snapshot.data}',
+                  );
+                }),
+              ),
               TextButton(
                 onPressed: () => _requestAccount(),
                 child: const Text("Request Account"),
