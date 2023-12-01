@@ -21,6 +21,7 @@ class _MyAppState extends State<MyApp> {
   String _addy = "";
   String _signed = "";
   String _sessionCleared = "";
+  bool _isConnected = false;
 
   @override
   void initState() {
@@ -36,6 +37,20 @@ class _MyAppState extends State<MyApp> {
       ),
     );
     super.initState();
+  }
+
+  Future<void> _checkIsConnected() async {
+    bool isConnected;
+    try {
+      final result = await CoinbaseWalletSDK.shared.isConnected();
+      isConnected = result;
+    } catch (e) {
+      isConnected = false;
+    }
+
+    setState(() {
+      _isConnected = isConnected;
+    });
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -89,7 +104,7 @@ class _MyAppState extends State<MyApp> {
     try {
       await CoinbaseWalletSDK.shared.resetSession();
       setState(() {
-        _sessionCleared = "SEssion Cleared!";
+        _sessionCleared = "Session Cleared!";
       });
     } catch (e) {
       setState(() {
@@ -117,26 +132,25 @@ class _MyAppState extends State<MyApp> {
                   );
                 }),
               ),
-              FutureBuilder<bool>(
-                future: CoinbaseWalletSDK.shared.isConnected(),
-                builder: ((context, snapshot) {
-                  return Text(
-                    'Is connected? ${snapshot.data}',
-                  );
-                }),
+              const SizedBox(height: 25),
+              TextButton(
+                onPressed: () => _checkIsConnected(),
+                child: const Text("Is Connected"),
               ),
+              Text('isConnected is \n\n $_isConnected'),
+              const SizedBox(height: 25),
               TextButton(
                 onPressed: () => _requestAccount(),
                 child: const Text("Request Account"),
               ),
               Text('address is\n\n $_addy'),
-              const SizedBox(height: 50),
+              const SizedBox(height: 25),
               TextButton(
                 onPressed: () => _personalSign(),
                 child: const Text("personalSign"),
               ),
               Text('signed message is\n\n $_signed'),
-              const SizedBox(height: 50),
+              const SizedBox(height: 25),
               TextButton(
                 onPressed: () => _resetSession(),
                 child: const Text("Reset Session"),
