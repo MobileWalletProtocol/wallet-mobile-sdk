@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk.dart';
 import 'package:coinbase_wallet_sdk/configuration.dart';
+import 'package:coinbase_wallet_sdk/currency.dart';
 import 'package:coinbase_wallet_sdk/eth_web3_rpc.dart';
 import 'package:coinbase_wallet_sdk/request.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class _MyAppState extends State<MyApp> {
   String _signed = "";
   String _sessionCleared = "";
   bool _isConnected = false;
+  String? _chain = null;
 
   @override
   void initState() {
@@ -113,6 +115,62 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  Future<void> _switchChain() async {
+    String chainId = '10';
+    try {
+      final request = Request(
+        actions: [SwitchEthereumChain(chainId: chainId)],
+      );
+      final results = await CoinbaseWalletSDK.shared.makeRequest(request);
+
+      // If the widget was removed from the tree while the asynchronous platform
+      // message was in flight, we want to discard the reply rather than calling
+      // setState to update our non-existent appearance.
+      if (!mounted) return;
+
+      if (results[0].error == null) {
+        setState(() {
+          _chain = chainId;
+        });
+      }
+    } catch (e) {
+      debugPrint('error --> $e');
+    }
+  }
+
+  Future<void> _addChain() async {
+    String chainId = '7777777';
+    String chainName = 'Zora';
+    List<String> rpcUrls = ['https://rpc.zora.energy'];
+    Currency currency = Currency(name: 'ETH', symbol: 'ETH', decimals: 18);
+    try {
+      final request = Request(
+        actions: [
+          AddEthereumChain(
+            chainId: chainId,
+            chainName: chainName,
+            rpcUrls: rpcUrls,
+            nativeCurrency: currency,
+          )
+        ],
+      );
+      final results = await CoinbaseWalletSDK.shared.makeRequest(request);
+
+      // If the widget was removed from the tree while the asynchronous platform
+      // message was in flight, we want to discard the reply rather than calling
+      // setState to update our non-existent appearance.
+      if (!mounted) return;
+
+      if (results[0].error == null) {
+        setState(() {
+          _chain = chainId;
+        });
+      }
+    } catch (e) {
+      debugPrint('error --> $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -132,30 +190,40 @@ class _MyAppState extends State<MyApp> {
                   );
                 }),
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 20),
               TextButton(
                 onPressed: () => _checkIsConnected(),
                 child: const Text("Is Connected"),
               ),
-              Text('isConnected is \n\n $_isConnected'),
-              const SizedBox(height: 25),
+              Text('isConnected is $_isConnected'),
+              const SizedBox(height: 20),
               TextButton(
                 onPressed: () => _requestAccount(),
                 child: const Text("Request Account"),
               ),
-              Text('address is\n\n $_addy'),
-              const SizedBox(height: 25),
+              Text('address is\n $_addy'),
+              const SizedBox(height: 20),
               TextButton(
                 onPressed: () => _personalSign(),
                 child: const Text("personalSign"),
               ),
-              Text('signed message is\n\n $_signed'),
-              const SizedBox(height: 25),
+              Text('signed message is\n $_signed'),
+              const SizedBox(height: 20),
               TextButton(
                 onPressed: () => _resetSession(),
                 child: const Text("Reset Session"),
               ),
-              Text('is reset\n\n $_sessionCleared'),
+              Text('is reset: $_sessionCleared'),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () => _switchChain(),
+                child: const Text("Switch Chain"),
+              ),
+              TextButton(
+                onPressed: () => _addChain(),
+                child: const Text("Add Chain"),
+              ),
+              Text('chain is ${_chain ?? 'undefined'}'),
             ],
           ),
         ),
