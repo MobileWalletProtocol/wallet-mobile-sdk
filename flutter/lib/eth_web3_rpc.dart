@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:coinbase_wallet_sdk/action.dart';
+import 'package:coinbase_wallet_sdk/currency.dart';
 
 class RequestAccounts extends Action {
   const RequestAccounts()
@@ -130,6 +131,28 @@ class SwitchEthereumChain extends Action {
           method: 'wallet_switchEthereumChain',
           paramsJson: jsonEncode({
             'chainId': chainId,
+          }),
+        );
+}
+
+class AddEthereumChain extends Action {
+  AddEthereumChain({
+    required String chainId,
+    required List<String> rpcUrls,
+    String? chainName,
+    Currency? nativeCurrency,
+    List<String>? iconUrls,
+    List<String>? blockExplorerUrls,
+  }) : super(
+          method: 'wallet_addEthereumChain',
+          paramsJson: jsonEncode({
+            'chainId': chainId,
+            'rpcUrls': rpcUrls,
+            if (chainName != null) 'chainName': chainName,
+            if (nativeCurrency != null) 'nativeCurrency': nativeCurrency,
+            if (iconUrls != null) 'iconUrls': iconUrls,
+            if (blockExplorerUrls != null)
+              'blockExplorerUrls': blockExplorerUrls,
           }),
         );
 }
