@@ -481,7 +481,7 @@ export class WalletMobileSDKEVMProvider
           ? bigIntStringFromBN(tx.maxPriorityFeePerGas)
           : null,
         gasLimit: tx.gasLimit ? bigIntStringFromBN(tx.gasLimit) : null,
-        chainId: tx.chainId,
+        chainId: tx.chainId.toString(),
       },
     };
 
@@ -503,6 +503,7 @@ export class WalletMobileSDKEVMProvider
     value?: unknown;
     data?: unknown;
     nonce?: unknown;
+    chainId?: unknown;
   }): EthereumTransactionParams {
     const fromAddress = tx.from ? ensureAddressString(tx.from) : null;
     if (!fromAddress) {
@@ -521,9 +522,7 @@ export class WalletMobileSDKEVMProvider
         ? ensureBN(tx.maxPriorityFeePerGas)
         : null;
     const gasLimit = tx.gas != null ? ensureBN(tx.gas) : null;
-    const chainId = this._chainId
-      ? IntNumber(this._chainId)
-      : this._getChainId();
+    const chainId = tx.chainId ? ensureIntNumber(tx.chainId) : this._getChainId();
 
     return {
       fromAddress,
