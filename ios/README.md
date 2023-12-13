@@ -75,7 +75,7 @@ func application(_ app: UIApplication, open url: URL ...) -> Bool {
 }
 ```
 
-It’s recommended to place this configuration logic in the AppDelegate as shown in this [example](https://github.com/coinbase/wallet-mobile-sdk/blob/master/ios/example/SampleClient/AppDelegate.swift#L19).
+It’s recommended to place this configuration logic in the AppDelegate as shown in this [example](ios/example/SampleClient/AppDelegate.swift#L19).
 
 ### Establishing a connection
 
@@ -103,7 +103,7 @@ cbwallet.initiateHandshake(
 }
 ```
 
-An example handshake request is provided in the sample [application](https://github.com/coinbase/wallet-mobile-sdk/blob/master/ios/example/SampleClient/ViewController.swift#L63).
+An example handshake request is provided in the sample [application](ios/example/SampleClient/ViewController.swift#L63).
 
 ### Making requests
 

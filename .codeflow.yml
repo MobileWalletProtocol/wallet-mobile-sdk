@@ -1,7 +1,3 @@
 secure:
   required_reviews: 1
-  upstream_repository: coinbase/wallet-mobile-sdk
-operate:
-  slack_channels:
-    - "#wallet-squad-build"
-    - "#wallet-feedback"
+  upstream_repository: MobileWalletProtocol/wallet-mobile-sdk
