@@ -78,7 +78,7 @@ public class CoinbaseWalletSDKModule: Module {
         }
 
         Function("handleResponse") { (url: String) -> Bool in
-            guard #available(iOS 13.0, *) else {
+            guard #available(iOS 13.0, *), !CoinbaseWalletSDK.isConfigured else {
                 return false
             }
 
