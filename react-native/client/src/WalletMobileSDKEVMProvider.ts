@@ -147,6 +147,7 @@ export class WalletMobileSDKEVMProvider
     resetSession();
     this._addresses = [];
     this._storage.delete(CACHED_ADDRESSES_KEY);
+    this.emit('disconnect');
     return true;
   }
 
