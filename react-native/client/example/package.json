@@ -16,7 +16,7 @@
     "expo-status-bar": "~1.6.0",
     "react": "18.2.0",
     "react-native": "0.72.1",
-    "react-native-mmkv": "^2.6.3"
+    "react-native-mmkv": "^2.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
