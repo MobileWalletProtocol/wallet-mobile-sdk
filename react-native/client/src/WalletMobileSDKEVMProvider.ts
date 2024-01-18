@@ -146,7 +146,7 @@ export class WalletMobileSDKEVMProvider
     resetSession();
     this._addresses = [];
     this._storage.delete(CACHED_ADDRESSES_KEY);
-    this.emit('disconnect');
+    this.emit("disconnect");
     return true;
   }
 
@@ -394,7 +394,7 @@ export class WalletMobileSDKEVMProvider
 
   private async _eth_requestAccounts(): Promise<JSONRPCResponse> {
     const action: Action = {
-      method: 'eth_requestAccounts',
+      method: "eth_requestAccounts",
       params: {},
     };
 
@@ -413,7 +413,7 @@ export class WalletMobileSDKEVMProvider
     const address = ensureAddressString(params[1]);
 
     const action: Action = {
-      method: 'personal_sign',
+      method: "personal_sign",
       params: {
         message,
         address,
@@ -439,8 +439,8 @@ export class WalletMobileSDKEVMProvider
     const action: Action = {
       method:
         type === "v3"
-          ? 'eth_signTypedData_v3'
-          : 'eth_signTypedData_v4',
+          ? "eth_signTypedData_v3"
+          : "eth_signTypedData_v4",
       params: {
         address,
         typedDataJson,
@@ -463,8 +463,8 @@ export class WalletMobileSDKEVMProvider
     const tx = this._prepareTransactionParams((params[0] as any) || {});
     const action: Action = {
       method: shouldSubmit
-        ? 'eth_sendTransaction'
-        : 'eth_signTransaction',
+        ? "eth_sendTransaction"
+        : "eth_signTransaction",
       params: {
         fromAddress: tx.fromAddress,
         toAddress: tx.toAddress,
@@ -556,7 +556,7 @@ export class WalletMobileSDKEVMProvider
     }
 
     const action: Action = {
-      method: 'wallet_switchEthereumChain',
+      method: "wallet_switchEthereumChain",
       params: {
         chainId: chainId.toString(),
       },
@@ -600,7 +600,7 @@ export class WalletMobileSDKEVMProvider
     const chainIdNumber = parseInt(request.chainId, 16);
 
     const action: Action = {
-      method: 'wallet_addEthereumChain',
+      method: "wallet_addEthereumChain",
       params: {
         chainId: chainIdNumber.toString(),
         blockExplorerUrls: request.blockExplorerUrls ?? null,
@@ -652,7 +652,7 @@ export class WalletMobileSDKEVMProvider
     const { address, symbol, image, decimals } = request.options;
 
     const action: Action = {
-      method: 'wallet_watchAsset',
+      method: "wallet_watchAsset",
       params: {
         type: request.type,
         options: {
