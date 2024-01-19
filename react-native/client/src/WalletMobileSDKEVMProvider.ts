@@ -1,16 +1,16 @@
 import {
   RequestArguments,
   Web3Provider,
-} from "@coinbase/wallet-sdk/dist/provider/Web3Provider";
+} from "./types/provider/Web3Provider";
 import {
   JSONRPCRequest,
   JSONRPCResponse,
-} from "@coinbase/wallet-sdk/dist/provider/JSONRPC";
+} from "./types/provider/JSONRPC";
 import {
   AddressString,
   Callback,
   IntNumber,
-} from "@coinbase/wallet-sdk/dist/core/type";
+} from "./types/core/type";
 import { ethErrors } from "eth-rpc-errors";
 import {
   initiateHandshake,
@@ -29,8 +29,7 @@ import {
   hexStringFromBuffer,
   hexStringFromIntNumber,
   prepend0x,
-} from "@coinbase/wallet-sdk/dist/core/util";
-import { EthereumTransactionParams } from "@coinbase/wallet-sdk/dist/relay/walletlink/type/EthereumTransactionParams";
+} from "./types/core/util";
 import BN from "bn.js";
 import { MMKV, NativeMMKV } from "react-native-mmkv";
 import SafeEventEmitter from "@metamask/safe-event-emitter";
@@ -75,6 +74,19 @@ interface WatchAssetParams {
     decimals?: number;
     image?: string;
   };
+}
+
+interface EthereumTransactionParams {
+  fromAddress: AddressString;
+  toAddress: AddressString | null;
+  weiValue: BN;
+  data: Buffer;
+  nonce: IntNumber | null;
+  gasPriceInWei: BN | null;
+  maxFeePerGas: BN | null; // in wei
+  maxPriorityFeePerGas: BN | null; // in wei
+  gasLimit: BN | null;
+  chainId: IntNumber;
 }
 
 export class WalletMobileSDKEVMProvider
