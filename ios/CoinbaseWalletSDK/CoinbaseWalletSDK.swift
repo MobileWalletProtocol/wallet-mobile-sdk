@@ -102,7 +102,7 @@ public final class CoinbaseWalletSDK {
     ) {
         let hasUnsupportedAction = initialActions?.contains(where: {
             let action = $0
-            return unsupportedHandShakeMethod.contains(where: {action.method == $0 })
+            return $0.method.hasPrefix("eth_sign") || $0.method.hasPrefix("eth_send")
         })
         
         guard !(CoinbaseWalletSDK.verificationMethod == .callbackConfirmation && hasUnsupportedAction == true) else {
