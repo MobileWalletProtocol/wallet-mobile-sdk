@@ -8,7 +8,6 @@
 import Foundation
 import CryptoKit
 
-@available(iOS 13.0, *)
 public final class CoinbaseWalletHostSDK {
     public static func deriveSymmetricKey(
         with ownPrivateKey: CoinbaseWalletSDK.PrivateKey,

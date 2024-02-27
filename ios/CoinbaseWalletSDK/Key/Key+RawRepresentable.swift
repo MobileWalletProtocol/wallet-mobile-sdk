@@ -12,9 +12,7 @@ public protocol RawRepresentableKey: Codable {
     var rawRepresentation: Data { get }
 }
 
-@available(iOS 13.0, *)
 extension CoinbaseWalletSDK.PrivateKey: RawRepresentableKey {}
-@available(iOS 13.0, *)
 extension CoinbaseWalletSDK.PublicKey: RawRepresentableKey {}
 
 extension RawRepresentableKey {

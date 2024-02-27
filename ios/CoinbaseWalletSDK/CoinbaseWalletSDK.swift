@@ -9,11 +9,20 @@ import Foundation
 import CryptoKit
 import UIKit
 
-@available(iOS 13.0, *)
 public final class CoinbaseWalletSDK {
     
     static public func isCoinbaseWalletInstalled() -> Bool {
         return UIApplication.shared.canOpenURL(URL(string: "cbwallet://")!)
+    }
+    
+    static public func getCoinbaseWalletMWPVersion() -> String? {
+        if UIApplication.shared.canOpenURL(URL(string: "mwp+1.1://")!) {
+            return "1.1"
+        } else if isCoinbaseWalletInstalled() {
+            return "1.0"
+        } else {
+            return nil
+        }
     }
     
     // MARK: - Constructor
@@ -83,10 +92,9 @@ public final class CoinbaseWalletSDK {
         initialActions: [Action]? = [Action(jsonRpc: .eth_requestAccounts)],
         onResponse: @escaping (ResponseResult, Account?) -> Void
     ) {
-        let hasUnsupportedAction = initialActions?.contains(where: {
-            let action = $0
-            return unsupportedHandShakeMethod.contains(where: {action.method == $0 })
-        })
+        let hasUnsupportedAction = initialActions?.contains { action in
+            ["eth_signTransaction", "eth_sendTransaction"].contains(where: { action.method == $0 })
+        }
         
         guard hasUnsupportedAction != true else {
             onResponse(.failure(Error.invalidHandshakeRequest), nil)

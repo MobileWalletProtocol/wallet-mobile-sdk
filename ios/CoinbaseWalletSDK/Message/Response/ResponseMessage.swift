@@ -7,7 +7,6 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
 public enum ResponseContent: UnencryptedContent {
     case response(requestId: UUID, values: [Value])
     case failure(requestId: UUID, description: String)
@@ -26,5 +25,4 @@ public enum ResponseContent: UnencryptedContent {
     }
 }
 
-@available(iOS 13.0, *)
 public typealias ResponseMessage = Message<ResponseContent>

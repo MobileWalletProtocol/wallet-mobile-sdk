@@ -7,7 +7,6 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
 struct Task {
     let request: RequestMessage
     let handler: ResponseHandler

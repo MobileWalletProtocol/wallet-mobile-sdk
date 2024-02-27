@@ -1,10 +1,10 @@
 PODS:
-  - CoinbaseWalletSDK (1.0.4):
-    - CoinbaseWalletSDK/Client (= 1.0.4)
-  - CoinbaseWalletSDK/Client (1.0.4)
-  - CoinbaseWalletSDK/Host (1.0.4):
+  - CoinbaseWalletSDK (1.1.0):
+    - CoinbaseWalletSDK/Client (= 1.1.0)
+  - CoinbaseWalletSDK/Client (1.1.0)
+  - CoinbaseWalletSDK/Host (1.1.0):
     - CoinbaseWalletSDK/Client
-  - CoinbaseWalletSDK/Test (1.0.4)
+  - CoinbaseWalletSDK/Test (1.1.0)
 
 DEPENDENCIES:
   - CoinbaseWalletSDK (from `../../`)
@@ -16,8 +16,8 @@ EXTERNAL SOURCES:
     :path: "../../"
 
 SPEC CHECKSUMS:
-  CoinbaseWalletSDK: ea1f37512bbc69ebe07416e3b29bf840f5cc3152
+  CoinbaseWalletSDK: 41ddc12533f7988f16c82513c4b07147994de665
 
 PODFILE CHECKSUM: f823550033f0f642ab843e71dafb66cc65c61e57
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.15.2

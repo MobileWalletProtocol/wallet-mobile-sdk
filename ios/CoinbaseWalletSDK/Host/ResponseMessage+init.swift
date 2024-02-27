@@ -7,7 +7,6 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
 extension ResponseMessage {
     public init(
         uuid: UUID = UUID(),
