@@ -57,6 +57,7 @@ class ViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         isCBWalletInstalledLabel.text = "\(CoinbaseWalletSDK.isCoinbaseWalletInstalled())"
+        self.log("Supported MWP Version: \(CoinbaseWalletSDK.getCoinbaseWalletMWPVersion() ?? "none")")
         updateSessionStatus()
     }
     

@@ -16,7 +16,7 @@ public final class CoinbaseWalletSDK {
         return UIApplication.shared.canOpenURL(URL(string: "cbwallet://")!)
     }
     
-    static public func getSupportedMWPVersion() -> String? {
+    static public func getCoinbaseWalletMWPVersion() -> String? {
         if UIApplication.shared.canOpenURL(URL(string: "mwp+1.1://")!) {
             return "1.1"
         } else if isCoinbaseWalletInstalled() {
