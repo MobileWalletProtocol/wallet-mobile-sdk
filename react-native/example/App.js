@@ -13,8 +13,11 @@ import {
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
-import {configure, handleResponse} from '@coinbase/wallet-mobile-sdk';
-import {WalletMobileSDKEVMProvider} from '@coinbase/wallet-mobile-sdk/build/WalletMobileSDKEVMProvider';
+import {
+  configure,
+  handleResponse,
+  WalletMobileSDKEVMProvider,
+} from '@coinbase/wallet-mobile-sdk';
 import {MMKV} from 'react-native-mmkv';
 
 // Configure Mobile SDK

@@ -6,16 +6,18 @@ import {
   Result,
 } from "./CoinbaseWalletSDK.types";
 
+export { WalletMobileSDKEVMProvider } from "./WalletMobileSDKEVMProvider";
+
 export function configure({
   callbackURL,
   hostURL,
   hostPackageName,
 }: ConfigurationParams) {
-  CoinbaseWalletSDK.configure(
-    callbackURL.toString(),
-    hostURL?.toString(),
-    hostPackageName
-  );
+  CoinbaseWalletSDK.configure({
+    callbackURL: callbackURL.toString(),
+    hostURL: hostURL?.toString(),
+    hostPackageName,
+  });
 }
 
 export async function initiateHandshake(
@@ -30,7 +32,7 @@ export async function initiateHandshake(
       };
     }) ?? [];
 
-  return await CoinbaseWalletSDK.initiateHandshake(actions);
+  return await CoinbaseWalletSDK.initiateHandshake({ initialActions: actions });
 }
 
 export async function makeRequest(
@@ -45,7 +47,10 @@ export async function makeRequest(
     };
   });
 
-  return await CoinbaseWalletSDK.makeRequest(requestActions, account);
+  return await CoinbaseWalletSDK.makeRequest({
+    actions: requestActions,
+    account,
+  });
 }
 
 export function handleResponse(url: URL): boolean {
