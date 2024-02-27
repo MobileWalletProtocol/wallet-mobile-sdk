@@ -74,19 +74,14 @@ afterEvaluate {
                 pom {
                     name = 'coinbase-wallet-sdk'
                     description = 'Coinbase Wallet Mobile SDK'
-                    url = 'https://github.com/coinbase/wallet-mobile-sdk'
+                    url = 'https://github.com/MobileWalletProtocol/wallet-mobile-sdk'
                     licenses {
                         license {
                             name = 'Coinbase License'
-                            url = 'https://github.com/coinbase/wallet-mobile-sdk/blob/master/LICENSE'
+                            url = 'https://github.com/MobileWalletProtocol/wallet-mobile-sdk/blob/master/LICENSE'
                         }
                     }
                     developers {
-                        developer {
-                            id = 'amitgoelny'
-                            name = 'Amit Goel'
-                            email = 'amit.nyc@gmail.com'
-                        }
                         developer {
                             id = 'bangtoven'
                             name = 'Jungho Bang'
@@ -99,8 +94,8 @@ afterEvaluate {
                         }
                     }
                     scm {
-                        developerConnection = 'scm:git@github.com:coinbase/wallet-mobile-sdk.git'
-                        url = 'https://github.com/coinbase/wallet-mobile-sdk/tree/main'
+                        developerConnection = 'scm:git@github.com:MobileWalletProtocol/wallet-mobile-sdk.git'
+                        url = 'https://github.com/MobileWalletProtocol/wallet-mobile-sdk/tree/main'
                     }
                 }
             }
