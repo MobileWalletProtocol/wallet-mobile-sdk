@@ -1,17 +1,16 @@
 package com.coinbase.android.nativesdk.task
 
 import com.coinbase.android.nativesdk.CoinbaseWalletSDKError
-import com.coinbase.android.nativesdk.message.request.RequestMessage
+import com.coinbase.android.nativesdk.message.request.UnencryptedRequestMessage
 import com.coinbase.android.nativesdk.message.response.ResponseContent
 import com.coinbase.android.nativesdk.message.response.ResponseHandler
-import com.coinbase.android.nativesdk.message.response.ResponseMessage
 import com.coinbase.android.nativesdk.message.response.ResponseResult
-import java.util.Date
+import com.coinbase.android.nativesdk.message.response.UnencryptedResponseMessage
 
 internal class TaskManager {
     private val tasks = HashMap<String, Task>()
 
-    fun registerResponseHandler(message: RequestMessage, handler: ResponseHandler) {
+    fun registerResponseHandler(message: UnencryptedRequestMessage, handler: ResponseHandler) {
         tasks[message.uuid] = Task(
             request = message,
             handler = handler,
@@ -19,9 +18,9 @@ internal class TaskManager {
         )
     }
 
-    fun handleResponse(message: ResponseMessage): Boolean {
+    fun handleResponse(message: UnencryptedResponseMessage): Boolean {
         val requestId: String
-        val result: ResponseResult = when (val response = message.content) {
+        val result: ResponseResult = when (val response = message.content.sealed) {
             is ResponseContent.Response -> {
                 requestId = response.requestId
                 Result.success(response.values)

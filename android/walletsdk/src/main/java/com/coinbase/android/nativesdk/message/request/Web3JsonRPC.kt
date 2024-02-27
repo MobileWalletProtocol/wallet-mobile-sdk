@@ -75,7 +75,8 @@ sealed class Web3JsonRPC {
         val maxFeePerGas: BigInt?,
         val maxPriorityFeePerGas: BigInt?,
         val gasLimit: BigInt?,
-        val chainId: String
+        val chainId: String,
+        val actionSource: ActionSource? = null
     ) : Web3JsonRPC()
 
     @Serializable
@@ -126,3 +127,6 @@ class AddChainNativeCurrency(val name: String, val symbol: String, val decimals:
 
 @Serializable
 class WatchAssetOptions(val address: String, val symbol: String?, val decimals: Int?, val image: String?)
+
+@Serializable
+class ActionSource(val url: String)
