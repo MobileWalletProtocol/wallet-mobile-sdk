@@ -6,6 +6,12 @@ import {
   Result,
 } from "./CoinbaseWalletSDK.types";
 
+export {
+  Action,
+  Account,
+  ConfigurationParams,
+  Result,
+} from "./CoinbaseWalletSDK.types";
 export { WalletMobileSDKEVMProvider } from "./WalletMobileSDKEVMProvider";
 
 export function configure({
