@@ -16,17 +16,29 @@ public final class CoinbaseWalletSDK {
         return UIApplication.shared.canOpenURL(URL(string: "cbwallet://")!)
     }
     
+    static public func getSupportedMWPVersion() -> String? {
+        if UIApplication.shared.canOpenURL(URL(string: "mwp+1.1://")!) {
+            return "1.1"
+        } else if isCoinbaseWalletInstalled() {
+            return "1.0"
+        } else {
+            return nil
+        }
+    }
+    
     // MARK: - Constructor
     
     static private var host: URL?
     static private var callback: URL?
+    static private var verificationMethod: VerificationMethod?
     static public var isConfigured: Bool {
         return host != nil && callback != nil
     }
     
     static public func configure(
         host: URL = URL(string: "https://wallet.coinbase.com/wsegue")!,
-        callback: URL
+        callback: URL,
+        verificationMethod: VerificationMethod = .callbackConfirmation
     ) {
         guard isConfigured == false else {
             assertionFailure("`CoinbaseWalletSDK.configure` should be called only once.")
@@ -39,6 +51,8 @@ public final class CoinbaseWalletSDK {
         } else {
             self.callback = callback
         }
+        
+        self.verificationMethod = verificationMethod
     }
     
     static public var shared: CoinbaseWalletSDK = {
