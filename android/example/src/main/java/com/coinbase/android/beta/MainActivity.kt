@@ -46,6 +46,9 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() = with(binding) {
         super.onStart()
 
+        val mwpVersion = CoinbaseWalletSDK.getCoinbaseWalletMWPVersion(this@MainActivity)
+        textArea.text = "Wallet MWP Version: $mwpVersion"
+
         setVisibility()
         connectWalletButton.setOnClickListener {
             val handShakeActions = ActionsManager.handShakeActions

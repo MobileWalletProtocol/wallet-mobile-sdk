@@ -25,5 +25,6 @@
 
     <queries>
         <package android:name="org.toshi" />
+        <package android:name="org.toshi.development" />
     </queries>
 </manifest>

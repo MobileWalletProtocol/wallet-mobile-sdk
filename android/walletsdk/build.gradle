@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 34
 
     defaultConfig {
         minSdk 23
-        targetSdk 32
+        targetSdk 34
 
         versionCode 3
         versionName libs.versions.sdk.version.get()
@@ -94,7 +94,7 @@ afterEvaluate {
                         }
                         developer {
                             id = 'vishnumad'
-                            name = 'Vishnu Mad'
+                            name = 'Vishnu Madhusoodanan'
                             email = 'vishnu.madhusoodanan@coinbase.com'
                         }
                     }

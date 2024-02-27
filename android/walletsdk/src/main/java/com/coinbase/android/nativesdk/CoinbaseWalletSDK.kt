@@ -1,5 +1,6 @@
 package com.coinbase.android.nativesdk
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -43,6 +44,23 @@ class CoinbaseWalletSDK(
 
     val isCoinbaseWalletInstalled get() = launchWalletIntent != null
     val isConnected: Boolean get() = keyManager.peerPublicKey != null
+
+    companion object {
+        fun getCoinbaseWalletMWPVersion(context: Context): String? {
+            val intents = listOf(
+                "1.1" to Intent(Intent.ACTION_VIEW, Uri.parse("mwp+1.1://")),
+                "1.0" to Intent(Intent.ACTION_VIEW, Uri.parse("cbwallet://"))
+            )
+
+            for ((version, intent) in intents) {
+                if (intent.resolveActivity(context.packageManager) != null) {
+                    return version
+                }
+            }
+
+            return null
+        }
+    }
 
     init {
         this.domain = if (domain.pathSegments.size < 2) {
