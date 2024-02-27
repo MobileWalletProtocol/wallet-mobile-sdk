@@ -117,8 +117,8 @@ public final class CoinbaseWalletSDK {
             content: .handshake(
                 appId: appId,
                 callback: callback,
-                verificationMethod: verificationMethod,
-                initialActions: initialActions
+                initialActions: initialActions,
+                verificationMethod: verificationMethod
             ),
             version: CoinbaseWalletSDK.version,
             timestamp: Date(),
