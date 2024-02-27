@@ -3,18 +3,20 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "start": "react-native start",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "test": "jest",
     "lint": "eslint ."
   },
   "dependencies": {
-    "@coinbase/wallet-mobile-sdk": "file:..",
-    "expo": "^46.0.16",
-    "react": "^18.2.0",
-    "react-native": "^0.70.4",
-    "react-native-mmkv": "^2.4.3"
+    "expo": "50.0.3",
+    "expo-build-properties": "0.11.0",
+    "expo-splash-screen": "0.26.4",
+    "expo-status-bar": "~1.6.0",
+    "react": "18.2.0",
+    "react-native": "0.73.0",
+    "react-native-mmkv": "^2.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -22,7 +24,7 @@
     "@react-native-community/eslint-config": "^2.0.0",
     "babel-jest": "^26.6.3",
     "eslint": "^7.32.0",
-    "jest": "^26.6.3",
+    "jest": "^29.2.1",
     "metro-react-native-babel-preset": "^0.72.1",
     "react-test-renderer": "18.1.0"
   },
@@ -30,6 +32,11 @@
     "preset": "react-native"
   },
   "resolutions": {
-    "@xmldom/xmldom": "^0.7.7"
+    "expo/**/json5": "^2.2.2"
+  },
+  "expo": {
+    "autolinking": {
+      "nativeModulesDir": ".."
+    }
   }
 }

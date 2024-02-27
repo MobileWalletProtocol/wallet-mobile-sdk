@@ -1,17 +1,16 @@
 import {
   RequestArguments,
   Web3Provider,
-} from "@coinbase/wallet-sdk/dist/provider/Web3Provider";
+} from "./types/provider/Web3Provider";
 import {
-  JSONRPCMethod,
   JSONRPCRequest,
   JSONRPCResponse,
-} from "@coinbase/wallet-sdk/dist/provider/JSONRPC";
+} from "./types/provider/JSONRPC";
 import {
   AddressString,
   Callback,
   IntNumber,
-} from "@coinbase/wallet-sdk/dist/types";
+} from "./types/core/type";
 import { ethErrors } from "eth-rpc-errors";
 import {
   initiateHandshake,
@@ -30,8 +29,7 @@ import {
   hexStringFromBuffer,
   hexStringFromIntNumber,
   prepend0x,
-} from "@coinbase/wallet-sdk/dist/util";
-import { EthereumTransactionParams } from "@coinbase/wallet-sdk/dist/relay/EthereumTransactionParams";
+} from "./types/core/util";
 import BN from "bn.js";
 import { MMKV, NativeMMKV } from "react-native-mmkv";
 import SafeEventEmitter from "@metamask/safe-event-emitter";
@@ -76,6 +74,19 @@ interface WatchAssetParams {
     decimals?: number;
     image?: string;
   };
+}
+
+interface EthereumTransactionParams {
+  fromAddress: AddressString;
+  toAddress: AddressString | null;
+  weiValue: BN;
+  data: Buffer;
+  nonce: IntNumber | null;
+  gasPriceInWei: BN | null;
+  maxFeePerGas: BN | null; // in wei
+  maxPriorityFeePerGas: BN | null; // in wei
+  gasLimit: BN | null;
+  chainId: IntNumber;
 }
 
 export class WalletMobileSDKEVMProvider
@@ -147,6 +158,7 @@ export class WalletMobileSDKEVMProvider
     resetSession();
     this._addresses = [];
     this._storage.delete(CACHED_ADDRESSES_KEY);
+    this.emit("disconnect");
     return true;
   }
 
@@ -327,13 +339,13 @@ export class WalletMobileSDKEVMProvider
 
   private _handleSynchronousMethods({ method }: JSONRPCRequest) {
     switch (method) {
-      case JSONRPCMethod.eth_accounts:
+      case "eth_accounts":
         return this._eth_accounts();
-      case JSONRPCMethod.eth_coinbase:
+      case "eth_coinbase":
         return this._eth_coinbase();
-      case JSONRPCMethod.net_version:
+      case "net_version":
         return this._net_version();
-      case JSONRPCMethod.eth_chainId:
+      case "eth_chainId":
         return this._eth_chainId();
       default:
         return undefined;
@@ -347,23 +359,23 @@ export class WalletMobileSDKEVMProvider
     const params = request.params || [];
 
     switch (method) {
-      case JSONRPCMethod.eth_requestAccounts:
+      case "eth_requestAccounts":
         return this._eth_requestAccounts();
-      case JSONRPCMethod.personal_sign:
+      case "personal_sign":
         return this._personal_sign(params);
-      case JSONRPCMethod.eth_signTypedData_v3:
+      case "eth_signTypedData_v3":
         return this._eth_signTypedData(params, "v3");
-      case JSONRPCMethod.eth_signTypedData_v4:
+      case "eth_signTypedData_v4":
         return this._eth_signTypedData(params, "v4");
-      case JSONRPCMethod.eth_signTransaction:
+      case "eth_signTransaction":
         return this._eth_signTransaction(params, false);
-      case JSONRPCMethod.eth_sendTransaction:
+      case "eth_sendTransaction":
         return this._eth_signTransaction(params, true);
-      case JSONRPCMethod.wallet_switchEthereumChain:
+      case "wallet_switchEthereumChain":
         return this._wallet_switchEthereumChain(params);
-      case JSONRPCMethod.wallet_addEthereumChain:
+      case "wallet_addEthereumChain":
         return this._wallet_addEthereumChain(params);
-      case JSONRPCMethod.wallet_watchAsset:
+      case "wallet_watchAsset":
         return this._wallet_watchAsset(params);
       default:
         if (this._jsonRpcUrl) {
@@ -394,7 +406,7 @@ export class WalletMobileSDKEVMProvider
 
   private async _eth_requestAccounts(): Promise<JSONRPCResponse> {
     const action: Action = {
-      method: JSONRPCMethod.eth_requestAccounts,
+      method: "eth_requestAccounts",
       params: {},
     };
 
@@ -413,7 +425,7 @@ export class WalletMobileSDKEVMProvider
     const address = ensureAddressString(params[1]);
 
     const action: Action = {
-      method: JSONRPCMethod.personal_sign,
+      method: "personal_sign",
       params: {
         message,
         address,
@@ -439,8 +451,8 @@ export class WalletMobileSDKEVMProvider
     const action: Action = {
       method:
         type === "v3"
-          ? JSONRPCMethod.eth_signTypedData_v3
-          : JSONRPCMethod.eth_signTypedData_v4,
+          ? "eth_signTypedData_v3"
+          : "eth_signTypedData_v4",
       params: {
         address,
         typedDataJson,
@@ -463,8 +475,8 @@ export class WalletMobileSDKEVMProvider
     const tx = this._prepareTransactionParams((params[0] as any) || {});
     const action: Action = {
       method: shouldSubmit
-        ? JSONRPCMethod.eth_sendTransaction
-        : JSONRPCMethod.eth_signTransaction,
+        ? "eth_sendTransaction"
+        : "eth_signTransaction",
       params: {
         fromAddress: tx.fromAddress,
         toAddress: tx.toAddress,
@@ -481,7 +493,7 @@ export class WalletMobileSDKEVMProvider
           ? bigIntStringFromBN(tx.maxPriorityFeePerGas)
           : null,
         gasLimit: tx.gasLimit ? bigIntStringFromBN(tx.gasLimit) : null,
-        chainId: tx.chainId,
+        chainId: tx.chainId.toString(),
       },
     };
 
@@ -503,6 +515,7 @@ export class WalletMobileSDKEVMProvider
     value?: unknown;
     data?: unknown;
     nonce?: unknown;
+    chainId?: unknown;
   }): EthereumTransactionParams {
     const fromAddress = tx.from ? ensureAddressString(tx.from) : null;
     if (!fromAddress) {
@@ -521,9 +534,7 @@ export class WalletMobileSDKEVMProvider
         ? ensureBN(tx.maxPriorityFeePerGas)
         : null;
     const gasLimit = tx.gas != null ? ensureBN(tx.gas) : null;
-    const chainId = this._chainId
-      ? IntNumber(this._chainId)
-      : this._getChainId();
+    const chainId = tx.chainId ? ensureIntNumber(tx.chainId) : this._getChainId();
 
     return {
       fromAddress,
@@ -557,7 +568,7 @@ export class WalletMobileSDKEVMProvider
     }
 
     const action: Action = {
-      method: JSONRPCMethod.wallet_switchEthereumChain,
+      method: "wallet_switchEthereumChain",
       params: {
         chainId: chainId.toString(),
       },
@@ -601,7 +612,7 @@ export class WalletMobileSDKEVMProvider
     const chainIdNumber = parseInt(request.chainId, 16);
 
     const action: Action = {
-      method: JSONRPCMethod.wallet_addEthereumChain,
+      method: "wallet_addEthereumChain",
       params: {
         chainId: chainIdNumber.toString(),
         blockExplorerUrls: request.blockExplorerUrls ?? null,
@@ -653,7 +664,7 @@ export class WalletMobileSDKEVMProvider
     const { address, symbol, image, decimals } = request.options;
 
     const action: Action = {
-      method: JSONRPCMethod.wallet_watchAsset,
+      method: "wallet_watchAsset",
       params: {
         type: request.type,
         options: {

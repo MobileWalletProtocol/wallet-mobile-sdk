@@ -62,3 +62,9 @@ buck-out/
 # Ruby / CocoaPods
 /ios/Pods/
 /vendor/bundle/
+
+.expo/
+
+# Don't check in native directories
+android/
+ios/
