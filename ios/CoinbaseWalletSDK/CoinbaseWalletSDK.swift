@@ -16,29 +16,17 @@ public final class CoinbaseWalletSDK {
         return UIApplication.shared.canOpenURL(URL(string: "cbwallet://")!)
     }
     
-    static public func getCoinbaseWalletMWPVersion() -> String? {
-        if UIApplication.shared.canOpenURL(URL(string: "mwp+1.1://")!) {
-            return "1.1"
-        } else if isCoinbaseWalletInstalled() {
-            return "1.0"
-        } else {
-            return nil
-        }
-    }
-    
     // MARK: - Constructor
     
     static private var host: URL?
     static private var callback: URL?
-    static private var verificationMethod: VerificationMethod = .callbackConfirmation
     static public var isConfigured: Bool {
         return host != nil && callback != nil
     }
     
     static public func configure(
         host: URL = URL(string: "https://wallet.coinbase.com/wsegue")!,
-        callback: URL,
-        verificationMethod: VerificationMethod = .callbackConfirmation
+        callback: URL
     ) {
         guard isConfigured == false else {
             assertionFailure("`CoinbaseWalletSDK.configure` should be called only once.")
@@ -51,8 +39,6 @@ public final class CoinbaseWalletSDK {
         } else {
             self.callback = callback
         }
-        
-        self.verificationMethod = verificationMethod
     }
     
     static public var shared: CoinbaseWalletSDK = {
@@ -61,7 +47,7 @@ public final class CoinbaseWalletSDK {
             preconditionFailure("Missing configuration: call `CoinbaseWalletSDK.configure` before accessing the `shared` instance.")
         }
         
-        return CoinbaseWalletSDK(host: host, callback: callback, verificationMethod: verificationMethod)
+        return CoinbaseWalletSDK(host: host, callback: callback)
     }()
     
     // MARK: - Properties
@@ -69,7 +55,6 @@ public final class CoinbaseWalletSDK {
     private let appId: String
     private let host: URL
     private let callback: URL
-    private let verificationMethod: VerificationMethod
     
     private lazy var keyManager: KeyManager = {
         KeyManager(host: self.host)
@@ -80,12 +65,10 @@ public final class CoinbaseWalletSDK {
     
     private init(
         host: URL,
-        callback: URL,
-        verificationMethod: VerificationMethod
+        callback: URL
     ) {
         self.host = host
         self.callback = callback
-        self.verificationMethod = verificationMethod
         
         self.appId = Bundle.main.bundleIdentifier!
     }
@@ -105,7 +88,7 @@ public final class CoinbaseWalletSDK {
             return $0.method.hasPrefix("eth_sign") || $0.method.hasPrefix("eth_send")
         })
         
-        guard !(CoinbaseWalletSDK.verificationMethod == .callbackConfirmation && hasUnsupportedAction == true) else {
+        guard hasUnsupportedAction != true else {
             onResponse(.failure(Error.invalidHandshakeRequest), nil)
             return
         }
@@ -117,8 +100,7 @@ public final class CoinbaseWalletSDK {
             content: .handshake(
                 appId: appId,
                 callback: callback,
-                initialActions: initialActions,
-                verificationMethod: verificationMethod
+                initialActions: initialActions
             ),
             version: CoinbaseWalletSDK.version,
             timestamp: Date(),
