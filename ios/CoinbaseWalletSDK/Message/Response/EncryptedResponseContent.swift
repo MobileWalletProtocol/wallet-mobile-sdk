@@ -8,7 +8,6 @@
 import Foundation
 import CryptoKit
 
-@available(iOS 13.0, *)
 public enum EncryptedResponseContent: EncryptedContent {
     case response(requestId: UUID, data: Data)
     case failure(requestId: UUID, description: String)
@@ -35,7 +34,6 @@ public enum EncryptedResponseContent: EncryptedContent {
     }
 }
 
-@available(iOS 13.0, *)
 extension ResponseContent {
     public func encrypt(with symmetricKey: SymmetricKey?) throws -> EncryptedResponseContent {
         switch self {
@@ -51,5 +49,4 @@ extension ResponseContent {
     }
 }
 
-@available(iOS 13.0, *)
 typealias EncryptedResponseMessage = EncryptedMessage<EncryptedResponseContent>

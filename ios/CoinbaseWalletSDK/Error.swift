@@ -7,7 +7,6 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
 extension CoinbaseWalletSDK {
     public enum Error: Swift.Error {
         case encodingFailed

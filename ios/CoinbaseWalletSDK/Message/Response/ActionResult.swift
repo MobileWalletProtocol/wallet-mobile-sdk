@@ -15,10 +15,8 @@ public struct ActionError: Swift.Error {
     public let message: String
 }
 
-@available(iOS 13.0, *)
 public typealias ResponseResult = Result<BaseMessage<[ActionResult]>, Error>
 
-@available(iOS 13.0, *)
 extension ResponseContent.Value {
     var asActionResult: ActionResult {
         switch self {
@@ -30,10 +28,8 @@ extension ResponseContent.Value {
     }
 }
 
-@available(iOS 13.0, *)
 public typealias ResponseHandler = (ResponseResult) -> Void
 
-@available(iOS 13.0, *)
 extension ResponseMessage {
     var result: ResponseResult {
         switch self.content {

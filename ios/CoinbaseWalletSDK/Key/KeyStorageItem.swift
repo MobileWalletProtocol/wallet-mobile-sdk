@@ -7,7 +7,6 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
 struct KeyStorageItem<K: RawRepresentableKey> {
     let name: String
     

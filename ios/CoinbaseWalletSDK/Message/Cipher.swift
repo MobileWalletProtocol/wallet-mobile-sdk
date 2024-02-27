@@ -8,7 +8,6 @@
 import Foundation
 import CryptoKit
 
-@available(iOS 13.0, *)
 final class Cipher {
     static func encrypt<C: Encodable>(
         _ content: C,

@@ -9,7 +9,6 @@ import Foundation
 import CryptoKit
 import UIKit
 
-@available(iOS 13.0, *)
 public final class CoinbaseWalletSDK {
     
     static public func isCoinbaseWalletInstalled() -> Bool {

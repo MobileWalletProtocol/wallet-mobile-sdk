@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.social_media_url      = 'https://twitter.com/CoinbaseWallet'
   s.homepage              = 'https://github.com/coinbase/wallet-mobile-sdk'
   s.license               = { :type => 'Apache', :file => 'LICENSE' }
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = '13.0'
   s.swift_version         = '5.0'
   
   SDK_PATH = 'ios/CoinbaseWalletSDK'
