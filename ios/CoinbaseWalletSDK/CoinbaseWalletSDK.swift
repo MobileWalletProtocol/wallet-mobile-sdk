@@ -93,10 +93,9 @@ public final class CoinbaseWalletSDK {
         initialActions: [Action]? = [Action(jsonRpc: .eth_requestAccounts)],
         onResponse: @escaping (ResponseResult, Account?) -> Void
     ) {
-        let hasUnsupportedAction = initialActions?.contains(where: {
-            let action = $0
-            return $0.method.hasPrefix("eth_sign") || $0.method.hasPrefix("eth_send")
-        })
+        let hasUnsupportedAction = initialActions?.contains { action in
+            ["eth_sign", "eth_send"].contains { action.method.hasPrefix($0) }
+        } ?? false
         
         guard hasUnsupportedAction != true else {
             onResponse(.failure(Error.invalidHandshakeRequest), nil)
