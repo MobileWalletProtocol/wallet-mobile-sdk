@@ -39,7 +39,7 @@ extension AppDelegate: UIAlertViewDelegate {
         guard let request: RequestMessage = try? CoinbaseWalletHostSDK.decode(url, with: symmetricKey) else { return }
         
         self.requestMessage = request
-        if case .handshake(_, let callback, _) = request.content {
+        if case .handshake(_, let callback, _, _) = request.content {
             self.peerCallback = callback
         }
         

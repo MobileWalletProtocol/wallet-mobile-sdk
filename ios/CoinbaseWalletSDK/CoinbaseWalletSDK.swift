@@ -30,7 +30,7 @@ public final class CoinbaseWalletSDK {
     
     static private var host: URL?
     static private var callback: URL?
-    static private var verificationMethod: VerificationMethod?
+    static private var verificationMethod: VerificationMethod = .callbackConfirmation
     static public var isConfigured: Bool {
         return host != nil && callback != nil
     }
@@ -61,7 +61,7 @@ public final class CoinbaseWalletSDK {
             preconditionFailure("Missing configuration: call `CoinbaseWalletSDK.configure` before accessing the `shared` instance.")
         }
         
-        return CoinbaseWalletSDK(host: host, callback: callback)
+        return CoinbaseWalletSDK(host: host, callback: callback, verificationMethod: verificationMethod)
     }()
     
     // MARK: - Properties
@@ -69,6 +69,7 @@ public final class CoinbaseWalletSDK {
     private let appId: String
     private let host: URL
     private let callback: URL
+    private let verificationMethod: VerificationMethod
     
     private lazy var keyManager: KeyManager = {
         KeyManager(host: self.host)
@@ -79,10 +80,12 @@ public final class CoinbaseWalletSDK {
     
     private init(
         host: URL,
-        callback: URL
+        callback: URL,
+        verificationMethod: VerificationMethod
     ) {
         self.host = host
         self.callback = callback
+        self.verificationMethod = verificationMethod
         
         self.appId = Bundle.main.bundleIdentifier!
     }
@@ -102,7 +105,7 @@ public final class CoinbaseWalletSDK {
             return unsupportedHandShakeMethod.contains(where: {action.method == $0 })
         })
         
-        guard hasUnsupportedAction != true else {
+        guard !(CoinbaseWalletSDK.verificationMethod == .callbackConfirmation && hasUnsupportedAction == true) else {
             onResponse(.failure(Error.invalidHandshakeRequest), nil)
             return
         }
@@ -114,6 +117,7 @@ public final class CoinbaseWalletSDK {
             content: .handshake(
                 appId: appId,
                 callback: callback,
+                verificationMethod: verificationMethod,
                 initialActions: initialActions
             ),
             version: CoinbaseWalletSDK.version,
