@@ -18,7 +18,7 @@ import {
   makeRequest,
   resetSession,
 } from "./CoinbaseWalletSDK";
-import { Account, Action, Result } from "./CoinbaseWalletSDK.types";
+import { Account, Action, ActionSource, Result } from "./CoinbaseWalletSDK.types";
 import {
   bigIntStringFromBN,
   ensureAddressString,
@@ -87,6 +87,7 @@ interface EthereumTransactionParams {
   maxPriorityFeePerGas: BN | null; // in wei
   gasLimit: BN | null;
   chainId: IntNumber;
+  actionSource?: ActionSource;
 }
 
 export class WalletMobileSDKEVMProvider
