@@ -24,7 +24,7 @@ import {MMKV} from 'react-native-mmkv';
 
 // Configure Mobile SDK
 configure({
-  hostURL: new URL('cbwallet://wsegue'),
+  hostURL: new URL('https://wallet.coinbase.com/wsegue'),
   callbackURL: new URL('example.rn.dapp://'), // Your app's Universal Link
   hostPackageName: 'org.toshi',
 });

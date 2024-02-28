@@ -38,7 +38,7 @@ public class CoinbaseWalletSDKModule: Module {
                         let accountRecord = account?.asRecord
                         promise.resolve([results, accountRecord])
                     case .failure(let error):
-                        promise.reject("handshake-error", error.localizedDescription)
+                        promise.reject("handshake-error", "\(error)");
                     }
                 }
             }
@@ -67,7 +67,7 @@ public class CoinbaseWalletSDKModule: Module {
                         let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
                         promise.resolve(results)
                     case .failure(let error):
-                        promise.reject("request-error", error.localizedDescription)
+                        promise.reject("request-error", "\(error)")
                     }
                 }
             }
