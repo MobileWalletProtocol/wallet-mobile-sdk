@@ -24,8 +24,10 @@ async function isIosAppVerified(hostname: string, clientAppId: string): Promise<
 
   for await (const url of urls) {
     try {
-      const wellKnownDataJson = await fetch(url.toString());
-      const wellKnownData = (await wellKnownDataJson.json()) as AppleAppSiteAssociationData;
+      const wellKnownDataResponse = await fetch(url.toString());
+      if (!wellKnownDataResponse.ok) continue;
+
+      const wellKnownData = (await wellKnownDataResponse.json()) as AppleAppSiteAssociationData;
 
       for (const { appID, appIDs } of wellKnownData.applinks.details) {
         if (appID) {
@@ -59,8 +61,10 @@ type AssetLinksData = {
 async function isAndroidAppVerified(hostname: string, clientAppId: string): Promise<boolean> {
   try {
     const url = new URL('/.well-known/assetlinks.json', `https://${hostname}`);
-    const wellKnownDataJson = await fetch(url.toString());
-    const wellKnownData = (await wellKnownDataJson.json()) as AssetLinksData[];
+    const wellKnownDataResponse = await fetch(url.toString());
+    if (!wellKnownDataResponse.ok) return false;
+
+    const wellKnownData = (await wellKnownDataResponse.json()) as AssetLinksData[];
     const clientAppSignatures = await MWPHostModule.getClientAppSignatures();
 
     for (const { target } of wellKnownData) {

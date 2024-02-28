@@ -81,7 +81,7 @@ PODS:
   - MMKV (1.2.14):
     - MMKVCore (~> 1.2.14)
   - MMKVCore (1.2.14)
-  - mobile-wallet-protocol-host (0.1.2):
+  - mobile-wallet-protocol-host (0.1.5):
     - CoinbaseWalletSDK/Host
     - React-Core
   - OpenSSL-Universal (1.1.1100)
@@ -311,7 +311,7 @@ PODS:
   - React-jsinspector (0.70.6)
   - React-logger (0.70.6):
     - glog
-  - react-native-mmkv (2.5.1):
+  - react-native-mmkv (2.11.0):
     - MMKV (>= 1.2.13)
     - React-Core
   - react-native-safe-area-context (4.4.1):
@@ -574,7 +574,7 @@ SPEC CHECKSUMS:
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   MMKV: 9c4663aa7ca255d478ff10f2f5cb7d17c1651ccd
   MMKVCore: 89f5c8a66bba2dcd551779dea4d412eeec8ff5bb
-  mobile-wallet-protocol-host: 022a421565dbd04131048b4527e21d71e47e1676
+  mobile-wallet-protocol-host: b5c7d96fa9552df5382c57829796243a6521b686
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   RCT-Folly: 0080d0a6ebf2577475bda044aa59e2ca1f909cda
   RCTRequired: e1866f61af7049eb3d8e08e8b133abd38bc1ca7a
@@ -591,7 +591,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: b4a65947391c658450151275aa406f2b8263178f
   React-jsinspector: 60769e5a0a6d4b32294a2456077f59d0266f9a8b
   React-logger: 1623c216abaa88974afce404dc8f479406bbc3a0
-  react-native-mmkv: 69b9c003f10afdd01addf7c6ee784ce42ee2eff3
+  react-native-mmkv: e97c0c79403fb94577e5d902ab1ebd42b0715b43
   react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
   React-perflogger: 8c79399b0500a30ee8152d0f9f11beae7fc36595
   React-RCTActionSheet: 7316773acabb374642b926c19aef1c115df5c466
@@ -611,4 +611,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: aa7084dd62d47f90bd1044b24ce286e06c2defab
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1

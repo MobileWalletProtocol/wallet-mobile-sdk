@@ -56,6 +56,9 @@ export type SendTransactionAction = {
     maxPriorityFeePerGas: string | null;
     gasLimit: string | null;
     chainId: string;
+    actionSource?: {
+      url: string;
+    } | null;
   };
 };
 
