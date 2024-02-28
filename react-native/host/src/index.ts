@@ -18,3 +18,4 @@ export { type RequestMessage } from './request/request';
 export { type SecureStorage, type Session } from './sessions/sessions';
 export { useSessions } from './sessions/useSessions';
 export { type AppMetadata } from './utils/fetchClientAppMetadata';
+export { isClientAppVerified } from './utils/isClientAppVerified';
