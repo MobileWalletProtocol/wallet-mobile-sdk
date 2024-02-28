@@ -15,14 +15,16 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import {
   configure,
+  getCoinbaseWalletMWPVersion,
   handleResponse,
+  isCoinbaseWalletInstalled,
   WalletMobileSDKEVMProvider,
 } from '@coinbase/wallet-mobile-sdk';
 import {MMKV} from 'react-native-mmkv';
 
 // Configure Mobile SDK
 configure({
-  hostURL: new URL('https://wallet.coinbase.com/wsegue'),
+  hostURL: new URL('cbwallet://wsegue'),
   callbackURL: new URL('example.rn.dapp://'), // Your app's Universal Link
   hostPackageName: 'org.toshi',
 });
@@ -53,6 +55,18 @@ const App = function () {
   const logMessage = useCallback(message => {
     setLog(prev => `${message}\n${prev}`);
   }, []);
+
+  useEffect(() => {
+    async function logVersion() {
+      logMessage(
+        `Coinbase Wallet Installed?: ${await isCoinbaseWalletInstalled()}`,
+      );
+      logMessage(
+        `Available MWP Version: ${await getCoinbaseWalletMWPVersion()}`,
+      );
+    }
+    logVersion();
+  }, [logMessage]);
 
   // Initiate connection to Wallet
   const connectWallet = useCallback(async () => {
