@@ -115,6 +115,13 @@ class CoinbaseWalletSDKModule : Module() {
             return@Function sdk?.isCoinbaseWalletInstalled ?: false
         }
 
+        Function("getCoinbaseWalletMWPVersion") {
+            val context = requireNotNull(appContext.reactContext?.applicationContext) {
+                "CoinbaseWalletSDK: Application context must not be null"
+            }
+            return@Function CoinbaseWalletSDK.getCoinbaseWalletMWPVersion(context)
+        }
+
         Function("isConnected") {
             return@Function sdk?.isConnected ?: false
         }

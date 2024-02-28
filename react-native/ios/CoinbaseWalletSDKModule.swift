@@ -9,7 +9,7 @@ public class CoinbaseWalletSDKModule: Module {
         Name("CoinbaseWalletSDK")
 
         Function("configure") { (params: ConfigParamsRecord) in
-            guard #available(iOS 13.0, *), !CoinbaseWalletSDK.isConfigured else {
+            guard !CoinbaseWalletSDK.isConfigured else {
                 return
             }
 
@@ -28,29 +28,23 @@ public class CoinbaseWalletSDKModule: Module {
         }
 
         AsyncFunction("initiateHandshake") { (params: HandshakeParamsRecord, promise: Promise) in
-            guard #available(iOS 13.0, *) else {
-                return
-            }
-
             let actions: [Action] = params.initialActions.map { $0.asAction }
 
-            CoinbaseWalletSDK.shared.initiateHandshake(initialActions: actions) { result, account in
-                switch result {
-                case .success(let response):
-                    let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
-                    let accountRecord = account?.asRecord
-                    promise.resolve([results, accountRecord])
-                case .failure(let error):
-                    promise.reject("handshake-error", error.localizedDescription)
+            DispatchQueue.main.async {
+                CoinbaseWalletSDK.shared.initiateHandshake(initialActions: actions) { result, account in
+                    switch result {
+                    case .success(let response):
+                        let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
+                        let accountRecord = account?.asRecord
+                        promise.resolve([results, accountRecord])
+                    case .failure(let error):
+                        promise.reject("handshake-error", "\(error)");
+                    }
                 }
             }
         }
 
         AsyncFunction("makeRequest") { (params: RequestParamsRecord, promise: Promise) in
-            guard #available(iOS 13.0, *) else {
-                return
-            }
-
             let requestActions: [Action] = params.actions.map { $0.asAction }
 
             let requestAccount: Account?
@@ -63,22 +57,24 @@ public class CoinbaseWalletSDKModule: Module {
             } else {
                 requestAccount = nil
             }
-
-            CoinbaseWalletSDK.shared.makeRequest(
-                Request(actions: requestActions, account: requestAccount)
-            ) { result in
-                switch result {
-                case .success(let response):
-                    let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
-                    promise.resolve(results)
-                case .failure(let error):
-                    promise.reject("request-error", error.localizedDescription)
+            
+            DispatchQueue.main.async {
+                CoinbaseWalletSDK.shared.makeRequest(
+                    Request(actions: requestActions, account: requestAccount)
+                ) { result in
+                    switch result {
+                    case .success(let response):
+                        let results: [ActionResultRecord.Dict] = response.content.map { $0.asRecord }
+                        promise.resolve(results)
+                    case .failure(let error):
+                        promise.reject("request-error", "\(error)")
+                    }
                 }
             }
         }
 
         Function("handleResponse") { (url: String) -> Bool in
-            guard #available(iOS 13.0, *), CoinbaseWalletSDK.isConfigured else {
+            guard CoinbaseWalletSDK.isConfigured else {
                 return false
             }
 
@@ -90,27 +86,23 @@ public class CoinbaseWalletSDKModule: Module {
             return false
         }
 
-        Function("isCoinbaseWalletInstalled") { () -> Bool in
-            guard #available(iOS 13.0, *) else {
-                return false
+        AsyncFunction("isCoinbaseWalletInstalled") { (promise: Promise) in
+            DispatchQueue.main.async {
+                promise.resolve(CoinbaseWalletSDK.isCoinbaseWalletInstalled())
             }
-
-            return CoinbaseWalletSDK.isCoinbaseWalletInstalled()
+        }
+        
+        AsyncFunction("getCoinbaseWalletMWPVersion") { (promise: Promise) in
+            DispatchQueue.main.async {
+                promise.resolve(CoinbaseWalletSDK.getCoinbaseWalletMWPVersion())
+            }
         }
 
         Function("isConnected") { () -> Bool in
-            guard #available(iOS 13.0, *) else {
-                return false
-            }
-
             return CoinbaseWalletSDK.shared.isConnected()
         }
 
         Function("resetSession") {
-            guard #available(iOS 13.0, *) else {
-                return
-            }
-
             CoinbaseWalletSDK.shared.resetSession()
         }
     }

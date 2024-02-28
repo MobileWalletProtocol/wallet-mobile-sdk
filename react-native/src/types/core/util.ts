@@ -3,7 +3,7 @@
 
 import BN from 'bn.js';
 
-import { AddressString, BigIntString, HexString, IntNumber, RegExpString } from './type';
+import { AddressString, HexString, IntNumber } from './type';
 
 const INT_STRING_REGEX = /^[0-9]*$/;
 const HEXADECIMAL_STRING_REGEX = /^[a-f0-9]*$/;
@@ -117,13 +117,6 @@ export function ensureIntNumber(num: unknown): IntNumber {
     }
   }
   throw new InvalidParamsError(`Not an integer: ${String(num)}`);
-}
-
-export function ensureRegExpString(regExp: unknown): RegExpString {
-  if (regExp instanceof RegExp) {
-    return RegExpString(regExp.toString());
-  }
-  throw new InvalidParamsError(`Not a RegExp: ${String(regExp)}`);
 }
 
 export function ensureBN(val: unknown): BN {

@@ -21,3 +21,7 @@ export type Result = {
   errorCode: number | null;
   errorMessage: string | null;
 };
+
+export type ActionSource = {
+  url: string;
+}
