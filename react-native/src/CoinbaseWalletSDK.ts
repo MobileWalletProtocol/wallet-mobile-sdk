@@ -67,6 +67,10 @@ export function isCoinbaseWalletInstalled(): boolean {
   return CoinbaseWalletSDK.isCoinbaseWalletInstalled();
 }
 
+export function getCoinbaseWalletMWPVersion(): string {
+  return CoinbaseWalletSDK.getCoinbaseWalletMWPVersion();
+}
+
 export function isConnected(): boolean {
   return CoinbaseWalletSDK.isConnected();
 }
