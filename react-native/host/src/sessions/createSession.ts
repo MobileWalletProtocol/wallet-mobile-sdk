@@ -16,6 +16,8 @@ export async function createSession(
     dappURL: action.callback,
     dappId: metadata.appId,
     dappName: metadata.appName ?? metadata.appId,
+    dappImageURL: metadata.iconUrl,
+    dappBase64Image: metadata.iconBase64Encoded,
     sessionId: message.uuid,
     version: message.version,
     clientPublicKey: message.sender,
