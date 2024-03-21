@@ -34,6 +34,19 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
             if (call.method == "isAppInstalled") {
                 return isAppInstalled(result: result)
             }
+            
+            if (call.method == "isConnected") {
+                return isConnected(result: result)
+            }
+            
+            if (call.method == "ownPublicKey") {
+                return ownPublicKey(result: result)
+            }
+            
+            if (call.method == "peerPublicKey") {
+                return peerPublicKey(result: result)
+            }
+            
         } catch {
             result(FlutterError(code: "handle", message: error.localizedDescription, details: nil))
             return
@@ -46,6 +59,23 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
         result(CoinbaseWalletSDK.isCoinbaseWalletInstalled())
     }
     
+    private func isConnected(result: @escaping FlutterResult) {
+        result(CoinbaseWalletSDK.shared.isConnected())
+    }
+
+    private func ownPublicKey(result: @escaping FlutterResult) {
+        let rawPublicKey = CoinbaseWalletSDK.shared.ownPublicKey.rawRepresentation
+        let stringPublicKey = rawPublicKey.map({ String(format: "%02x", $0) }).joined()
+        result(stringPublicKey)
+    }
+    
+    private func peerPublicKey(result: @escaping FlutterResult) {
+        if let rawPublicKey = CoinbaseWalletSDK.shared.peerPublicKey?.rawRepresentation {
+            let stringPublicKey = rawPublicKey.map({ String(format: "%02x", $0) }).joined()
+            result(stringPublicKey)
+        }
+    }
+    
     private func configure(call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard
             let args = call.arguments as? [String: Any],
@@ -55,6 +85,11 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
             let callbackURL = URL(string: callback)
         else {
             result(FlutterError(code: "configure", message: "Invalid arguments", details: nil))
+            return
+        }
+
+        guard CoinbaseWalletSDK.isConfigured == false else {
+            result(FlutterError(code: "configure", message: "`CoinbaseWalletSDK.configure` should be called only once.", details: nil))
             return
         }
         

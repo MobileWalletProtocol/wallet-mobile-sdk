@@ -46,6 +46,8 @@ class CoinbaseWalletSDK(
 
     val isCoinbaseWalletInstalled get() = launchWalletIntent != null
     val isConnected: Boolean get() = keyManager.peerPublicKey != null
+    val peerPublicKey: ECPublicKey? get() = keyManager.peerPublicKey
+    val ownPublicKey: ECPublicKey get() = keyManager.ownPublicKey
 
     companion object {
         fun getCoinbaseWalletMWPVersion(context: Context): String? {

@@ -76,6 +76,19 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
             if (call.method == "isAppInstalled") {
                 return isAppInstalled(result)
             }
+
+            if (call.method == "isConnected") {
+                return isConnected(result)
+            }
+
+            if (call.method == "ownPublicKey") {
+                return ownPublicKey(result)
+            }
+
+            if (call.method == "peerPublicKey") {
+                return peerPublicKey(result)
+            }
+
         } catch (e: Throwable) {
             result.error("onMethodCall", e.message, null)
         }
@@ -85,6 +98,20 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
 
     private fun isAppInstalled(@NonNull result: Result) {
         result.success(coinbase.isCoinbaseWalletInstalled)
+    }
+
+    private fun isConnected(@NonNull result: Result) {
+        result.success(coinbase.isConnected)
+    }
+
+    private fun ownPublicKey(@NonNull result: Result) {
+        // TODO implement
+        //  result.success(coinbase.ownPublicKey)
+    }
+
+    private fun peerPublicKey(@NonNull result: Result) {
+        // TODO implement
+        // result.success(coinbase.peerPublicKey)
     }
 
     private fun configure(@NonNull call: MethodCall, @NonNull result: Result) {
