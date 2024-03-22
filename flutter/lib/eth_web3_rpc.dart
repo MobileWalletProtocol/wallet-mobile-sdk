@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:coinbase_wallet_sdk/action.dart';
+import 'package:coinbase_wallet_sdk/currency.dart';
 
 class RequestAccounts extends Action {
   const RequestAccounts()
@@ -14,14 +15,13 @@ class PersonalSign extends Action {
   PersonalSign({
     required String address,
     required String message,
-    bool optional = false,
+    super.optional,
   }) : super(
           method: 'personal_sign',
           paramsJson: jsonEncode({
             'address': address,
             'message': message,
           }),
-          optional: optional,
         );
 }
 
@@ -32,14 +32,13 @@ class SignTypedDataV3 extends Action {
   SignTypedDataV3({
     required this.address,
     required this.typedDataJson,
-    bool optional = false,
+    super.optional,
   }) : super(
           method: 'eth_signTypedData_v3',
           paramsJson: jsonEncode({
             'address': address,
             'typedDataJson': typedDataJson,
           }),
-          optional: optional,
         );
 }
 
@@ -50,42 +49,43 @@ class SignTypedDataV4 extends Action {
   SignTypedDataV4({
     required this.address,
     required this.typedDataJson,
-    bool optional = false,
+    super.optional,
   }) : super(
           method: 'eth_signTypedData_v4',
           paramsJson: jsonEncode({
             'address': address,
             'typedDataJson': typedDataJson,
           }),
-          optional: optional,
         );
 }
 
 class SignTransaction extends Action {
   SignTransaction({
     required String fromAddress,
-    required String? toAddress,
+    required String chainId,
     required BigInt weiValue,
     required String data,
-    required int? nonce,
-    required BigInt? gasPriceInWei,
-    required BigInt? maxFeePerGas,
-    required BigInt? maxPriorityFeePerGas,
-    required BigInt? gasLimit,
-    required String chainId,
+    String? toAddress,
+    int? nonce,
+    BigInt? gasPriceInWei,
+    BigInt? maxFeePerGas,
+    BigInt? maxPriorityFeePerGas,
+    BigInt? gasLimit,
   }) : super(
           method: 'eth_signTransaction',
           paramsJson: jsonEncode({
             'fromAddress': fromAddress,
-            'toAddress': toAddress,
-            'weiValue': weiValue.toString(),
             'data': data,
-            'nonce': nonce,
-            'gasPriceInWei': gasPriceInWei?.toString(),
-            'maxFeePerGas': maxFeePerGas?.toString(),
-            'maxPriorityFeePerGas': maxPriorityFeePerGas?.toString(),
-            'gasLimit': gasLimit?.toString(),
             'chainId': chainId,
+            'weiValue': weiValue.toString(),
+            if (toAddress != null) 'toAddress': toAddress,
+            if (nonce != null) 'nonce': nonce,
+            if (gasPriceInWei != null)
+              'gasPriceInWei': gasPriceInWei.toString(),
+            if (maxFeePerGas != null) 'maxFeePerGas': maxFeePerGas.toString(),
+            if (maxPriorityFeePerGas != null)
+              'maxPriorityFeePerGas': maxPriorityFeePerGas.toString(),
+            if (gasLimit != null) 'gasLimit': gasLimit.toString(),
           }),
         );
 }
@@ -93,39 +93,80 @@ class SignTransaction extends Action {
 class SendTransaction extends Action {
   SendTransaction({
     required String fromAddress,
-    required String? toAddress,
-    required BigInt weiValue,
+    required String? weiValue,
     required String data,
-    required int? nonce,
-    required BigInt? gasPriceInWei,
-    required BigInt? maxFeePerGas,
-    required BigInt? maxPriorityFeePerGas,
-    required BigInt? gasLimit,
     required String chainId,
+    required String toAddress,
+    int? nonce,
+    BigInt? gasPriceInWei,
+    BigInt? maxFeePerGas,
+    BigInt? maxPriorityFeePerGas,
+    BigInt? gasLimit,
   }) : super(
-          method: 'eth_signTransaction',
+          method: 'eth_sendTransaction',
           paramsJson: jsonEncode({
             'fromAddress': fromAddress,
             'toAddress': toAddress,
-            'weiValue': weiValue.toString(),
-            'data': data,
-            'nonce': nonce,
-            'gasPriceInWei': gasPriceInWei?.toString(),
-            'maxFeePerGas': maxFeePerGas?.toString(),
-            'maxPriorityFeePerGas': maxPriorityFeePerGas?.toString(),
-            'gasLimit': gasLimit?.toString(),
             'chainId': chainId,
+            'weiValue': weiValue,
+            'data': data,
+            'nonce': nonce ?? 0,
+            if (gasPriceInWei != null)
+              'gasPriceInWei': gasPriceInWei.toString(),
+            if (maxFeePerGas != null) 'maxFeePerGas': maxFeePerGas.toString(),
+            if (maxPriorityFeePerGas != null)
+              'maxPriorityFeePerGas': maxPriorityFeePerGas.toString(),
+            if (gasLimit != null) 'gasLimit': gasLimit.toString(),
           }),
         );
 }
 
 class SwitchEthereumChain extends Action {
   SwitchEthereumChain({
-    required int chainId,
+    required String chainId,
   }) : super(
           method: 'wallet_switchEthereumChain',
           paramsJson: jsonEncode({
             'chainId': chainId,
+          }),
+        );
+}
+
+class AddEthereumChain extends Action {
+  AddEthereumChain({
+    required String chainId,
+    required List<String> rpcUrls,
+    String? chainName,
+    Currency? nativeCurrency,
+    List<String>? iconUrls,
+    List<String>? blockExplorerUrls,
+  }) : super(
+          method: 'wallet_addEthereumChain',
+          paramsJson: jsonEncode({
+            'chainId': chainId,
+            'rpcUrls': rpcUrls,
+            if (chainName != null) 'chainName': chainName,
+            if (nativeCurrency != null) 'nativeCurrency': nativeCurrency,
+            if (iconUrls != null) 'iconUrls': iconUrls,
+            if (blockExplorerUrls != null)
+              'blockExplorerUrls': blockExplorerUrls,
+          }),
+        );
+}
+
+class WatchAsset extends Action {
+  WatchAsset({
+    required String address,
+    required String symbol,
+    int? decimals,
+    String? image,
+  }) : super(
+          method: 'wallet_watchAsset',
+          paramsJson: jsonEncode({
+            'address': address,
+            'symbol': symbol,
+            'decimals': decimals ?? 18,
+            if (image != null) 'image': image,
           }),
         );
 }
