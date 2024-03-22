@@ -22,15 +22,15 @@ class _MyAppState extends State<MyApp> {
   String _signed = "";
   String _sessionCleared = "";
 
-  @override
-  void initState() {
-    super.initState();
-    // _configure();
-  }
+  // TODO `configure` method shouldn't be called from Flutter side since the calling could happen too late raising an error when opening app from terminated state
+  // Since Flutter requires anyway iOS platform specific code https://github.com/MobileWalletProtocol/wallet-mobile-sdk/tree/main/flutter#ios-only
+  //    makes sense to call configure on native side as well as it is currently done for iOS SDK https://github.com/MobileWalletProtocol/wallet-mobile-sdk/tree/main/ios#setup
+  // Same for Android https://github.com/MobileWalletProtocol/wallet-mobile-sdk/tree/main/android#setup
 
-  // void _configure() async {
-  //   try {
-  //     final config = Configuration(
+  // @override
+  // void initState() {
+  //   CoinbaseWalletSDK.shared.configure(
+  //     Configuration(
   //       ios: IOSConfiguration(
   //         host: Uri.parse('cbwallet://wsegue'),
   //         callback: Uri.parse('tribesxyzsample://mycallback'),
@@ -38,13 +38,9 @@ class _MyAppState extends State<MyApp> {
   //       android: AndroidConfiguration(
   //         domain: Uri.parse('https://www.myappxyz.com'),
   //       ),
-  //     );
-  //     await CoinbaseWalletSDK.shared.configure(config).then((value) {
-  //       setState(() {});
-  //     });
-  //   } on PlatformException catch (e) {
-  //     debugPrint('Error ${e.code}: ${e.message}');
-  //   }
+  //     ),
+  //   );
+  //   super.initState();
   // }
 
   // Platform messages are asynchronous, so we initialize in an async method.
