@@ -63,9 +63,9 @@ class SignTransaction extends Action {
   SignTransaction({
     required String fromAddress,
     required String chainId,
-    required BigInt weiValue,
-    required String data,
     String? toAddress,
+    BigInt? weiValue,
+    String? data,
     int? nonce,
     BigInt? gasPriceInWei,
     BigInt? maxFeePerGas,
@@ -75,10 +75,10 @@ class SignTransaction extends Action {
           method: 'eth_signTransaction',
           paramsJson: jsonEncode({
             'fromAddress': fromAddress,
-            'data': data,
             'chainId': chainId,
-            'weiValue': weiValue.toString(),
             if (toAddress != null) 'toAddress': toAddress,
+            if (weiValue != null) 'weiValue': weiValue.toString(),
+            if (data != null) 'data': data,
             if (nonce != null) 'nonce': nonce,
             if (gasPriceInWei != null)
               'gasPriceInWei': gasPriceInWei.toString(),
@@ -93,24 +93,24 @@ class SignTransaction extends Action {
 class SendTransaction extends Action {
   SendTransaction({
     required String fromAddress,
-    required String? weiValue,
-    required String data,
     required String chainId,
-    required String toAddress,
+    String? toAddress,
+    BigInt? weiValue,
+    String? data,
     int? nonce,
     BigInt? gasPriceInWei,
     BigInt? maxFeePerGas,
     BigInt? maxPriorityFeePerGas,
     BigInt? gasLimit,
   }) : super(
-          method: 'eth_sendTransaction',
+          method: 'eth_signTransaction',
           paramsJson: jsonEncode({
             'fromAddress': fromAddress,
-            'toAddress': toAddress,
             'chainId': chainId,
-            'weiValue': weiValue,
-            'data': data,
-            'nonce': nonce ?? 0,
+            if (toAddress != null) 'toAddress': toAddress,
+            if (weiValue != null) 'weiValue': weiValue.toString(),
+            if (data != null) 'data': data,
+            if (nonce != null) 'nonce': nonce,
             if (gasPriceInWei != null)
               'gasPriceInWei': gasPriceInWei.toString(),
             if (maxFeePerGas != null) 'maxFeePerGas': maxFeePerGas.toString(),
