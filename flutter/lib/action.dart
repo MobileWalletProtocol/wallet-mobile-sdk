@@ -3,7 +3,7 @@ import 'dart:convert';
 class Action {
   final String method;
   final String paramsJson;
-  final bool optional;
+  final bool? optional;
 
   const Action({
     required this.method,

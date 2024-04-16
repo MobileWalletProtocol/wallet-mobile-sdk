@@ -38,7 +38,7 @@ body:
     id: version
     attributes:
       label: Version
-      description: Which version of Coinbase Wallet SDK
+      description: Which version of SDK
 
   - type: textarea
     id: additional

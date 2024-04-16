@@ -7,18 +7,19 @@ import com.coinbase.android.nativesdk.message.response.ResponseHandler
 import com.coinbase.android.nativesdk.message.response.ResponseResult
 import com.coinbase.android.nativesdk.message.response.UnencryptedResponseMessage
 
-internal class TaskManager {
-    private val tasks = HashMap<String, Task>()
+internal object TaskManager : ITaskManager {
+    private val tasks: MutableMap<String, Task> = mutableMapOf()
 
-    fun registerResponseHandler(message: UnencryptedRequestMessage, handler: ResponseHandler) {
+    override fun registerResponseHandler(message: UnencryptedRequestMessage, handler: ResponseHandler, host: String) {
         tasks[message.uuid] = Task(
             request = message,
+            host = host,
             handler = handler,
             timestamp = message.timestamp
         )
     }
 
-    fun handleResponse(message: UnencryptedResponseMessage): Boolean {
+    override fun handleResponse(message: UnencryptedResponseMessage): Boolean {
         val requestId: String
         val result: ResponseResult = when (val response = message.content.sealed) {
             is ResponseContent.Response -> {
@@ -38,7 +39,20 @@ internal class TaskManager {
         return true
     }
 
-    fun reset(){
-        tasks.clear()
+    override fun findTask(requestId: String): Task? {
+        return tasks[requestId]
     }
+
+    override fun reset(host: String) {
+        tasks.forEach { (k, v) ->
+            if (v.host == host) tasks.remove(k)
+        }
+    }
+}
+
+internal interface ITaskManager {
+    fun registerResponseHandler(message: UnencryptedRequestMessage, handler: ResponseHandler, host: String)
+    fun handleResponse(message: UnencryptedResponseMessage): Boolean
+    fun findTask(requestId: String): Task?
+    fun reset(host: String)
 }

@@ -65,7 +65,7 @@ launcher = registerForActivityResult(ActivityResultContracts.StartActivityForRes
 }
 ```
 
-An example is provided in the sample [application](https://github.com/coinbase/wallet-mobile-sdk/blob/master/android/example/src/main/java/com/coinbase/android/beta/MainActivity.kt#L27).
+An example is provided in the sample [application](android/example/src/main/java/com/coinbase/android/beta/MainActivity.kt#L27).
 
 ### Establishing a connection
 
@@ -87,7 +87,7 @@ client.initiateHandshake(
 }
 ```
 
-An example handshake request is provided in the sample [application](https://github.com/coinbase/wallet-mobile-sdk/blob/master/android/example/src/main/java/com/coinbase/android/beta/MainActivity.kt#L52).
+An example handshake request is provided in the sample [application](android/example/src/main/java/com/coinbase/android/beta/MainActivity.kt#L52).
 
 ### Making requests
 
@@ -112,7 +112,7 @@ client.makeRequest(request = RequestContent.Request(actions = requestActions)) {
 }
 ```
 
-An example request is provided in the sample [application](https://github.com/coinbase/wallet-mobile-sdk/blob/master/android/example/src/main/java/com/coinbase/android/beta/MainActivity.kt#L68).
+An example request is provided in the sample [application](android/example/src/main/java/com/coinbase/android/beta/MainActivity.kt#L68).
 
 For more information on the types of requests you can make, visit our [developer documentation](https://docs.cloud.coinbase.com/wallet-sdk/docs/mobile-sdk-overview).
 

@@ -1,6 +1,6 @@
 //
 //  ActionResult.swift
-//  WalletSegue
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 6/24/22.
 //
@@ -39,7 +39,7 @@ extension ResponseMessage {
                 BaseMessage<[ActionResult]>.copy(self, replaceContentWith: results)
             )
         case .failure(_, let description):
-            return .failure(CoinbaseWalletSDK.Error.walletReturnedError(description))
+            return .failure(MWPError.walletReturnedError(description))
         }
     }
 }

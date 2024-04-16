@@ -1,19 +1,29 @@
 //
 //  Key+RawRepresentable.swift
-//  WalletSegue
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 6/13/22.
 //
 
 import Foundation
+import CryptoKit
+
+@available(iOS 13.0, *)
+public typealias PrivateKey = Curve25519.KeyAgreement.PrivateKey
+
+@available(iOS 13.0, *)
+public typealias PublicKey = Curve25519.KeyAgreement.PublicKey
 
 public protocol RawRepresentableKey: Codable {
     init<D>(rawRepresentation data: D) throws where D: ContiguousBytes
     var rawRepresentation: Data { get }
 }
 
-extension CoinbaseWalletSDK.PrivateKey: RawRepresentableKey {}
-extension CoinbaseWalletSDK.PublicKey: RawRepresentableKey {}
+@available(iOS 13.0, *)
+extension PrivateKey: RawRepresentableKey {}
+
+@available(iOS 13.0, *)
+extension PublicKey: RawRepresentableKey {}
 
 extension RawRepresentableKey {
     public init(from decoder: Decoder) throws {

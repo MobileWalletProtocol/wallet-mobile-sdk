@@ -1,6 +1,6 @@
 //
 //  KeyManager.swift
-//  WalletSegue
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 6/9/22.
 //
@@ -8,18 +8,14 @@
 import Foundation
 import CryptoKit
 
-extension CoinbaseWalletSDK {
-    public typealias PrivateKey = Curve25519.KeyAgreement.PrivateKey
-    public typealias PublicKey = Curve25519.KeyAgreement.PublicKey
-}
-
+@available(iOS 13.0, *)
 final class KeyManager {
-    private(set) var ownPrivateKey: CoinbaseWalletSDK.PrivateKey
-    var ownPublicKey: CoinbaseWalletSDK.PublicKey {
+    private(set) var ownPrivateKey: PrivateKey
+    var ownPublicKey: PublicKey {
         return ownPrivateKey.publicKey
     }
     
-    private(set) var peerPublicKey: CoinbaseWalletSDK.PublicKey?
+    private(set) var peerPublicKey: PublicKey?
     
     private(set) var symmetricKey: SymmetricKey?
     
@@ -32,7 +28,7 @@ final class KeyManager {
         
         guard let storedKey = try? storage.read(.ownPrivateKey) else {
             // generate new private key
-            self.ownPrivateKey = CoinbaseWalletSDK.PrivateKey()
+            self.ownPrivateKey = PrivateKey()
             try? self.resetOwnPrivateKey(with: ownPrivateKey)
             return
         }
@@ -45,7 +41,7 @@ final class KeyManager {
         }
     }
     
-    func resetOwnPrivateKey(with key: CoinbaseWalletSDK.PrivateKey = CoinbaseWalletSDK.PrivateKey()) throws {
+    func resetOwnPrivateKey(with key: PrivateKey = PrivateKey()) throws {
         self.symmetricKey = nil
         self.peerPublicKey = nil
         self.ownPrivateKey = key
@@ -55,7 +51,7 @@ final class KeyManager {
         try storage.delete(.peerPublicKey)
     }
     
-    func storePeerPublicKey(_ key: CoinbaseWalletSDK.PublicKey) throws {
+    func storePeerPublicKey(_ key: PublicKey) throws {
         self.peerPublicKey = key
         self.symmetricKey = try Cipher.deriveSymmetricKey(with: ownPrivateKey, key)
         

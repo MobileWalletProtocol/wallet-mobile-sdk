@@ -31,7 +31,6 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  pod 'CoinbaseWalletSDK/CrossPlatform', :path => '../../../'
 end
 
 post_install do |installer|

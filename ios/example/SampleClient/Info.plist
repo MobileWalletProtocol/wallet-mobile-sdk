@@ -18,6 +18,7 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>cbwallet</string>
+		<string>samplewallet</string>
 	</array>
 </dict>
 </plist>

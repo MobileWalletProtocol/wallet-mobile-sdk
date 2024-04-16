@@ -17,8 +17,8 @@ sealed interface RequestContent {
     data class Handshake(
         val appId: String,
         val callback: String,
-        val appName: String? = null,
-        val appIconUrl: String? = null,
+        val appName: String?,
+        val appIconUrl: String?,
         val initialActions: List<Action>? = null
     ) : RequestContent
 

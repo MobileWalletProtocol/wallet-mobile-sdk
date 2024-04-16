@@ -1,6 +1,6 @@
 //
 //  KeyStorage.swift
-//  WalletSegue
+//  MobileWalletProtocol
 //
 //  Created by Jungho Bang on 6/17/22.
 //

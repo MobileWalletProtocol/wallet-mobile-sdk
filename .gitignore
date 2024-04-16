@@ -128,3 +128,4 @@ google-services.json
 
 node_modules/
 
+.vscode/settings.json

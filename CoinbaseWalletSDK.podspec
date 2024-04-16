@@ -12,16 +12,22 @@ Pod::Spec.new do |s|
   
   SDK_PATH = 'ios/CoinbaseWalletSDK'
   
-  s.subspec 'Client' do |ss|
+  s.subspec 'Core' do |ss|
     ss.source_files = "#{SDK_PATH}/**/*.swift"
     ss.exclude_files = [
+      "#{SDK_PATH}/Client/**/*.swift",
       "#{SDK_PATH}/Host/**/*.swift",
       "#{SDK_PATH}/Test/**/*.swift"
     ]
   end
   
+  s.subspec 'Client' do |ss|
+    ss.dependency 'CoinbaseWalletSDK/Core'
+    ss.source_files = "#{SDK_PATH}/Client/**/*.swift"
+  end
+  
   s.subspec 'Host' do |ss|
-    ss.dependency 'CoinbaseWalletSDK/Client'
+    ss.dependency 'CoinbaseWalletSDK/Core'
     ss.source_files = "#{SDK_PATH}/Host/**/*.swift"
   end
   
