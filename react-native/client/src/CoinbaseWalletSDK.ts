@@ -63,12 +63,8 @@ export function handleResponse(url: URL): boolean {
   return CoinbaseWalletSDK.handleResponse(url.toString());
 }
 
-export async function isCoinbaseWalletInstalled(): Promise<boolean> {
+export function isCoinbaseWalletInstalled(): boolean {
   return CoinbaseWalletSDK.isCoinbaseWalletInstalled();
-}
-
-export async function getCoinbaseWalletMWPVersion(): Promise<string | undefined> {
-  return CoinbaseWalletSDK.getCoinbaseWalletMWPVersion();
 }
 
 export function isConnected(): boolean {
