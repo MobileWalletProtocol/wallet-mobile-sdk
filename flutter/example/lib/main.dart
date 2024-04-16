@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk.dart';
 // import 'package:coinbase_wallet_sdk/configuration.dart';
-import 'package:coinbase_wallet_sdk/configuration.dart';
 import 'package:coinbase_wallet_sdk/currency.dart';
 import 'package:coinbase_wallet_sdk/eth_web3_rpc.dart';
 import 'package:coinbase_wallet_sdk/request.dart';
@@ -24,7 +23,7 @@ class _MyAppState extends State<MyApp> {
   String _signed = "";
   String _sessionCleared = "";
   bool _isConnected = false;
-  String? _chain = null;
+  String? _chain;
 
   // TODO `configure` method shouldn't be called from Flutter side since the calling could happen too late raising an error when opening app from terminated state
   // Since Flutter requires anyway iOS platform specific code https://github.com/MobileWalletProtocol/wallet-mobile-sdk/tree/main/flutter#ios-only
@@ -184,37 +183,31 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Coinbase Flutter SDK'),
         ),
-        body: SafeArea(
+        body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FutureBuilder<bool>(
                 future: CoinbaseWalletSDK.shared.isAppInstalled(),
-                builder: ((context, snapshot) {
+                builder: (context, snapshot) {
                   return Text(
-                    'Is installed?\n${snapshot.data}',
-                    textAlign: TextAlign.center,
+                    'Is installed? ${snapshot.data}',
                   );
-                }),
+                },
               ),
-              const SizedBox(height: 8),
-              FutureBuilder<bool>(
-                future: CoinbaseWalletSDK.shared.isConnected(),
-                builder: ((context, snapshot) {
-                  return Text(
-                    'Is connected?\n${snapshot.data}',
-                    textAlign: TextAlign.center,
-                  );
-                }),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () => _checkIsConnected(),
+                child: const Text("Is Connected"),
               ),
-              const SizedBox(height: 8),
+              Text('isConnected is $_isConnected'),
+              const SizedBox(height: 20),
               FutureBuilder<String>(
                 future: CoinbaseWalletSDK.shared.ownPublicKey(),
-                builder: ((context, snapshot) {
+                builder: (context, snapshot) {
                   if (snapshot.data != null) {
                     return Text(
-                      'Own Public Key:\n${snapshot.data!}',
+                      'Own Public Key: ${snapshot.data!}',
                       textAlign: TextAlign.center,
                     );
                   }
@@ -222,15 +215,15 @@ class _MyAppState extends State<MyApp> {
                     'Own Public Key:',
                     textAlign: TextAlign.center,
                   );
-                }),
+                },
               ),
               const SizedBox(height: 8),
               FutureBuilder<String>(
                 future: CoinbaseWalletSDK.shared.peerPublicKey(),
-                builder: ((context, snapshot) {
+                builder: (context, snapshot) {
                   if (snapshot.data != null) {
                     return Text(
-                      'Peer Public Key:\n${snapshot.data!}',
+                      'Peer Public Key: ${snapshot.data!}',
                       textAlign: TextAlign.center,
                     );
                   }
@@ -238,38 +231,8 @@ class _MyAppState extends State<MyApp> {
                     'Peer Public Key:',
                     textAlign: TextAlign.center,
                   );
-                }),
+                },
               ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () => _requestAccount(),
-                child: const Text("Request Account"),
-              ),
-              Text(
-                'address is:\n$_addy',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () => _personalSign(),
-                child: const Text("personalSign"),
-              ),
-              Text(
-                'signed message is\n$_signed',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () => _resetSession(),
-                child: const Text("Reset Session"),
-              ),
-              Text('is reset\n$_sessionCleared'),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () => _checkIsConnected(),
-                child: const Text("Is Connected"),
-              ),
-              Text('isConnected is $_isConnected'),
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () => _requestAccount(),
