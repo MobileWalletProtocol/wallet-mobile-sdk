@@ -11,6 +11,8 @@ public typealias EthAddress = String
 public typealias EthTxData = String
 public typealias BigInt = String
 
+public let unsupportedHandShakeMethod: [String] = ["eth_signTransaction", "eth_sendTransaction"]
+
 public enum Web3JSONRPC: Codable {
     case eth_requestAccounts
     
@@ -52,8 +54,7 @@ public enum Web3JSONRPC: Codable {
         maxFeePerGas: BigInt?,
         maxPriorityFeePerGas: BigInt?,
         gasLimit: BigInt?,
-        chainId: BigInt,
-        actionSource: ActionSource?
+        chainId: BigInt
     )
     
     case wallet_switchEthereumChain(
@@ -107,13 +108,5 @@ public struct WatchAssetOptions: Codable {
         self.symbol = symbol
         self.decimals = decimals
         self.image = image
-    }
-}
-
-public struct ActionSource: Codable {
-    let url: String
-    
-    public init(url: String) {
-        self.url = url
     }
 }

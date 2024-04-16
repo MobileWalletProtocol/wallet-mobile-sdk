@@ -34,7 +34,7 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
             if (call.method == "isAppInstalled") {
                 return isAppInstalled(result: result)
             }
-            
+
             if (call.method == "isConnected") {
                 return isConnected(result: result)
             }
@@ -59,10 +59,6 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
         result(CoinbaseWalletSDK.isCoinbaseWalletInstalled())
     }
 
-    private func isConnected(result: @escaping FlutterResult) {
-        result(CoinbaseWalletSDK.shared.isConnected())
-    }
-    
     private func isConnected(result: @escaping FlutterResult) {
         result(CoinbaseWalletSDK.shared.isConnected())
     }
@@ -94,13 +90,6 @@ public class SwiftCoinbaseWalletSdkFlutterPlugin: NSObject, FlutterPlugin {
 
         guard CoinbaseWalletSDK.isConfigured == false else {
             result(FlutterError(code: "configure", message: "`CoinbaseWalletSDK.configure` should be called only once.", details: nil))
-            return
-        }
-        
-        guard CoinbaseWalletSDK.isConfigured == false else {
-            #if DEBUG
-            result(FlutterError(code: "configure", message: "`CoinbaseWalletSDK.configure` should be called only once.", details: nil))
-            #endif
             return
         }
         

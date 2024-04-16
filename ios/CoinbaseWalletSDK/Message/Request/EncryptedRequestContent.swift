@@ -8,6 +8,7 @@
 import Foundation
 import CryptoKit
 
+@available(iOS 13.0, *)
 public enum EncryptedRequestContent: EncryptedContent {
     case handshake(appId: String, callback: URL, name: String?, iconUrl: URL?, initialActions: [Action]?)
     case request(data: Data)
@@ -26,6 +27,7 @@ public enum EncryptedRequestContent: EncryptedContent {
     }
 }
 
+@available(iOS 13.0, *)
 extension RequestContent {
     public func encrypt(with symmetricKey: SymmetricKey?) throws -> EncryptedRequestContent {
         switch self {

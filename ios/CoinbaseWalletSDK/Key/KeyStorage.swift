@@ -7,6 +7,7 @@
 
 import Foundation
 
+@available(iOS 13.0, *)
 final class KeyStorage {
     
     init(host: URL) {
@@ -79,6 +80,7 @@ final class KeyStorage {
     }
 }
 
+@available(iOS 13.0, *)
 extension KeyStorage {
     enum Error: Swift.Error {
         case storeFailed(String)

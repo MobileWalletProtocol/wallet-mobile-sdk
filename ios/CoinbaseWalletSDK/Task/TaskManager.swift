@@ -7,6 +7,7 @@
 
 import Foundation
 
+@available(iOS 13.0, *)
 class TaskManager {
     private static var tasks = [UUID: Task]()
     

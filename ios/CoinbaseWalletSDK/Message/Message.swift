@@ -8,8 +8,10 @@
 import Foundation
 import CryptoKit
 
+@available(iOS 13.0, *)
 public typealias Message<C> = CodableMessage<C> where C: UnencryptedContent
 
+@available(iOS 13.0, *)
 public protocol UnencryptedContent: CodableContent {
     associatedtype Encrypted: EncryptedContent where Encrypted.Unencrypted == Self
     
@@ -21,6 +23,7 @@ public protocol UnencryptedContent: CodableContent {
 public protocol BaseContent {}
 extension Array: BaseContent where Element: BaseContent {}
 
+@available(iOS 13.0, *)
 public struct BaseMessage<C: BaseContent> {
     public let uuid: UUID
     public let sender: PublicKey
@@ -42,9 +45,11 @@ public struct BaseMessage<C: BaseContent> {
 }
 
 // MARK: - codable types
+@available(iOS 13.0, *)
 extension BaseMessage: Codable where C: Codable {}
 
 public protocol CodableContent: BaseContent, Codable {}
 extension Array: CodableContent where Element: CodableContent {}
 
+@available(iOS 13.0, *)
 public typealias CodableMessage<C> = BaseMessage<C> where C: CodableContent

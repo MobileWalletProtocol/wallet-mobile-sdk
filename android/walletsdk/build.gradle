@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    compileSdk 34
+    compileSdk 32
 
     defaultConfig {
         minSdk 23
-        targetSdk 34
+        targetSdk 32
 
         versionCode 3
         versionName libs.versions.sdk.version.get()
@@ -78,11 +78,11 @@ afterEvaluate {
                 pom {
                     name = 'coinbase-wallet-sdk'
                     description = 'Coinbase Wallet Mobile SDK'
-                    url = 'https://github.com/MobileWalletProtocol/wallet-mobile-sdk'
+                    url = 'https://github.com/coinbase/wallet-mobile-sdk'
                     licenses {
                         license {
                             name = 'Coinbase License'
-                            url = 'https://github.com/MobileWalletProtocol/wallet-mobile-sdk/blob/master/LICENSE'
+                            url = 'https://github.com/coinbase/wallet-mobile-sdk/blob/master/LICENSE'
                         }
                     }
                     developers {
@@ -93,13 +93,13 @@ afterEvaluate {
                         }
                         developer {
                             id = 'vishnumad'
-                            name = 'Vishnu Madhusoodanan'
+                            name = 'Vishnu Mad'
                             email = 'vishnu.madhusoodanan@coinbase.com'
                         }
                     }
                     scm {
-                        developerConnection = 'scm:git@github.com:MobileWalletProtocol/wallet-mobile-sdk.git'
-                        url = 'https://github.com/MobileWalletProtocol/wallet-mobile-sdk/tree/main'
+                        developerConnection = 'scm:git@github.com:coinbase/wallet-mobile-sdk.git'
+                        url = 'https://github.com/coinbase/wallet-mobile-sdk/tree/main'
                     }
                 }
             }
