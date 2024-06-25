@@ -32,7 +32,7 @@
     "buffer": "6.0.3",
     "bn.js": "5.2.1",
     "events": "^3.0.0",
-    "react-native-mmkv": "2.11.0"
+    "react-native-mmkv": "^2.11.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.25",
