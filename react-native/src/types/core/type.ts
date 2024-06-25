@@ -18,6 +18,9 @@ export const HexString = OpaqueType<HexString>();
 export type AddressString = OpaqueType<'AddressString', string>;
 export const AddressString = OpaqueType<AddressString>();
 
+export type BigIntString = OpaqueType<'BigIntString', string>;
+export const BigIntString = OpaqueType<BigIntString>();
+
 export type IntNumber = OpaqueType<'IntNumber', number>;
 export function IntNumber(num: number): IntNumber {
   return Math.floor(num) as IntNumber;
