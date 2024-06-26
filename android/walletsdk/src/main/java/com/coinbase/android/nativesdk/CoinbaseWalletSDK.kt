@@ -35,6 +35,8 @@ class CoinbaseWalletSDK internal constructor(
 
 
     val isConnected: Boolean get() = keyManager.peerPublicKey != null
+    val ownPublicKey: ECPublicKey get() = keyManager.ownPublicKey
+    val peerPublicKey: ECPublicKey? get() = keyManager.peerPublicKey
 
     private val config: ClientConfiguration.Configuration
         get() = ClientConfiguration.config
