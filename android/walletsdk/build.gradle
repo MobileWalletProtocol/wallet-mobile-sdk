@@ -59,7 +59,6 @@ dependencies {
     testImplementation libs.junit4
     testImplementation libs.kotest
     androidTestImplementation libs.androidx.junit4
-    androidTestImplementation libs.espresso
 }
 
 afterEvaluate {
