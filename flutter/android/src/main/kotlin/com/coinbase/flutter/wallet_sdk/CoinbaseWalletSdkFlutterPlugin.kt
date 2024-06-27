@@ -105,13 +105,11 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
     }
 
     private fun ownPublicKey(@NonNull result: Result) {
-        // TODO implement the proper function to return coinbase.ownPublicKey
-        result.success("")
+        result.success(coinbase.ownPublicKey)
     }
 
     private fun peerPublicKey(@NonNull result: Result) {
-        // TODO implement the proper function to return coinbase.peerPublicKey
-        result.success("")
+        result.success(coinbase.peerPublicKey)
     }
 
     private fun configure(@NonNull call: MethodCall, @NonNull result: Result) {
