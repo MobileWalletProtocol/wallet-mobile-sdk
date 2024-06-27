@@ -1,7 +1,7 @@
 import {
-  HandshakeAction,
+  type HandshakeAction,
   useMobileWalletProtocolHost,
-  AppMetadata,
+  type AppMetadata,
 } from '@coinbase/mobile-wallet-protocol-host';
 import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';

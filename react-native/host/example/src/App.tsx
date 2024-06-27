@@ -3,7 +3,7 @@ import {
   addDiagnosticLogListener,
   getAndroidIntentUrl,
   MobileWalletProtocolProvider,
-  SecureStorage,
+  type SecureStorage,
   useMobileWalletProtocolHost,
 } from '@coinbase/mobile-wallet-protocol-host';
 import React, { useEffect } from 'react';

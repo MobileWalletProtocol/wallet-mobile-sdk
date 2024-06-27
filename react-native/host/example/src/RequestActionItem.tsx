@@ -1,5 +1,5 @@
 import {
-  EthereumRequestAction,
+  type EthereumRequestAction,
   useMobileWalletProtocolHost,
 } from '@coinbase/mobile-wallet-protocol-host';
 import React from 'react';
