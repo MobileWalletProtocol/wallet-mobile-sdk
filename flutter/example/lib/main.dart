@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk.dart';
-import 'package:coinbase_wallet_sdk/configuration.dart';
+// import 'package:coinbase_wallet_sdk/configuration.dart';
 import 'package:coinbase_wallet_sdk/currency.dart';
 import 'package:coinbase_wallet_sdk/eth_web3_rpc.dart';
 import 'package:coinbase_wallet_sdk/request.dart';
@@ -23,23 +23,28 @@ class _MyAppState extends State<MyApp> {
   String _signed = "";
   String _sessionCleared = "";
   bool _isConnected = false;
-  String? _chain = null;
+  String? _chain;
 
-  @override
-  void initState() {
-    CoinbaseWalletSDK.shared.configure(
-      Configuration(
-        ios: IOSConfiguration(
-          host: Uri.parse('cbwallet://wsegue'),
-          callback: Uri.parse('tribesxyzsample://mycallback'),
-        ),
-        android: AndroidConfiguration(
-          domain: Uri.parse('https://www.myappxyz.com'),
-        ),
-      ),
-    );
-    super.initState();
-  }
+  // TODO `configure` method shouldn't be called from Flutter side since the calling could happen too late raising an error when opening app from terminated state
+  // Since Flutter requires anyway iOS platform specific code https://github.com/MobileWalletProtocol/wallet-mobile-sdk/tree/main/flutter#ios-only
+  //    makes sense to call configure on native side as well as it is currently done for iOS SDK https://github.com/MobileWalletProtocol/wallet-mobile-sdk/tree/main/ios#setup
+  // Same for Android https://github.com/MobileWalletProtocol/wallet-mobile-sdk/tree/main/android#setup
+
+  // @override
+  // void initState() {
+  //   CoinbaseWalletSDK.shared.configure(
+  //     Configuration(
+  //       ios: IOSConfiguration(
+  //         host: Uri.parse('cbwallet://wsegue'),
+  //         callback: Uri.parse('tribesxyzsample://mycallback'),
+  //       ),
+  //       android: AndroidConfiguration(
+  //         domain: Uri.parse('https://www.myappxyz.com'),
+  //       ),
+  //     ),
+  //   );
+  //   super.initState();
+  // }
 
   Future<void> _checkIsConnected() async {
     bool isConnected;
@@ -184,11 +189,11 @@ class _MyAppState extends State<MyApp> {
             children: [
               FutureBuilder<bool>(
                 future: CoinbaseWalletSDK.shared.isAppInstalled(),
-                builder: ((context, snapshot) {
+                builder: (context, snapshot) {
                   return Text(
                     'Is installed? ${snapshot.data}',
                   );
-                }),
+                },
               ),
               const SizedBox(height: 20),
               TextButton(
@@ -196,6 +201,38 @@ class _MyAppState extends State<MyApp> {
                 child: const Text("Is Connected"),
               ),
               Text('isConnected is $_isConnected'),
+              const SizedBox(height: 20),
+              FutureBuilder<String>(
+                future: CoinbaseWalletSDK.shared.ownPublicKey(),
+                builder: (context, snapshot) {
+                  if (snapshot.data != null) {
+                    return Text(
+                      'Own Public Key: ${snapshot.data!}',
+                      textAlign: TextAlign.center,
+                    );
+                  }
+                  return const Text(
+                    'Own Public Key:',
+                    textAlign: TextAlign.center,
+                  );
+                },
+              ),
+              const SizedBox(height: 8),
+              FutureBuilder<String>(
+                future: CoinbaseWalletSDK.shared.peerPublicKey(),
+                builder: (context, snapshot) {
+                  if (snapshot.data != null) {
+                    return Text(
+                      'Peer Public Key: ${snapshot.data!}',
+                      textAlign: TextAlign.center,
+                    );
+                  }
+                  return const Text(
+                    'Peer Public Key:',
+                    textAlign: TextAlign.center,
+                  );
+                },
+              ),
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () => _requestAccount(),

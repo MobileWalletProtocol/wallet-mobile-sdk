@@ -19,6 +19,10 @@ class MethodChannelCoinbaseWalletSdkFlutter
       return result;
     }
 
+    if (method == 'ownPublicKey' || method == 'peerPublicKey') {
+      return result;
+    }
+
     return result != null ? jsonDecode(result as String) : null;
   }
 }

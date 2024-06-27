@@ -14,6 +14,11 @@ class CoinbaseWalletSDK {
 
   const CoinbaseWalletSDK._();
 
+  // TODO `configure` method shouldn't be called from Flutter side since the calling could happen too late raising an error when opening app from terminated state
+  // Since Flutter requires anyway iOS platform specific code https://github.com/MobileWalletProtocol/wallet-mobile-sdk/tree/main/flutter#ios-only
+  //    makes sense to call configure on native side as well as it is currently done for iOS SDK https://github.com/MobileWalletProtocol/wallet-mobile-sdk/tree/main/ios#setup
+  // Same for Android https://github.com/MobileWalletProtocol/wallet-mobile-sdk/tree/main/android#setup
+
   /// Setup the SDK
   Future<void> configure(Configuration configuration) async {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
@@ -78,6 +83,15 @@ class CoinbaseWalletSDK {
     final result =
         await CoinbaseWalletSdkFlutterPlatform.instance.call('isConnected');
     return result ?? false;
+  }
+
+  Future<String> ownPublicKey() async {
+    return await CoinbaseWalletSdkFlutterPlatform.instance.call('ownPublicKey');
+  }
+
+  Future<String> peerPublicKey() async {
+    return await CoinbaseWalletSdkFlutterPlatform.instance
+        .call('peerPublicKey');
   }
 
   // private helper methods

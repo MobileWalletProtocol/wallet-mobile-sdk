@@ -15,14 +15,13 @@ class PersonalSign extends Action {
   PersonalSign({
     required String address,
     required String message,
-    bool optional = false,
+    super.optional,
   }) : super(
           method: 'personal_sign',
           paramsJson: jsonEncode({
             'address': address,
             'message': message,
           }),
-          optional: optional,
         );
 }
 
@@ -33,14 +32,13 @@ class SignTypedDataV3 extends Action {
   SignTypedDataV3({
     required this.address,
     required this.typedDataJson,
-    bool optional = false,
+    super.optional,
   }) : super(
           method: 'eth_signTypedData_v3',
           paramsJson: jsonEncode({
             'address': address,
             'typedDataJson': typedDataJson,
           }),
-          optional: optional,
         );
 }
 
@@ -51,14 +49,13 @@ class SignTypedDataV4 extends Action {
   SignTypedDataV4({
     required this.address,
     required this.typedDataJson,
-    bool optional = false,
+    super.optional,
   }) : super(
           method: 'eth_signTypedData_v4',
           paramsJson: jsonEncode({
             'address': address,
             'typedDataJson': typedDataJson,
           }),
-          optional: optional,
         );
 }
 
@@ -66,9 +63,9 @@ class SignTransaction extends Action {
   SignTransaction({
     required String fromAddress,
     required String chainId,
-    required BigInt weiValue,
-    required String data,
     String? toAddress,
+    BigInt? weiValue,
+    String? data,
     int? nonce,
     BigInt? gasPriceInWei,
     BigInt? maxFeePerGas,
@@ -78,10 +75,10 @@ class SignTransaction extends Action {
           method: 'eth_signTransaction',
           paramsJson: jsonEncode({
             'fromAddress': fromAddress,
-            'data': data,
             'chainId': chainId,
-            'weiValue': weiValue.toString(),
             if (toAddress != null) 'toAddress': toAddress,
+            if (weiValue != null) 'weiValue': weiValue.toString(),
+            if (data != null) 'data': data,
             if (nonce != null) 'nonce': nonce,
             if (gasPriceInWei != null)
               'gasPriceInWei': gasPriceInWei.toString(),
@@ -96,10 +93,10 @@ class SignTransaction extends Action {
 class SendTransaction extends Action {
   SendTransaction({
     required String fromAddress,
-    required String? weiValue,
-    required String data,
     required String chainId,
-    required String toAddress,
+    String? toAddress,
+    BigInt? weiValue,
+    String? data,
     int? nonce,
     BigInt? gasPriceInWei,
     BigInt? maxFeePerGas,
@@ -109,11 +106,11 @@ class SendTransaction extends Action {
           method: 'eth_sendTransaction',
           paramsJson: jsonEncode({
             'fromAddress': fromAddress,
-            'toAddress': toAddress,
             'chainId': chainId,
-            'weiValue': weiValue,
-            'data': data,
-            'nonce': nonce ?? 0,
+            if (toAddress != null) 'toAddress': toAddress,
+            if (weiValue != null) 'weiValue': weiValue.toString(),
+            if (data != null) 'data': data,
+            if (nonce != null) 'nonce': nonce,
             if (gasPriceInWei != null)
               'gasPriceInWei': gasPriceInWei.toString(),
             if (maxFeePerGas != null) 'maxFeePerGas': maxFeePerGas.toString(),
@@ -153,6 +150,23 @@ class AddEthereumChain extends Action {
             if (iconUrls != null) 'iconUrls': iconUrls,
             if (blockExplorerUrls != null)
               'blockExplorerUrls': blockExplorerUrls,
+          }),
+        );
+}
+
+class WatchAsset extends Action {
+  WatchAsset({
+    required String address,
+    required String symbol,
+    int? decimals,
+    String? image,
+  }) : super(
+          method: 'wallet_watchAsset',
+          paramsJson: jsonEncode({
+            'address': address,
+            'symbol': symbol,
+            'decimals': decimals ?? 18,
+            if (image != null) 'image': image,
           }),
         );
 }

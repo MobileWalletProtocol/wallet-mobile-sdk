@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-   implementation "com.coinbase:coinbase-wallet-sdk:1.0.3"
+   implementation "com.coinbase:coinbase-wallet-sdk:1.1.1"
 }
 ```
 
