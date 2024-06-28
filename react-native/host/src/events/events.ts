@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from './EventEmitter';
 
 // Request Decoding
 type RequestEventParams = {
@@ -128,15 +128,15 @@ type MWPEvent =
   | RequestStartedEvent
   | ResponseHandledEvent;
 
-const diagnosticLogger = new EventEmitter();
+const diagnosticLogger = new EventEmitter<MWPEvent>();
 
 export function addDiagnosticLogListener(listener: (event: MWPEvent) => void) {
-  diagnosticLogger.addListener('mwp_event', listener);
+  diagnosticLogger.addListener(listener);
   return () => {
-    diagnosticLogger.removeListener('mwp_event', listener);
+    diagnosticLogger.removeListener(listener);
   };
 }
 
 export function diagnosticLog(event: MWPEvent) {
-  diagnosticLogger.emit('mwp_event', event);
+  diagnosticLogger.emit(event);
 }
