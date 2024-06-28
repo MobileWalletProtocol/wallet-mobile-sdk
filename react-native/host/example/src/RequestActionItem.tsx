@@ -30,12 +30,7 @@ export function RequestActionItem({ action, onHandled }: RequestItemProps) {
   }, [action, onHandled, rejectAction]);
 
   return (
-    <View
-      style={[
-        styles.container,
-        { paddingTop: insets.top, paddingBottom: insets.bottom },
-      ]}
-    >
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <Text>Request</Text>
       <Text>{action.method}</Text>
       <Text>{JSON.stringify(action.params, null, 4)}</Text>

@@ -34,10 +34,7 @@ const storage: SecureStorage = {
 export default function Root() {
   return (
     <SafeAreaProvider>
-      <MobileWalletProtocolProvider
-        secureStorage={storage}
-        sessionExpiryDays={7}
-      >
+      <MobileWalletProtocolProvider secureStorage={storage} sessionExpiryDays={7}>
         <App />
       </MobileWalletProtocolProvider>
     </SafeAreaProvider>
@@ -45,8 +42,7 @@ export default function Root() {
 }
 
 function App() {
-  const { message, handleRequestUrl, sendFailureToClient } =
-    useMobileWalletProtocolHost();
+  const { message, handleRequestUrl, sendFailureToClient } = useMobileWalletProtocolHost();
 
   // Handle incoming deeplinks
   useEffect(() => {
@@ -91,7 +87,7 @@ function App() {
   // Diagnostic events
   useEffect(() => {
     const removeListener = addDiagnosticLogListener((event) => {
-      console.log('Event:', JSON.stringify(event));
+      console.log('Event:', JSON.stringify(event, null, 2));
     });
 
     return () => removeListener();

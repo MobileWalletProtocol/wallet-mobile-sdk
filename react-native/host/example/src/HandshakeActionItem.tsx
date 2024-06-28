@@ -18,12 +18,8 @@ export function HandshakeActionItem({ action, onHandled }: HandshakeItemProps) {
   const [metadata, setMetadata] = React.useState<AppMetadata | null>(null);
   const [isVerified, setVerified] = React.useState<boolean | null>(null);
 
-  const {
-    fetchClientAppMetadata,
-    isClientAppVerified,
-    approveHandshake,
-    rejectHandshake,
-  } = useMobileWalletProtocolHost();
+  const { fetchClientAppMetadata, isClientAppVerified, approveHandshake, rejectHandshake } =
+    useMobileWalletProtocolHost();
 
   React.useEffect(() => {
     try {
@@ -45,19 +41,12 @@ export function HandshakeActionItem({ action, onHandled }: HandshakeItemProps) {
   }, [onHandled, rejectHandshake]);
 
   return (
-    <View
-      style={[
-        styles.container,
-        { paddingTop: insets.top, paddingBottom: insets.bottom },
-      ]}
-    >
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <Text>Handshake</Text>
       <Text>App Id: {action.appId}</Text>
       <Text>Callback: {action.callback}</Text>
       <Text>Name: {metadata?.appName ?? 'Loading...'}</Text>
-      <Text>
-        Verified?: {isVerified === null ? 'Loading...' : `${isVerified}`}
-      </Text>
+      <Text>Verified?: {isVerified === null ? 'Loading...' : `${isVerified}`}</Text>
       <View style={styles.buttonContainer}>
         <Button title="Approve" onPress={approve} />
         <View style={styles.space} />
