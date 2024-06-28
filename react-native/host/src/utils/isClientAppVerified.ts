@@ -16,7 +16,10 @@ function stripIosDeveloperId(appId: string) {
   return appId.replace(/^[\dA-Z]+\./g, '');
 }
 
-async function isIosAppVerified(hostname: string, clientAppId: string): Promise<boolean> {
+async function isIosAppVerified(
+  hostname: string,
+  clientAppId: string
+): Promise<boolean> {
   const urls = [
     new URL('/.well-known/apple-app-site-association', `https://${hostname}`),
     new URL('/apple-app-site-association', `https://${hostname}`),
@@ -27,7 +30,8 @@ async function isIosAppVerified(hostname: string, clientAppId: string): Promise<
       const wellKnownDataResponse = await fetch(url.toString());
       if (!wellKnownDataResponse.ok) continue;
 
-      const wellKnownData = (await wellKnownDataResponse.json()) as AppleAppSiteAssociationData;
+      const wellKnownData =
+        (await wellKnownDataResponse.json()) as AppleAppSiteAssociationData;
 
       for (const { appID, appIDs } of wellKnownData.applinks.details) {
         if (appID) {
@@ -37,7 +41,9 @@ async function isIosAppVerified(hostname: string, clientAppId: string): Promise<
         }
 
         if (appIDs) {
-          const verified = appIDs.map((id) => stripIosDeveloperId(id)).includes(clientAppId);
+          const verified = appIDs
+            .map((id) => stripIosDeveloperId(id))
+            .includes(clientAppId);
           if (verified) {
             return true;
           }
@@ -58,13 +64,17 @@ type AssetLinksData = {
   };
 };
 
-async function isAndroidAppVerified(hostname: string, clientAppId: string): Promise<boolean> {
+async function isAndroidAppVerified(
+  hostname: string,
+  clientAppId: string
+): Promise<boolean> {
   try {
     const url = new URL('/.well-known/assetlinks.json', `https://${hostname}`);
     const wellKnownDataResponse = await fetch(url.toString());
     if (!wellKnownDataResponse.ok) return false;
 
-    const wellKnownData = (await wellKnownDataResponse.json()) as AssetLinksData[];
+    const wellKnownData =
+      (await wellKnownDataResponse.json()) as AssetLinksData[];
     const clientAppSignatures = await MWPHostModule.getClientAppSignatures();
 
     for (const { target } of wellKnownData) {

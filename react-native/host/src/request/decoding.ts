@@ -33,7 +33,9 @@ export type DecryptedRequestContent = {
 };
 
 export type DecodedRequest = BaseRequest & {
-  content: { request: EncryptedRequestContent } | { handshake: HandshakeContent };
+  content:
+    | { request: EncryptedRequestContent }
+    | { handshake: HandshakeContent };
 };
 
 type DecryptedRequest = BaseRequest & {
@@ -41,14 +43,18 @@ type DecryptedRequest = BaseRequest & {
 };
 
 // TODO: Move decoding to native module
-export async function decodeRequest(url: string): Promise<DecodedRequest | null> {
+export async function decodeRequest(
+  url: string
+): Promise<DecodedRequest | null> {
   try {
     const base64EncodedRequest = new URL(url).searchParams.get('p');
     if (base64EncodedRequest === null) {
       return null;
     }
 
-    const jsonString = Buffer.from(base64EncodedRequest, 'base64').toString('ascii');
+    const jsonString = Buffer.from(base64EncodedRequest, 'base64').toString(
+      'ascii'
+    );
     return JSON.parse(jsonString) as DecodedRequest;
   } catch (e) {
     return null;
@@ -56,7 +62,10 @@ export async function decodeRequest(url: string): Promise<DecodedRequest | null>
 }
 
 // TODO: Implement `decryptRequest` in native module
-export async function decryptRequest(url: string, session: Session): Promise<DecryptedRequest> {
+export async function decryptRequest(
+  url: string,
+  session: Session
+): Promise<DecryptedRequest> {
   const { dappURL, version } = session;
 
   diagnosticLog({
@@ -68,7 +77,7 @@ export async function decryptRequest(url: string, session: Session): Promise<Dec
     const decrypted = await MWPHostModule.decodeRequest(
       url,
       session.sessionPrivateKey,
-      session.clientPublicKey,
+      session.clientPublicKey
     );
 
     diagnosticLog({

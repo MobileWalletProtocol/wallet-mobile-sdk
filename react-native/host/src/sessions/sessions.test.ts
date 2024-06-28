@@ -2,8 +2,8 @@ import {
   addSessions,
   deleteSessions,
   getSessions,
-  SecureStorage,
-  Session,
+  type SecureStorage,
+  type Session,
   updateSessions,
 } from './sessions';
 

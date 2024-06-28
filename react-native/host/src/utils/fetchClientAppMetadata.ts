@@ -20,7 +20,9 @@ type ITunesAppSearch = {
   }[];
 };
 
-async function fetchIosAppMetadata(appId: string): Promise<AppMetadataWithoutUrl | null> {
+async function fetchIosAppMetadata(
+  appId: string
+): Promise<AppMetadataWithoutUrl | null> {
   const appSearchUrl = new URL('https://itunes.apple.com/lookup');
   appSearchUrl.searchParams.set('bundleId', appId);
 
@@ -31,8 +33,8 @@ async function fetchIosAppMetadata(appId: string): Promise<AppMetadataWithoutUrl
     }
 
     try {
-      const appSearchData = (await fetch(appSearchUrl.toString()).then(async (res) =>
-        res.json(),
+      const appSearchData = (await fetch(appSearchUrl.toString()).then(
+        async (res) => res.json()
       )) as ITunesAppSearch;
 
       const appStoreResult = appSearchData.results.at(0);
@@ -51,7 +53,9 @@ async function fetchIosAppMetadata(appId: string): Promise<AppMetadataWithoutUrl
   return null;
 }
 
-async function fetchAndroidAppMetadata(appId: string): Promise<AppMetadataWithoutUrl | null> {
+async function fetchAndroidAppMetadata(
+  appId: string
+): Promise<AppMetadataWithoutUrl | null> {
   try {
     const metadata = await MWPHostModule.getClientAppMetadataV2();
 
@@ -75,7 +79,9 @@ export async function fetchClientAppMetadata({
   appUrl,
 }: FetchClientAppMetadataParams): Promise<AppMetadata | null> {
   const parsedUrl = new URL(appUrl);
-  const dappUrl = appUrl.startsWith('https://') ? parsedUrl.host : parsedUrl.protocol;
+  const dappUrl = appUrl.startsWith('https://')
+    ? parsedUrl.host
+    : parsedUrl.protocol;
 
   let metadata: AppMetadataWithoutUrl | null;
   switch (Platform.OS) {

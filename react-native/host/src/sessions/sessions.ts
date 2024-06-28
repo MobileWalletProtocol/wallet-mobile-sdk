@@ -24,10 +24,15 @@ export type SecureStorage = {
 };
 
 function findMatchingSession(sessions: Session[], sessionToFind: Session) {
-  return sessions.find((session) => session.sessionPublicKey === sessionToFind.sessionPublicKey);
+  return sessions.find(
+    (session) => session.sessionPublicKey === sessionToFind.sessionPublicKey
+  );
 }
 
-export function isSessionValid(session: Session, expiryDeltaDays: number): boolean {
+export function isSessionValid(
+  session: Session,
+  expiryDeltaDays: number
+): boolean {
   const lastAccessTime = new Date(session.lastAccessTime);
   const now = new Date();
 
@@ -51,7 +56,10 @@ export async function addSessions(storage: SecureStorage, sessions: Session[]) {
   await storage.set<Session[]>(SESSIONS_KEY, existingSessions.concat(sessions));
 }
 
-export async function updateSessions(storage: SecureStorage, sessions: Session[]) {
+export async function updateSessions(
+  storage: SecureStorage,
+  sessions: Session[]
+) {
   const existingSessions = await getSessions(storage);
   const updatedSessions = existingSessions.map((existingSession) => {
     const matchingSession = findMatchingSession(sessions, existingSession);
@@ -60,7 +68,10 @@ export async function updateSessions(storage: SecureStorage, sessions: Session[]
   await storage.set<Session[]>(SESSIONS_KEY, updatedSessions);
 }
 
-export async function deleteSessions(storage: SecureStorage, sessions: Session[]) {
+export async function deleteSessions(
+  storage: SecureStorage,
+  sessions: Session[]
+) {
   const existingSessions = await getSessions(storage);
   const updatedSessions = existingSessions.filter((session) => {
     const matchingSession = findMatchingSession(sessions, session);
@@ -71,7 +82,7 @@ export async function deleteSessions(storage: SecureStorage, sessions: Session[]
 
 export async function getSession(
   storage: SecureStorage,
-  message: { sender: string },
+  message: { sender: string }
 ): Promise<Session | undefined> {
   const sessions = await getSessions(storage);
   return sessions.find((value) => value.clientPublicKey === message.sender);

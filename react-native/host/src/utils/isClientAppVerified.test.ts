@@ -24,7 +24,10 @@ function mockIosAppSiteAssociationV1() {
       apps: [],
       details: [
         {
-          appIDs: ['ABCD123XYZ.xyz.example.app', 'ABCD123XYZ.xyz.example.app.beta'],
+          appIDs: [
+            'ABCD123XYZ.xyz.example.app',
+            'ABCD123XYZ.xyz.example.app.beta',
+          ],
           components: [],
         },
       ],
@@ -70,7 +73,8 @@ jest.mock('../native-module/MWPHostNativeModule', () => ({
 }));
 
 function mockAndroidClientSignatures(signatures: string[]) {
-  MWPHostModule.getClientAppSignatures = async () => Promise.resolve(signatures);
+  MWPHostModule.getClientAppSignatures = async () =>
+    Promise.resolve(signatures);
 }
 
 describe('isClientAppVerified', () => {

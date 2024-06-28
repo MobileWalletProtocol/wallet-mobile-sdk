@@ -1,11 +1,15 @@
 import { Linking, Platform } from 'react-native';
-import { diagnosticLog, ResponseEventParams } from '../events/events';
+import { diagnosticLog, type ResponseEventParams } from '../events/events';
 import type { DecodedRequest } from '../request/decoding';
 
-import { isHandshakeAction, RequestAction } from '../action/action';
+import { isHandshakeAction, type RequestAction } from '../action/action';
 import { MWPHostModule } from '../native-module/MWPHostNativeModule';
 import type { RequestMessage } from '../request/request';
-import { getSession, SecureStorage, updateSessions } from '../sessions/sessions';
+import {
+  getSession,
+  type SecureStorage,
+  updateSessions,
+} from '../sessions/sessions';
 import { uuidV4 } from '../utils/uuid';
 import { URL } from 'react-native-url-polyfill';
 import { Buffer } from 'buffer';
@@ -31,7 +35,9 @@ type FailureResponse = {
   description: string;
 };
 
-type ResponseContent = { response: SuccessResponse } | { failure: FailureResponse };
+type ResponseContent =
+  | { response: SuccessResponse }
+  | { failure: FailureResponse };
 
 type ResponseMessage = {
   version: string;
@@ -44,7 +50,9 @@ type ResponseMessage = {
 
 type RequestType = 'handshake' | 'request';
 
-type TypedResponseEventParams = ResponseEventParams & { requestType: RequestType };
+type TypedResponseEventParams = ResponseEventParams & {
+  requestType: RequestType;
+};
 
 type EventParams =
   | {
@@ -95,12 +103,13 @@ async function respond({
   let encodedResponseUrl: string;
   if (sessionPrivateKey && clientPublicKey) {
     // Encrypted response
-    const platformResponse = Platform.OS === 'android' ? JSON.stringify(response) : response;
+    const platformResponse =
+      Platform.OS === 'android' ? JSON.stringify(response) : response;
     encodedResponseUrl = await MWPHostModule.encodeResponse(
       platformResponse,
       callbackUrl,
       sessionPrivateKey,
-      clientPublicKey,
+      clientPublicKey
     );
   } else {
     // Unencrypted response
@@ -145,9 +154,11 @@ async function respond({
 export async function sendResponse(
   responseMap: Map<number, ReturnValue>,
   message: RequestMessage,
-  storage: SecureStorage,
+  storage: SecureStorage
 ) {
-  const actions = message.actions.filter((value) => !isHandshakeAction(value)) as RequestAction[];
+  const actions = message.actions.filter(
+    (value) => !isHandshakeAction(value)
+  ) as RequestAction[];
 
   const responses: ReturnValue[] = actions.map((value) => {
     const returnValue = responseMap.get(value.id);
@@ -222,7 +233,10 @@ export async function sendResponse(
   }
 }
 
-export async function sendError(description: string, message: RequestMessage | DecodedRequest) {
+export async function sendError(
+  description: string,
+  message: RequestMessage | DecodedRequest
+) {
   const sdkVersion = await MWPHostModule.getSdkVersion();
 
   const response: ResponseMessage = {
@@ -272,7 +286,7 @@ export async function sendError(description: string, message: RequestMessage | D
 
 export function shouldRespondToClient(
   responseMap: Map<number, ReturnValue>,
-  message: RequestMessage,
+  message: RequestMessage
 ): boolean {
   const actions = message.actions.filter((value) => !isHandshakeAction(value));
   return responseMap.size === actions.length;
