@@ -1,7 +1,7 @@
 import {
   isEthereumAction,
   isHandshakeAction,
-  RequestMessage,
+  type RequestMessage,
 } from '@coinbase/mobile-wallet-protocol-host';
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
