@@ -3,7 +3,7 @@ import {
   addDiagnosticLogListener,
   getAndroidIntentUrl,
   MobileWalletProtocolProvider,
-  SecureStorage,
+  type SecureStorage,
   useMobileWalletProtocolHost,
 } from '@coinbase/mobile-wallet-protocol-host';
 import React, { useEffect } from 'react';
@@ -34,7 +34,10 @@ const storage: SecureStorage = {
 export default function Root() {
   return (
     <SafeAreaProvider>
-      <MobileWalletProtocolProvider secureStorage={storage} sessionExpiryDays={7}>
+      <MobileWalletProtocolProvider
+        secureStorage={storage}
+        sessionExpiryDays={7}
+      >
         <App />
       </MobileWalletProtocolProvider>
     </SafeAreaProvider>
@@ -42,7 +45,8 @@ export default function Root() {
 }
 
 function App() {
-  const { message, handleRequestUrl, sendFailureToClient } = useMobileWalletProtocolHost();
+  const { message, handleRequestUrl, sendFailureToClient } =
+    useMobileWalletProtocolHost();
 
   // Handle incoming deeplinks
   useEffect(() => {
