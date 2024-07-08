@@ -3,6 +3,7 @@ package com.coinbase.flutter.wallet_sdk
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.annotation.NonNull
 import com.coinbase.android.nativesdk.CoinbaseWalletSDK
 import com.coinbase.android.nativesdk.message.request.Account
@@ -24,6 +25,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.encodeToJsonElement
+import java.util.Base64
 
 /** CoinbaseWalletSdkFlutterPlugin */
 class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
@@ -105,12 +107,32 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
     }
 
     private fun ownPublicKey(@NonNull result: Result) {
-        result.success(coinbase.ownPublicKey)
+        try {
+            val bytes = coinbase.ownPublicKey.encoded;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                result.success(bytes?.toHexString())
+            } else {
+                result.success("")
+            }
+        } catch (e: Throwable) {
+            result.success("")
+        }
     }
 
     private fun peerPublicKey(@NonNull result: Result) {
-        result.success(coinbase.peerPublicKey)
+        try {
+            val bytes = coinbase.peerPublicKey?.encoded;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                result.success(bytes?.toHexString())
+            } else {
+                result.success("")
+            }
+        } catch (e: Throwable) {
+            result.success("")
+        }
     }
+
+    private fun ByteArray.toHexString() = joinToString(separator = "") { ib -> "%02x".format(ib) }
 
     private fun configure(@NonNull call: MethodCall, @NonNull result: Result) {
         val args = call.arguments
