@@ -105,12 +105,24 @@ class CoinbaseWalletSdkFlutterPlugin : FlutterPlugin, MethodCallHandler,
     }
 
     private fun ownPublicKey(@NonNull result: Result) {
-        result.success(coinbase.ownPublicKey)
+        try {
+            val bytes = coinbase.ownPublicKey.encoded
+            result.success(bytes.toHexString())
+        } catch (e: Throwable) {
+            result.error("ownPublicKey", e.message, null)
+        }
     }
 
     private fun peerPublicKey(@NonNull result: Result) {
-        result.success(coinbase.peerPublicKey)
+        try {
+            val bytes = coinbase.peerPublicKey?.encoded
+            result.success(bytes?.toHexString())
+        } catch (e: Throwable) {
+            result.error("peerPublicKey", e.message, null)
+        }
     }
+
+    private fun ByteArray.toHexString() = joinToString(separator = "") { ib -> "%02x".format(ib) }
 
     private fun configure(@NonNull call: MethodCall, @NonNull result: Result) {
         val args = call.arguments
