@@ -1,3 +1,7 @@
+## 1.0.9
+
+- Hex encode public keys on Android platform
+
 ## 1.0.8
 
 - Changed: Type of chainId parameter on SwitchEthereumChain to string
