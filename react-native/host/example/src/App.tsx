@@ -3,7 +3,7 @@ import {
   addDiagnosticLogListener,
   getAndroidIntentUrl,
   MobileWalletProtocolProvider,
-  SecureStorage,
+  type SecureStorage,
   useMobileWalletProtocolHost,
 } from '@coinbase/mobile-wallet-protocol-host';
 import React, { useEffect } from 'react';
@@ -87,7 +87,7 @@ function App() {
   // Diagnostic events
   useEffect(() => {
     const removeListener = addDiagnosticLogListener((event) => {
-      console.log('Event:', JSON.stringify(event));
+      console.log('Event:', JSON.stringify(event, null, 2));
     });
 
     return () => removeListener();

@@ -1,5 +1,5 @@
 import {
-  EthereumRequestAction,
+  type EthereumRequestAction,
   useMobileWalletProtocolHost,
 } from '@coinbase/mobile-wallet-protocol-host';
 import React from 'react';
@@ -16,15 +16,18 @@ export function RequestActionItem({ action, onHandled }: RequestItemProps) {
 
   const { approveAction, rejectAction } = useMobileWalletProtocolHost();
 
-  const approve = async () => {
+  const approve = React.useCallback(async () => {
     const proceed = await approveAction(action, { value: '0xdeadbeef' });
     onHandled(proceed);
-  };
+  }, [action, approveAction, onHandled]);
 
-  const reject = async () => {
-    const proceed = await rejectAction(action, { code: 4001, message: 'User rejected request' });
+  const reject = React.useCallback(async () => {
+    const proceed = await rejectAction(action, {
+      code: 4001,
+      message: 'User rejected request',
+    });
     onHandled(proceed);
-  };
+  }, [action, onHandled, rejectAction]);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>

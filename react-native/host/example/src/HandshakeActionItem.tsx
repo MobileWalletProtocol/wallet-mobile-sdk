@@ -1,9 +1,9 @@
 import {
-  HandshakeAction,
+  type HandshakeAction,
   useMobileWalletProtocolHost,
-  AppMetadata,
+  type AppMetadata,
 } from '@coinbase/mobile-wallet-protocol-host';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -15,13 +15,13 @@ type HandshakeItemProps = {
 export function HandshakeActionItem({ action, onHandled }: HandshakeItemProps) {
   const insets = useSafeAreaInsets();
 
-  const [metadata, setMetadata] = useState<AppMetadata | null>(null);
-  const [isVerified, setVerified] = useState<boolean | null>(null);
+  const [metadata, setMetadata] = React.useState<AppMetadata | null>(null);
+  const [isVerified, setVerified] = React.useState<boolean | null>(null);
 
   const { fetchClientAppMetadata, isClientAppVerified, approveHandshake, rejectHandshake } =
     useMobileWalletProtocolHost();
 
-  useEffect(() => {
+  React.useEffect(() => {
     try {
       fetchClientAppMetadata().then((value) => setMetadata(value));
       isClientAppVerified().then((value) => setVerified(value));
@@ -30,15 +30,15 @@ export function HandshakeActionItem({ action, onHandled }: HandshakeItemProps) {
     }
   }, [fetchClientAppMetadata, isClientAppVerified]);
 
-  const approve = async () => {
+  const approve = React.useCallback(async () => {
     const proceed = await approveHandshake(metadata);
     onHandled(proceed);
-  };
+  }, [approveHandshake, metadata, onHandled]);
 
-  const reject = async () => {
+  const reject = React.useCallback(async () => {
     const proceed = await rejectHandshake('User rejected handshake');
     onHandled(proceed);
-  };
+  }, [onHandled, rejectHandshake]);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
