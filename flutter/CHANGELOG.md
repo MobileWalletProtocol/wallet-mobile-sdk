@@ -1,3 +1,7 @@
+## 1.0.10
+
+- Add Android Gradle Plugin 8 compatibility
+
 ## 1.0.9
 
 - Hex encode public keys on Android platform
