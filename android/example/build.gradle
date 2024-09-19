@@ -57,6 +57,7 @@ dependencies {
 
     testImplementation libs.junit4
     androidTestImplementation libs.androidx.junit4
+    androidTestImplementation libs.espresso
 
     implementation project(':walletsdk')
 }
