@@ -27,22 +27,25 @@ public final class CoinbaseWalletSDK {
     
     // MARK: - Constructor
     
-    static private var host: URL?
+    // TODO: revisit singleton approach
     static private var callback: URL?
-    static public var isConfigured: Bool {
-        return host != nil && callback != nil
-    }
     
+    // backward compatibility
+    @available(*, deprecated, message: "Use instance method updateHost() instead")
     static public func configure(
-        host: URL = URL(string: "https://wallet.coinbase.com/wsegue")!,
+        host: URL,
         callback: URL
     ) {
-        guard isConfigured == false else {
+        self.configure(callback: callback)
+        self.shared.updateHost(host: host)
+    }
+    
+    static public func configure(callback: URL) {
+        guard self.callback == nil else {
             assertionFailure("`CoinbaseWalletSDK.configure` should be called only once.")
             return
         }
         
-        self.host = host
         if callback.pathComponents.count < 2 { // [] or ["/"]
             self.callback = callback.appendingPathComponent("wsegue")
         } else {
@@ -51,35 +54,36 @@ public final class CoinbaseWalletSDK {
     }
     
     static public var shared: CoinbaseWalletSDK = {
-        guard let host = CoinbaseWalletSDK.host,
+        guard
               let callback = CoinbaseWalletSDK.callback else {
             preconditionFailure("Missing configuration: call `CoinbaseWalletSDK.configure` before accessing the `shared` instance.")
         }
         
-        return CoinbaseWalletSDK(host: host, callback: callback)
+        return CoinbaseWalletSDK(callback: callback)
     }()
     
     // MARK: - Properties
     
     private let appId: String
-    private let host: URL
+    private var host: URL! // TODO: no optionals
     private let callback: URL
     
-    private lazy var keyManager: KeyManager = {
-        KeyManager(host: self.host)
-    }()
+    private var keyManager: KeyManager! // TODO: no optionals
     private lazy var taskManager: TaskManager = {
         TaskManager()
     }()
     
     private init(
-        host: URL,
         callback: URL
     ) {
-        self.host = host
         self.callback = callback
-        
         self.appId = Bundle.main.bundleIdentifier!
+        self.updateHost(host: URL(string: "https://wallet.coinbase.com/wsegue")!) // TODO: revisit host setup process
+    }
+    
+    public func updateHost(host: URL) {
+        self.host = host
+        self.keyManager = KeyManager(host: host)
     }
     
     // MARK: - Send message
