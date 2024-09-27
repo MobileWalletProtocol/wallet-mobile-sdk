@@ -29,7 +29,9 @@ public final class CoinbaseWalletSDK {
     
     // TODO: revisit singleton approach
     static private var callback: URL?
-    static public func configure(callback: URL) {
+    static public func configure(
+        callback: URL
+    ) {
         guard self.callback == nil else {
             assertionFailure("`CoinbaseWalletSDK.configure` should be called only once.")
             return
@@ -62,7 +64,9 @@ public final class CoinbaseWalletSDK {
         TaskManager()
     }()
     
-    private init(callback: URL) {
+    private init(
+        callback: URL
+    ) {
         self.callback = callback
         self.appId = Bundle.main.bundleIdentifier!
         self.updateHost(host: URL(string: "https://wallet.coinbase.com/wsegue")!) // TODO: revisit host setup process
