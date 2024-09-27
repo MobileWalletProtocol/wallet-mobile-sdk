@@ -29,9 +29,18 @@ public final class CoinbaseWalletSDK {
     
     // TODO: revisit singleton approach
     static private var callback: URL?
+    
+    // backward compatibility
+    @available(*, deprecated, message: "Use instance method updateHost() instead")
     static public func configure(
+        host: URL,
         callback: URL
     ) {
+        self.configure(callback: callback)
+        self.shared.updateHost(host: host)
+    }
+    
+    static public func configure(callback: URL) {
         guard self.callback == nil else {
             assertionFailure("`CoinbaseWalletSDK.configure` should be called only once.")
             return
@@ -42,16 +51,6 @@ public final class CoinbaseWalletSDK {
         } else {
             self.callback = callback
         }
-    }
-    
-    // backward compatibility
-    @available(*, deprecated, message: "Use instance method updateHost() instead")
-    static public func configure(
-        host: URL,
-        callback: URL
-    ) {
-        self.configure(callback: callback)
-        self.shared.updateHost(host: host)
     }
     
     static public var shared: CoinbaseWalletSDK = {
