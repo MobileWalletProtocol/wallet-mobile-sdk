@@ -44,6 +44,16 @@ public final class CoinbaseWalletSDK {
         }
     }
     
+    // backward compatibility
+    @available(*, deprecated, message: "Use instance method updateHost() instead")
+    static public func configure(
+        host: URL,
+        callback: URL
+    ) {
+        self.configure(callback: callback)
+        self.shared.updateHost(host: host)
+    }
+    
     static public var shared: CoinbaseWalletSDK = {
         guard
               let callback = CoinbaseWalletSDK.callback else {
