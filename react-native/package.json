@@ -1,6 +1,6 @@
 {
   "name": "@coinbase/wallet-mobile-sdk",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "Coinbase Wallet Mobile SDK for React Native",
   "main": "build/CoinbaseWalletSDK.js",
   "types": "build/CoinbaseWalletSDK.d.ts",
@@ -32,7 +32,7 @@
     "buffer": "6.0.3",
     "bn.js": "5.2.1",
     "events": "^3.0.0",
-    "react-native-mmkv": "2.11.0"
+    "react-native-mmkv": "^2.11.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.25",

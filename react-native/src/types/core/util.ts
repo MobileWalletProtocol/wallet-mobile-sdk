@@ -3,7 +3,7 @@
 
 import BN from 'bn.js';
 
-import { AddressString, HexString, IntNumber } from './type';
+import { AddressString, BigIntString, HexString, IntNumber } from './type';
 
 const INT_STRING_REGEX = /^[0-9]*$/;
 const HEXADECIMAL_STRING_REGEX = /^[a-f0-9]*$/;

@@ -22,7 +22,7 @@ Wrapper libraries and modules are also available for the following platforms:
 For **Install** and **Usage** instructions of each platform, visit the links above or our [developer documentation](https://docs.cloud.coinbase.com/wallet-sdk/docs/mobile-sdk-overview).
 
 ## References
-- Mobile Wallet Protocol [Specification](https://coinbase.github.io/wallet-mobile-sdk)
+- Mobile Wallet Protocol [Specification](https://mobilewalletprotocol.github.io/wallet-mobile-sdk/docs/spec)
 - Coinbase Wallet [Developer Documentation](https://docs.cloud.coinbase.com/wallet-sdk/docs)
 - Questions? Visit our [Developer Forums](https://forums.coinbasecloud.dev/).
 - For bugs, please report an issue on Github.
