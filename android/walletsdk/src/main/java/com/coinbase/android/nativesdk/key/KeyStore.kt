@@ -15,7 +15,7 @@ import java.security.KeyStore
 import java.security.interfaces.ECPublicKey
 
 private const val DEPRECATED_MAIN_KEY_ALIAS = "wallet_segue_main_key"
-private const val HAS_MIGRATED_ALIAS = "has_migrated"
+private const val HAS_MIGRATED_TO_VERSION_120_ALIAS = "has_migrated_to_version_1.2.0"
 
 private const val PUBLIC_KEY_ALIAS = "public_key"
 private const val PRIVATE_KEY_ALIAS = "private_key"
@@ -102,9 +102,9 @@ class KeyStore(
 
     private fun getSharedPrefs(): SharedPreferences {
         val sharedPrefs = context.getSharedPreferences("${fileName}_raw", Context.MODE_PRIVATE)
-        val hasMigrated = sharedPrefs.getBoolean(HAS_MIGRATED_ALIAS, false)
+        val hasMigratedToVersion120 = sharedPrefs.getBoolean(HAS_MIGRATED_TO_VERSION_120_ALIAS, false)
 
-        if (!hasMigrated) {
+        if (!hasMigratedToVersion120) {
             try {
                 // Perform the migration
                 migrateEncryptedPrefs(sharedPrefs)
@@ -113,7 +113,7 @@ class KeyStore(
                 sharedPrefs.edit().clear().commit()
             } finally {
                 // Mark as migrated
-                sharedPrefs.edit().putBoolean(HAS_MIGRATED_ALIAS, true).commit()
+                sharedPrefs.edit().putBoolean(HAS_MIGRATED_TO_VERSION_120_ALIAS, true).commit()
             }
         }
 
