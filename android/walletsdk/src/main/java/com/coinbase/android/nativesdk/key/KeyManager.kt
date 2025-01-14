@@ -1,5 +1,6 @@
 package com.coinbase.android.nativesdk.key
 
+import KeyStore
 import android.content.Context
 import com.google.crypto.tink.subtle.EllipticCurves
 import java.security.KeyPair
@@ -10,7 +11,7 @@ private const val OWN_KEY_PAIR_ALIAS = "own_key_pair"
 
 internal class KeyManager(appContext: Context, host: String) {
 
-    private val encryptedStore: EncryptedStore
+    private val keyStore: KeyStore
     private var ownKeyPair: KeyPair? = null
 
     val ownPublicKey: ECPublicKey
@@ -28,39 +29,39 @@ internal class KeyManager(appContext: Context, host: String) {
         }
 
     val peerPublicKey: ECPublicKey?
-        get() = encryptedStore.peerPublicKey
+        get() = keyStore.peerPublicKey
 
     init {
-        encryptedStore = EncryptedStore(
+        keyStore = KeyStore(
             fileName = "${host}_wallet_segue_key_store",
             context = appContext
         )
     }
 
     fun storePeerPublicKey(key: ECPublicKey) {
-        encryptedStore.peerPublicKey = key
+        keyStore.peerPublicKey = key
     }
 
     fun resetKeys() {
-        encryptedStore.reset()
+        keyStore.reset()
 
         // Create new KeyPair
         ownKeyPair = getOrCreateKeyPair(OWN_KEY_PAIR_ALIAS)
     }
 
     private fun deleteKeyPair(alias: String) {
-        encryptedStore.deleteKeyPair(alias)
+        keyStore.deleteKeyPair(alias)
     }
 
     private fun getOrCreateKeyPair(alias: String): KeyPair {
-        val keyPair = encryptedStore.getKeyPair(alias)
+        val keyPair = keyStore.getKeyPair(alias)
         return if (keyPair != null) {
             // Already have keys in encrypted storage
             keyPair
         } else {
             // Generate new key pair and save to encrypted storage
             val kp = EllipticCurves.generateKeyPair(EllipticCurves.CurveType.NIST_P256)
-            encryptedStore.saveKeyPair(alias, kp)
+            keyStore.saveKeyPair(alias, kp)
             kp
         }
     }
