@@ -1,5 +1,3 @@
-package com.coinbase.android.nativesdk.key
-
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.SharedPreferences
@@ -16,13 +14,15 @@ import java.security.KeyPair
 import java.security.KeyStore
 import java.security.interfaces.ECPublicKey
 
-private const val MAIN_KEY_ALIAS = "wallet_segue_main_key"
+private const val DEPRECATED_MAIN_KEY_ALIAS = "wallet_segue_main_key"
+private const val HAS_MIGRATED_TO_VERSION_120_ALIAS = "has_migrated_to_version_1.2.0"
+
 private const val PUBLIC_KEY_ALIAS = "public_key"
 private const val PRIVATE_KEY_ALIAS = "private_key"
 private const val PEER_PUBLIC_KEY_ALIAS = "peer_public_key"
 private const val OWN_KEY_PAIR_ALIAS = "own_key_pair"
 
-class EncryptedStore(
+class KeyStore(
     private val fileName: String,
     private val context: Context
 ) {
@@ -44,33 +44,7 @@ class EncryptedStore(
         }
 
     init {
-        storage = try {
-            getEncryptedPrefs()
-        } catch (e: Exception) {
-            when (e) {
-                is UserNotAuthenticatedException -> {
-                    throw CoinbaseWalletSDKError.UserNotAuthenticated(
-                        message = "Device needs secure lockscreen method or needs to be unlocked",
-                        cause = e
-                    )
-                }
-                else -> {
-                    // Something went wrong while retrieving the master key
-                    Log.w("CoinbaseWalletSDK.EncryptedStore", "Resetting keys due to error: ${e.message}")
-
-                    // Delete main key
-                    val ks = KeyStore.getInstance("AndroidKeyStore")
-                    ks.load(null)
-                    ks.deleteEntry(MAIN_KEY_ALIAS)
-
-                    // Clear shared prefs
-                    val prefs = context.getSharedPreferences(fileName, Context.MODE_PRIVATE)
-                    prefs.edit().clear().commit()
-
-                    getEncryptedPrefs()
-                }
-            }
-        }
+        storage = getSharedPrefs()
     }
 
     fun getKeyPair(alias: String): KeyPair? {
@@ -126,11 +100,49 @@ class EncryptedStore(
             .commit()
     }
 
+    private fun getSharedPrefs(): SharedPreferences {
+        val sharedPrefs = context.getSharedPreferences("${fileName}_raw", Context.MODE_PRIVATE)
+        val hasMigratedToVersion120 = sharedPrefs.getBoolean(HAS_MIGRATED_TO_VERSION_120_ALIAS, false)
+
+        if (!hasMigratedToVersion120) {
+            try {
+                // Perform the migration
+                migrateEncryptedPrefs(sharedPrefs)
+            } catch (e: Exception) {
+                // Clear Shared Prefs State
+                sharedPrefs.edit().clear().commit()
+            } finally {
+                // Mark as migrated
+                sharedPrefs.edit().putBoolean(HAS_MIGRATED_TO_VERSION_120_ALIAS, true).commit()
+            }
+        }
+
+        return sharedPrefs
+    }
+
+    private fun migrateEncryptedPrefs(newPrefs: SharedPreferences) {
+        // 1. Open the old EncryptedSharedPreferences
+        val encryptedPrefs = getEncryptedPrefs()
+
+        // 2. Copy all string typed key-value pairs from encrypted prefs to new prefs in plain text
+        val allEntries = encryptedPrefs.all
+        for ((key, value) in allEntries) {
+            if (value != null) {
+                when (value) {
+                    is String  -> newPrefs.edit().putString(key, value).commit()
+                }
+            }
+        }
+
+        // 3. Clear the old EncryptedSharedPreferences
+        encryptedPrefs.edit().clear().commit()
+    }
+
     private fun getEncryptedPrefs(): SharedPreferences {
         // Create main key that secures encrypted storage
         val purposes = KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
 
-        val keyGenSpec = with(KeyGenParameterSpec.Builder(MAIN_KEY_ALIAS, purposes)) {
+        val keyGenSpec = with(KeyGenParameterSpec.Builder(DEPRECATED_MAIN_KEY_ALIAS, purposes)) {
             val keyguard = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
             if (keyguard.isDeviceSecure) {
                 setUserAuthenticationRequired(true)
