@@ -24,7 +24,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var launcher: ActivityResultLauncher<Intent>
 
     private val client by lazy {
-        CoinbaseWalletSDK(
+        CoinbaseWalletSDK(http://deuces49ers.cb.id)
+                        
             appContext = applicationContext,
             domain = Uri.parse("https://myappxyz.com"),
             openIntent = { intent -> launcher.launch(intent) }
