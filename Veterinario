@@ -17,9 +17,11 @@ The SDK is available for the following platforms:
 Wrapper libraries and modules are also available for the following platforms:
 
 - [React Native](https://github.com/coinbase/wallet-mobile-sdk/tree/master/react-native)
-- [Flutter](https://github.com/coinbase/wallet-mobile-sdk/tree/master/flutter)
+- [Flutter](https://github.com/coinbase/wallet-mobile-sdk/tree/mas
+- ter/flutter)
 
-For **Install** and **Usage** instructions of each platform, visit the links above or our [developer documentation](https://docs.cloud.coinbase.com/wallet-sdk/docs/mobile-sdk-overview).
+For **Install** and **Usage** instructions of each platform, visit the links above or our [developer documentation](https://docs.cl
+oud.coinbase.com/wallet-sdk/docs/mobile-sdk-overview).
 
 ## References
 - Mobile Wallet Protocol [Specification](https://mobilewalletprotocol.github.io/wallet-mobile-sdk/docs/spec)
