@@ -27,6 +27,13 @@ import java.security.interfaces.ECPublicKey
 import java.util.Date
 import java.util.UUID
 
+internal fun Context.applicationLabel(): String? {
+    val label = applicationInfo.nonLocalizedLabel?.toString()
+        ?: applicationInfo.loadLabel(packageManager)?.toString()
+
+    return label?.takeUnless { it.isBlank() }
+}
+
 const val CBW_PACKAGE_NAME = "org.toshi"
 private const val CBW_SCHEME = "cbwallet://wsegue"
 
@@ -99,6 +106,7 @@ class CoinbaseWalletSDK(
      */
     fun initiateHandshake(
         initialActions: List<Action>? = null,
+        appName: String? = appContext.applicationLabel(),
         onResponse: (ResponseResult, Account?) -> Unit
     ) {
         resetSession()
@@ -118,6 +126,7 @@ class CoinbaseWalletSDK(
                 handshake = RequestContent.Handshake(
                     appId = appContext.packageName,
                     callback = domain.toString(),
+                    appName = appName,
                     initialActions = initialActions
                 )
             ),
@@ -151,10 +160,11 @@ class CoinbaseWalletSDK(
 
     fun initiateHandshake(
         initialActions: List<Action>? = null,
+        appName: String? = appContext.applicationLabel(),
         onSuccess: SuccessHandshakeResponseCallback,
         onFailure: FailureResponseCallback
     ) {
-        initiateHandshake(initialActions) { result, account ->
+        initiateHandshake(initialActions, appName) { result, account ->
             result
                 .onSuccess { onSuccess.call(it, account) }
                 .onFailure { onFailure.call(it) }
